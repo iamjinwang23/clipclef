@@ -1,0 +1,66 @@
+{
+  "common": {
+    "login": "Login",
+    "logout": "Logout",
+    "collection": "Collection",
+    "save": "Save",
+    "saved": "Saved",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "viewOnYoutube": "View on YouTube",
+    "back": "Back"
+  },
+  "filter": {
+    "genre": "Genre",
+    "mood": "Mood",
+    "place": "Place",
+    "era": "Era",
+    "reset": "Reset filters",
+    "sort": {
+      "label": "Sort",
+      "latest": "Latest",
+      "likes": "Most Liked",
+      "views": "Most Viewed"
+    }
+  },
+  "playlist": {
+    "tracks": "{count} tracks",
+    "likes": "{count} likes",
+    "noResults": "No playlists match your filters",
+    "noResultsHint": "Try resetting filters or selecting different options"
+  },
+  "comment": {
+    "title": "{count} Comments",
+    "placeholder": "Write a comment (up to 500 characters)",
+    "loginRequired": "Please log in to write a comment",
+    "submit": "Post",
+    "delete": "Delete",
+    "empty": "Be the first to comment"
+  },
+  "collection": {
+    "title": "My Collection",
+    "empty": "No saved playlists",
+    "emptyHint": "Save playlists you love"
+  },
+  "admin": {
+    "title": "Manage Playlists",
+    "addPlaylist": "Add Playlist",
+    "urlLabel": "YouTube Playlist URL",
+    "urlPlaceholder": "Enter a YouTube playlist URL",
+    "parse": "Fetch Info",
+    "parsing": "Fetching...",
+    "tags": "Set Tags",
+    "tagsLabel": "Select Tags",
+    "register": "Register",
+    "registering": "Registering...",
+    "empty": "No playlists registered",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this playlist?"
+  },
+  "auth": {
+    "loginWithGoogle": "Continue with Google",
+    "loginPrompt": "Login required"
+  }
+}

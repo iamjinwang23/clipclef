@@ -1,0 +1,123 @@
+// Design Ref: §5.1 — 플레이리스트 상세 페이지
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
+import type { Playlist, Track } from '@/types';
+import PlaylistPlayer from '@/features/playlist/components/PlaylistPlayer';
+import ChannelAvatar from '@/features/playlist/components/ChannelAvatar';
+import LikeButton from '@/features/interaction/components/LikeButton';
+import CollectionButton from '@/features/interaction/components/CollectionButton';
+import AddToPlaylistButton from '@/features/user-playlist/components/AddToPlaylistButton';
+import CommentList from '@/features/interaction/components/CommentList';
+import CommentForm from '@/features/interaction/components/CommentForm';
+import UploaderCard from '@/features/interaction/components/UploaderCard';
+
+export default async function PlaylistDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  const supabase = await createClient();
+
+  const [{ data: playlist }, { data: tracks }, { data: { user } }] = await Promise.all([
+    supabase.from('playlists').select('*, uploader:profiles!uploaded_by(display_name, avatar_url, is_verified)').eq('id', id).single(),
+    supabase.from('tracks').select('*').eq('playlist_id', id).order('position'),
+    supabase.auth.getUser(),
+  ]);
+
+  if (!playlist) notFound();
+
+  const p = playlist as Playlist & { uploader?: { display_name: string | null; avatar_url: string | null; is_verified: boolean } | null };
+  const t = (tracks ?? []) as Track[];
+  const allTags = [...p.genre, ...p.mood, ...p.place, ...p.era];
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      {/* 뒤로가기 */}
+      <Link href={`/${locale}`} className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] mb-4 inline-flex items-center gap-1">
+        ← 목록으로
+      </Link>
+
+      {/* 플레이어 (영상 아래에 제목/채널/태그/액션 삽입 후 트랙리스트) */}
+      <PlaylistPlayer youtubeId={p.youtube_id} tracks={t}>
+        {/* 제목 + 채널 */}
+        <div className="mt-4 mb-3">
+          <div className="flex items-start gap-2 mb-1">
+            {p.is_ai && (
+              <span className="mt-0.5 flex-shrink-0 bg-violet-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                AI
+              </span>
+            )}
+            <h1 className="text-xl font-semibold leading-snug">{p.title}</h1>
+          </div>
+          <div className="flex items-center gap-2 ml-0.5">
+            <ChannelAvatar channelId={p.channel_id} channelName={p.channel_name} size={18} />
+            <p className="text-sm text-[var(--text-secondary)]">
+              {p.channel_name} · {Math.max(1, p.track_count)}개 트랙
+            </p>
+          </div>
+        </div>
+
+        {/* 에디터 노트 */}
+        {p.editor_note && (
+          <blockquote className="mb-3 border-l-2 border-[var(--subtle)] pl-4 py-1">
+            <p className="text-sm text-[var(--text-secondary)] italic leading-relaxed">{p.editor_note}</p>
+          </blockquote>
+        )}
+
+        {/* 태그 */}
+        {allTags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {allTags.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs px-2 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* 액션 버튼 */}
+        <div className="flex items-center gap-2 mb-2">
+          <LikeButton playlistId={p.id} initialCount={p.like_count} />
+          <CollectionButton playlistId={p.id} variant="responsive" />
+          <AddToPlaylistButton playlistId={p.id} isLoggedIn={!!user} responsive />
+          <a
+            href={`https://www.youtube.com/watch?v=${p.youtube_id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-[var(--border)] text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+            </svg>
+            YouTube에서 보기
+          </a>
+        </div>
+      </PlaylistPlayer>
+
+      {/* 댓글 */}
+      <section className="mt-10">
+        {/* 업로더 정보 */}
+        {p.uploaded_by && p.uploader && (
+          <UploaderCard
+            uploadedBy={p.uploaded_by}
+            displayName={p.uploader.display_name}
+            avatarUrl={p.uploader.avatar_url}
+            isVerified={p.uploader.is_verified}
+          />
+        )}
+        <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
+          댓글
+        </h2>
+        <div className="mb-6">
+          <CommentForm playlistId={p.id} isLoggedIn={!!user} />
+        </div>
+        <CommentList playlistId={p.id} />
+      </section>
+    </div>
+  );
+}

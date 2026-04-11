@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Supabase__execute_sql",
+      "mcp__ide__getDiagnostics",
+      "Bash(npx next:*)",
+      "mcp__claude_ai_Supabase__apply_migration",
+      "WebFetch(domain:m3.material.io)",
+      "Bash(sed:*)",
+      "Bash(python3:*)",
+      "Skill(bkit:pdca)"
+    ]
+  }
+}

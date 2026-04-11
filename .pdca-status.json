@@ -1,0 +1,153 @@
+{
+  "clipclef": {
+    "phase": "check",
+    "matchRate": 92,
+    "iterationCount": 0,
+    "startedAt": "2026-04-07T00:00:00Z",
+    "updatedAt": "2026-04-11T00:00:00Z",
+    "description": "ClipClef — YouTube playlist curation service (Next.js + Supabase)",
+    "completedModules": {
+      "auth": {
+        "label": "인증 (Google OAuth)",
+        "status": "done",
+        "files": [
+          "src/middleware.ts",
+          "src/lib/supabase/client.ts",
+          "src/lib/supabase/server.ts",
+          "src/app/api/auth/callback/route.ts"
+        ],
+        "notes": "Edge middleware for session refresh + i18n routing. Admin guard on /admin page."
+      },
+      "playlist-listing": {
+        "label": "플리 목록 (홈)",
+        "status": "done",
+        "files": [
+          "src/app/[locale]/page.tsx",
+          "src/features/playlist/components/PlaylistGrid.tsx",
+          "src/features/playlist/components/PlaylistCard.tsx",
+          "src/features/playlist/components/CuratedCollectionSection.tsx",
+          "src/features/playlist/components/ChannelStoriesBar.tsx",
+          "src/features/filter/components/FilterBar.tsx",
+          "src/features/filter/store.ts"
+        ],
+        "notes": "Filter by genre/mood/place/era, sort by latest/likes/views, curated collections, channel stories carousel"
+      },
+      "playlist-detail": {
+        "label": "플리 상세",
+        "status": "done",
+        "files": [
+          "src/app/[locale]/playlist/[id]/page.tsx",
+          "src/features/playlist/components/PlaylistPlayer.tsx",
+          "src/features/playlist/components/TrackList.tsx",
+          "src/features/interaction/components/LikeButton.tsx",
+          "src/features/interaction/components/CollectionButton.tsx",
+          "src/features/user-playlist/components/AddToPlaylistButton.tsx",
+          "src/features/interaction/components/UploaderCard.tsx",
+          "src/features/interaction/components/CommentList.tsx",
+          "src/features/interaction/components/CommentForm.tsx"
+        ],
+        "notes": "YouTube embed player, tracklist, like/collect/add-to-playlist, uploader card with follow, comments"
+      },
+      "upload": {
+        "label": "플리 업로드",
+        "status": "done",
+        "files": [
+          "src/app/[locale]/upload/page.tsx",
+          "src/features/admin/components/PlaylistForm.tsx",
+          "src/app/api/youtube/route.ts"
+        ],
+        "notes": "All authenticated users can upload. YouTube URL parsing (title, channel, tracklist from description). Toast + navigate on success."
+      },
+      "admin": {
+        "label": "관리자 페이지",
+        "status": "done",
+        "files": [
+          "src/app/[locale]/admin/page.tsx",
+          "src/features/admin/components/AdminContent.tsx",
+          "src/features/admin/components/PlaylistTable.tsx",
+          "src/features/admin/components/CollectionManager.tsx",
+          "src/features/admin/components/AdminMembers.tsx",
+          "src/app/api/admin/collections/route.ts"
+        ],
+        "notes": "Admin-only (ADMIN_EMAIL check on server). Playlist CRUD, curated collection management, member list."
+      },
+      "user-profile": {
+        "label": "유저 프로필",
+        "status": "done",
+        "files": [
+          "src/app/[locale]/me/profile/page.tsx",
+          "src/app/[locale]/me/settings/page.tsx",
+          "src/app/[locale]/me/profile/ProfileForm.tsx",
+          "src/app/[locale]/me/profile/ProfileSettingsMenu.tsx",
+          "src/app/[locale]/me/likes/page.tsx",
+          "src/app/[locale]/me/comments/page.tsx",
+          "src/app/[locale]/me/playlists/page.tsx",
+          "src/app/[locale]/profile/[userId]/page.tsx"
+        ],
+        "notes": "/me/profile = public hub (uploaded playlists, public user-playlists, follower/following). /me/settings = edit display_name. /profile/[userId] = other user's public profile."
+      },
+      "social": {
+        "label": "소셜 (팔로우/좋아요/컬렉션/댓글)",
+        "status": "done",
+        "files": [
+          "src/features/interaction/hooks/useFollow.ts",
+          "src/features/interaction/hooks/useLike.ts",
+          "src/features/interaction/hooks/useCollection.ts",
+          "src/features/interaction/hooks/useComments.ts"
+        ],
+        "notes": "Follow/unfollow, like with count, save to collection, comment with delete-own"
+      },
+      "verified-badge": {
+        "label": "인증 마크",
+        "status": "done",
+        "files": [
+          "src/components/ui/VerifiedBadge.tsx"
+        ],
+        "notes": "Instagram-style blue checkmark. profiles.is_verified=true for admin. Shows in UploaderCard, CommentList, profile pages, AdminMembers."
+      },
+      "avatar": {
+        "label": "아바타 (UserAvatar)",
+        "status": "done",
+        "files": [
+          "src/components/ui/UserAvatar.tsx"
+        ],
+        "notes": "Graceful onError fallback to initial letter. Used everywhere avatars appear."
+      }
+    },
+    "database": {
+      "migrations": [
+        "001_initial_schema",
+        "002_add_is_ai",
+        "003_add_start_sec",
+        "004_user_playlists",
+        "005_add_is_default",
+        "006_user_tokens",
+        "007_editor_note",
+        "008_curated_collections",
+        "009_user_upload_follows",
+        "010_backfill_uploaded_by_verified"
+      ],
+      "tables": [
+        "profiles (id, display_name, avatar_url, is_verified, created_at)",
+        "playlists (id, youtube_id, title, channel_name, channel_id, thumbnail_url, description, editor_note, track_count, view_count, like_count, genre[], mood[], place[], era[], is_active, is_ai, uploaded_by, created_at)",
+        "tracks (id, playlist_id, position, title, artist, start_sec, duration_sec, youtube_video_id)",
+        "comments (id, playlist_id, user_id, content, created_at)",
+        "likes (playlist_id, user_id)",
+        "collections (playlist_id, user_id)",
+        "user_playlists (id, user_id, name, is_public, is_default, created_at)",
+        "user_playlist_items (id, user_playlist_id, playlist_id, position)",
+        "curated_collections (id, title, description, position, is_active)",
+        "curated_collection_items (collection_id, playlist_id, position)",
+        "follows (follower_id, following_id, created_at)",
+        "user_tokens (user_id, provider, access_token, refresh_token, expires_at)"
+      ]
+    },
+    "knownGaps": [
+      "신고 관리 탭 — 미구현 (placeholder)",
+      "필터 관리 탭 — 미구현 (placeholder)",
+      "방문자 대시보드 탭 — 미구현 (placeholder)",
+      "YouTube export 기능 — /api/youtube/export 있으나 UI 미연결",
+      "다국어(EN) 번역 — 구조 있으나 영어 메시지 미작성"
+    ]
+  }
+}

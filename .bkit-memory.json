@@ -1,0 +1,22 @@
+{
+  "project": "clipclef",
+  "projectAlias": "ClipClef",
+  "level": "Dynamic",
+  "phase": "check",
+  "feature": "clipclef",
+  "updatedAt": "2026-04-11T00:00:00Z",
+  "stack": {
+    "framework": "Next.js 16.2.2 (App Router)",
+    "backend": "Supabase (PostgreSQL + Auth + RLS)",
+    "auth": "Google OAuth via @supabase/ssr",
+    "language": "TypeScript",
+    "styling": "Tailwind CSS",
+    "i18n": "next-intl 4.9.0 (ko/en)",
+    "state": "Zustand (filter), TanStack Query (server state)"
+  },
+  "history": [
+    { "phase": "do", "feature": "clipclef", "date": "2026-04-07", "summary": "Initial implementation: playlist listing, detail, admin, auth" },
+    { "phase": "do", "feature": "clipclef", "date": "2026-04-08", "summary": "User playlists, collections, curated sections, channel stories" },
+    { "phase": "do", "feature": "clipclef", "date": "2026-04-11", "summary": "Upload for all users, profile redesign, uploader info, follow, verified badge, auth middleware, service rename to ClipClef" }
+  ]
+}

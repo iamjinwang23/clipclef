@@ -1,0 +1,1 @@
+ALTER TABLE playlists ADD COLUMN IF NOT EXISTS editor_note TEXT;

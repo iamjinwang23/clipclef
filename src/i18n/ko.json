@@ -1,0 +1,66 @@
+{
+  "common": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "collection": "컬렉션",
+    "save": "저장",
+    "saved": "저장됨",
+    "cancel": "취소",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "viewOnYoutube": "YouTube에서 보기",
+    "back": "뒤로"
+  },
+  "filter": {
+    "genre": "장르",
+    "mood": "분위기",
+    "place": "장소",
+    "era": "시대",
+    "reset": "필터 초기화",
+    "sort": {
+      "label": "정렬",
+      "latest": "최신순",
+      "likes": "좋아요순",
+      "views": "조회수순"
+    }
+  },
+  "playlist": {
+    "tracks": "{count}개 트랙",
+    "likes": "좋아요 {count}",
+    "noResults": "조건에 맞는 플레이리스트가 없습니다",
+    "noResultsHint": "필터를 초기화하거나 다른 조건을 선택해보세요"
+  },
+  "comment": {
+    "title": "댓글 {count}개",
+    "placeholder": "댓글을 작성하세요 (최대 500자)",
+    "loginRequired": "로그인 후 댓글을 작성할 수 있습니다",
+    "submit": "등록",
+    "delete": "삭제",
+    "empty": "첫 번째 댓글을 남겨보세요"
+  },
+  "collection": {
+    "title": "내 컬렉션",
+    "empty": "저장한 플레이리스트가 없습니다",
+    "emptyHint": "마음에 드는 플레이리스트를 저장해보세요"
+  },
+  "admin": {
+    "title": "플레이리스트 관리",
+    "addPlaylist": "플레이리스트 추가",
+    "urlLabel": "YouTube 영상 URL",
+    "urlPlaceholder": "YouTube 영상 URL을 입력하세요",
+    "parse": "정보 가져오기",
+    "parsing": "가져오는 중...",
+    "tags": "태그 설정",
+    "tagsLabel": "태그 선택",
+    "register": "등록하기",
+    "registering": "등록 중...",
+    "empty": "등록된 플레이리스트가 없습니다",
+    "edit": "수정",
+    "delete": "삭제",
+    "confirmDelete": "이 플레이리스트를 삭제하시겠습니까?"
+  },
+  "auth": {
+    "loginWithGoogle": "Google로 로그인",
+    "loginPrompt": "로그인이 필요한 기능입니다"
+  }
+}
