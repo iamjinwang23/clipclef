@@ -12,7 +12,7 @@ async function getCollection(id: string) {
 
   const { data: col } = await service
     .from('curated_collections')
-    .select('*')
+    .select('id, title, description, position, is_active, banner_image_url, created_at')
     .eq('id', id)
     .eq('is_active', true)
     .single();
