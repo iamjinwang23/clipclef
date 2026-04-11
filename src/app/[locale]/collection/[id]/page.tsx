@@ -39,21 +39,15 @@ export default async function CollectionDetailPage({
   const collection = await getCollection(id);
   if (!collection) notFound();
 
+  const thumbUrl = collection.banner_image_url ?? collection.items[0]?.thumbnail_url;
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* 뒤로가기 */}
-      <Link
-        href={`/${locale}`}
-        className="inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] mb-6"
-      >
-        ← 홈으로
-      </Link>
-
-      {/* 헤더 — 커버 이미지 + 제목 */}
-      {collection.items[0] && (
+      {/* 헤더 — 배너 이미지 + 제목 */}
+      {thumbUrl && (
         <div className="relative w-full h-52 rounded-3xl overflow-hidden mb-6">
           <Image
-            src={collection.items[0].thumbnail_url}
+            src={thumbUrl}
             alt={collection.title}
             fill
             className="object-cover"
