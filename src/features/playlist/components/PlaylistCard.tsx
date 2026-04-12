@@ -42,18 +42,18 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
       </div>
 
       {/* 카드 내용 */}
-      <div className="p-3">
-        <h3 className="font-medium text-sm leading-snug line-clamp-2 mb-1.5 text-[var(--foreground)]">
+      <div className="p-4">
+        <h3 className="font-semibold text-base leading-snug line-clamp-2 mb-2 text-[var(--foreground)]">
           {playlist.title}
         </h3>
         <div className="flex items-center gap-1.5 mb-2">
           <ChannelAvatar channelId={playlist.channel_id} channelName={playlist.channel_name} size={16} />
-          <p className="text-xs text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
+          <p className="text-sm text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
         </div>
 
         {/* 에디터 노트 */}
         {playlist.editor_note && (
-          <p className="text-xs text-[var(--text-secondary)] italic line-clamp-2 mb-2 leading-relaxed">
+          <p className="text-sm text-[var(--text-secondary)] italic line-clamp-2 mb-2 leading-relaxed">
             "{playlist.editor_note}"
           </p>
         )}
@@ -64,7 +64,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
             {[...playlist.genre, ...playlist.mood].slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="text-xs px-1.5 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded"
+                className="text-sm px-2 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded"
               >
                 {tag}
               </span>
@@ -73,7 +73,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
         )}
 
         {/* 좋아요 수 */}
-        <div className="flex items-center gap-1 text-xs text-[var(--text-secondary)]">
+        <div className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
           <span>♥</span>
           <span>{playlist.like_count.toLocaleString()}</span>
         </div>
