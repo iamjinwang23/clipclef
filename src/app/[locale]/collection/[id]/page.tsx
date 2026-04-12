@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { createClient } from '@supabase/supabase-js';
 import type { Playlist } from '@/types';
 
+export const dynamic = 'force-dynamic';
+
 async function getCollection(id: string) {
   const service = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

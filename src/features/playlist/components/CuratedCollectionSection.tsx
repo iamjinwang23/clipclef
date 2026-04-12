@@ -179,7 +179,7 @@ export default function CuratedCollectionSection() {
                   <div className={`absolute left-0 right-0 ${isMobile ? 'bottom-0 pb-10' : 'bottom-16'}`}>
                     <div className="max-w-6xl mx-auto px-4 pr-24">
                       <p className="text-[11px] font-semibold text-white/50 uppercase tracking-widest mb-2">
-                        {col.items.length}개 플레이리스트
+                        큐레이션 콜렉션
                       </p>
                       <h3 className={`font-black text-white leading-tight line-clamp-2 mb-2 tracking-tight ${isMobile ? 'text-xl' : 'text-4xl'}`}>
                         {col.title}
