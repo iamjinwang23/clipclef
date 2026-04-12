@@ -45,7 +45,7 @@ export default async function LocaleLayout({
                 <div className="flex items-center gap-5">
                   <Link href={`/${locale}`} className="flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.svg" alt="ClipClef" className="h-3.5 w-auto opacity-40" style={{ filter: 'invert(1)' }} />
+                    <img src="/logo.svg" alt="ClipClef" className="h-3.5 w-auto opacity-40" />
                   </Link>
                   <Link href={`/${locale}/terms`} className="hover:text-[var(--foreground)] transition-colors">
                     이용약관
