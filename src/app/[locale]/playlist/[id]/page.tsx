@@ -33,12 +33,7 @@ export default async function PlaylistDetailPage({
   const allTags = [...p.genre, ...p.mood, ...p.place, ...p.era];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* 뒤로가기 */}
-      <Link href={`/${locale}`} className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] mb-4 inline-flex items-center gap-1">
-        ← 목록으로
-      </Link>
-
+    <div className="max-w-4xl mx-auto px-4 pb-6">
       {/* 플레이어 (영상 아래에 제목/채널/태그/액션 삽입 후 트랙리스트) */}
       <PlaylistPlayer youtubeId={p.youtube_id} tracks={t}>
         {/* 제목 + 채널 */}

@@ -44,20 +44,20 @@ export default async function CollectionDetailPage({
   const thumbUrl = collection.banner_image_url ?? collection.items[0]?.thumbnail_url;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* 헤더 — 배너 이미지 + 제목 */}
+    <div>
+      {/* 헤더 — 배너 이미지 + 제목 (full-width, flush with header) */}
       {thumbUrl && (
-        <div className="relative w-full h-52 rounded-3xl overflow-hidden mb-6">
+        <div className="relative w-full h-64 sm:h-80 overflow-hidden mb-6">
           <Image
             src={thumbUrl}
             alt={collection.title}
             fill
             className="object-cover"
             priority
-            sizes="(max-width: 768px) 100vw, 896px"
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 p-6">
+          <div className="absolute bottom-0 left-0 p-6 max-w-4xl">
             <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
               큐레이션 컬렉션 · 플리 {collection.items.length}개
             </p>
@@ -70,6 +70,7 @@ export default async function CollectionDetailPage({
       )}
 
       {/* 플리 그리드 */}
+      <div className="max-w-4xl mx-auto px-4 pb-6">
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {collection.items.map((playlist: Playlist) => (
           <Link
@@ -101,6 +102,7 @@ export default async function CollectionDetailPage({
             )}
           </Link>
         ))}
+      </div>
       </div>
     </div>
   );
