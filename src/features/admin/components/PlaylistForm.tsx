@@ -36,6 +36,18 @@ function timestampToSeconds(ts: string): number | null {
   return null;
 }
 
+// 숫자만 입력 시 자동 포맷: 1234 → "12:34", 12345 → "1:23:45"
+function autoFormatDigits(raw: string): string {
+  const d = raw.replace(/\D/g, '');
+  if (!d) return '';
+  const len = d.length;
+  if (len <= 2) return `0:${d.padStart(2, '0')}`;
+  if (len === 3) return `${d[0]}:${d.slice(1)}`;
+  if (len === 4) return `${d.slice(0, 2)}:${d.slice(2)}`;
+  if (len === 5) return `${d[0]}:${d.slice(1, 3)}:${d.slice(3)}`;
+  return `${d.slice(0, len - 4)}:${d.slice(len - 4, len - 2)}:${d.slice(len - 2)}`;
+}
+
 interface ParsedPlaylist {
   youtube_id: string;
   title: string;
@@ -106,9 +118,11 @@ function TrackEditor({ tracks, onChange }: { tracks: TrackRow[]; onChange: (t: T
   };
 
   const handleTimeBlur = (i: number) => {
-    const sec = timestampToSeconds(timeInputs[i]);
+    const raw = timeInputs[i];
+    // ':' 없이 숫자만 입력한 경우 자동 포맷 (예: "1234" → "12:34")
+    const formatted = raw.includes(':') ? raw : autoFormatDigits(raw);
+    const sec = timestampToSeconds(formatted);
     onChange(tracks.map((t, idx) => (idx === i ? { ...t, start_sec: sec } : t)));
-    // blur 시 정규 형식으로 재포맷 (유효하지 않은 입력은 빈 문자열로 초기화)
     setTimeInputs((prev) =>
       prev.map((v, idx) => (idx === i ? secondsToTimestamp(sec) : v))
     );
