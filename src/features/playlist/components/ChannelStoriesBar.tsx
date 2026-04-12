@@ -36,12 +36,12 @@ function StoryItem({
             <Image
               src={thumbnailUrl}
               alt={name}
-              width={52}
-              height={52}
-              className="rounded-full object-cover w-[52px] h-[52px]"
+              width={58}
+              height={58}
+              className="rounded-full object-cover w-[58px] h-[58px]"
             />
           ) : (
-            <div className="w-[52px] h-[52px] rounded-full bg-[var(--muted)] flex items-center justify-center text-xs font-semibold text-[var(--foreground)]">
+            <div className="w-[58px] h-[58px] rounded-full bg-[var(--muted)] flex items-center justify-center text-xs font-semibold text-[var(--foreground)]">
               {initial}
             </div>
           )}
@@ -65,7 +65,7 @@ export default function ChannelStoriesBar() {
     <div className="bg-[var(--background)]">
       <div
         className="max-w-6xl mx-auto py-3 flex gap-4 overflow-x-auto scrollbar-hide"
-        style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', scrollPaddingLeft: '1rem' }}
+        style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: '1rem' }}
       >
         {/* 좌측 여백 스페이서 */}
         <div className="w-4 flex-shrink-0" aria-hidden />
