@@ -106,7 +106,7 @@ export default function FilterBar() {
           <div className="relative flex-1 min-w-0">
             <div
               className="flex items-center gap-2 overflow-x-auto scrollbar-hide"
-              style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
+              style={{ WebkitOverflowScrolling: 'touch' }}
             >
               <FilterChip label={t('genre')} options={GENRE_OPTIONS} selected={genre} onToggle={toggleGenre} />
               <FilterChip label={t('mood')} options={MOOD_OPTIONS} selected={mood} onToggle={toggleMood} />
