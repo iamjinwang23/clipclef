@@ -27,7 +27,7 @@ export default function LikeButton({ playlistId, initialCount }: LikeButtonProps
       <button
         onClick={handleClick}
         disabled={loading}
-        className={`flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+        className={`flex items-center gap-1.5 h-9 px-4 rounded-full border text-sm font-medium transition-colors ${
           liked
             ? 'bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]'
             : 'bg-transparent text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--subtle)] hover:text-[var(--foreground)]'

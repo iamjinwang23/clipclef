@@ -139,7 +139,7 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
     </svg>
   );
 
-  const btnBase = `flex items-center justify-center gap-1.5 rounded-full border text-sm font-medium transition-colors`;
+  const btnBase = `flex items-center justify-center gap-1.5 h-9 rounded-full border text-sm font-medium transition-colors`;
   const btnColor = savedAnywhere
     ? 'bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]'
     : 'bg-transparent text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--subtle)] hover:text-[var(--foreground)]';
