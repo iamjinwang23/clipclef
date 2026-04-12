@@ -27,9 +27,9 @@
   },
   "notes": "Supabase 프로젝트 미생성 - .env.local에 실제 값 입력 필요",
   "updatedAt": "2026-04-06",
-  "sessionCount": 15,
+  "sessionCount": 17,
   "lastSession": {
-    "startedAt": "2026-04-11T17:37:12.930Z",
+    "startedAt": "2026-04-12T03:22:39.250Z",
     "platform": "claude",
     "level": "Dynamic"
   }
