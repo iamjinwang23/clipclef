@@ -30,15 +30,14 @@ export default function ProfileSettingsMenu({ locale }: Props) {
     <div ref={ref} className="relative flex-shrink-0">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:border-[var(--subtle)] transition-colors"
+        className="p-2 text-[var(--foreground)] hover:text-[var(--text-secondary)] transition-colors"
         aria-label="더보기 메뉴"
       >
-        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <circle cx="5" cy="12" r="2" />
           <circle cx="12" cy="12" r="2" />
           <circle cx="19" cy="12" r="2" />
         </svg>
-        더보기
       </button>
 
       {open && (
