@@ -94,7 +94,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
   return (
     <div>
       {/* YouTube 플레이어 */}
-      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
+      <div className="relative w-[calc(100%+2rem)] sm:w-full aspect-video rounded-none sm:rounded-lg overflow-hidden bg-black -mx-4 sm:mx-0">
         <div ref={containerRef} className="w-full h-full" />
       </div>
 
