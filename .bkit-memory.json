@@ -1,6 +1,8 @@
 {
   "project": "clipclef",
   "projectAlias": "ClipClef",
+  "productionUrl": "https://clipclef.vercel.app",
+  "vercelProject": "youchoose",
   "level": "Dynamic",
   "phase": "done",
   "feature": "collection-player",
