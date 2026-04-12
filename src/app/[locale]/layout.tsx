@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { routing } from '@/i18n/routing';
 import QueryProvider from './QueryProvider';
 import Header from '@/components/layout/Header';
+import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default async function LocaleLayout({
           <QueryProvider>
             <Header />
             <main className="flex-1">{children}</main>
+            <AuthErrorToast />
             <footer className="py-8 text-sm text-[var(--subtle)]">
               <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
                 <div className="flex items-center gap-5">
