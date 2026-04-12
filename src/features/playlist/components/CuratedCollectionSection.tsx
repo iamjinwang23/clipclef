@@ -164,16 +164,6 @@ export default function CuratedCollectionSection() {
                   {/* Scrim */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-                  {/* 미니 썸네일 스택 — 데스크톱 전용 */}
-                  {!isMobile && col.items.length >= 3 && (
-                    <div className="absolute top-4 right-4 flex flex-col gap-1.5">
-                      {col.items.slice(1, 3).map((p, j) => (
-                        <div key={j} className="relative w-16 h-10 rounded-xl overflow-hidden shadow-xl opacity-75">
-                          <Image src={p.thumbnail_url} alt="" fill className="object-cover" sizes="64px" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
 
                   {/* 라벨 */}
                   <div className={`absolute left-0 right-0 ${isMobile ? 'bottom-0 pb-10' : 'bottom-16'}`}>
