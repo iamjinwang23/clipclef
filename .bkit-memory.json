@@ -2,9 +2,9 @@
   "project": "clipclef",
   "projectAlias": "ClipClef",
   "level": "Dynamic",
-  "phase": "check",
-  "feature": "clipclef",
-  "updatedAt": "2026-04-11T00:00:00Z",
+  "phase": "design",
+  "feature": "collection-player",
+  "updatedAt": "2026-04-12T01:00:00Z",
   "stack": {
     "framework": "Next.js 16.2.2 (App Router)",
     "backend": "Supabase (PostgreSQL + Auth + RLS)",

@@ -20,10 +20,8 @@ function AllItem({ isSelected, onClick }: { isSelected: boolean; onClick: () => 
       <div className={`rounded-full p-[2px] ${isSelected ? GRADIENT : GRAY}`}>
         <div className="rounded-full bg-[var(--background)] p-[2px]">
           <div className="w-[58px] h-[58px] rounded-full bg-[var(--muted)] flex items-center justify-center">
-            {/* ↓ 여기에 제공받은 SVG로 교체 */}
-            <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
-              {/* SVG_PLACEHOLDER */}
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/mobile_logo.svg" alt="전체" className="w-8 h-auto" />
           </div>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@supabase/supabase-js';
 import type { Playlist } from '@/types';
+import CollectionPageClient from '@/features/collection/components/CollectionPageClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,51 +59,15 @@ export default async function CollectionDetailPage({
         </div>
       )}
 
-      {/* 타이틀 — 배너 아래, body width 정렬 */}
-      <div className="max-w-4xl mx-auto px-4 pt-5 pb-2">
-        <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
-          큐레이션 컬렉션 · 플리 {collection.items.length}개
-        </p>
-        <h1 className="text-2xl font-bold leading-snug whitespace-pre-line">{collection.title}</h1>
-        {collection.description && (
-          <p className="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-line">{collection.description}</p>
-        )}
-      </div>
-
-      {/* 플리 그리드 */}
-      <div className="max-w-4xl mx-auto px-4 pt-4 pb-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {collection.items.map((playlist: Playlist) => (
-          <Link
-            key={playlist.id}
-            href={`/${locale}/playlist/${playlist.id}`}
-            className="group"
-          >
-            {/* 썸네일 */}
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-[var(--muted)] mb-2">
-              <Image
-                src={playlist.thumbnail_url}
-                alt={playlist.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                sizes="(max-width: 640px) 50vw, 33vw"
-              />
-            </div>
-
-            {/* 제목 */}
-            <p className="text-sm font-medium line-clamp-2 leading-snug group-hover:text-[var(--text-secondary)] transition-colors">
-              {playlist.title}
-            </p>
-
-            <p className="text-xs text-[var(--subtle)] mt-0.5 truncate">{playlist.channel_name}</p>
-            {playlist.editor_note && (
-              <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2 italic leading-relaxed">
-                "{playlist.editor_note}"
-              </p>
-            )}
-          </Link>
-        ))}
-      </div>
+      {/* 타이틀 + 그리드 + 플레이어 (Client — 플레이 버튼 상태 연동) */}
+      <div className="max-w-4xl mx-auto px-4">
+        <CollectionPageClient
+          playlists={collection.items}
+          locale={locale}
+          collectionTitle={collection.title}
+          collectionDescription={collection.description}
+          itemCount={collection.items.length}
+        />
       </div>
     </div>
   );
