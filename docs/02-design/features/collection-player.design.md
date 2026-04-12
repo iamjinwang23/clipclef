@@ -3,7 +3,8 @@
 > Feature: collection-player
 > Architecture: Option C — Pragmatic Balance
 > Date: 2026-04-12
-> Status: active
+> Status: implemented
+> Implemented: 2026-04-13
 
 ---
 
@@ -72,16 +73,25 @@ src/
 ```tsx
 // Design Ref: §1 — 서버에서 데이터 fetch, CollectionPageClient에 전달
 // 변경:
-//   1. 카드 그리드 → <CollectionPageClient playlists={...} />
-//   2. 배너/타이틀은 그대로 서버 렌더
+//   1. 배너 이미지만 서버 렌더 유지
+//   2. 타이틀/설명/플레이버튼/그리드/플레이어 → CollectionPageClient로 이관
+//      (타이틀 플레이 버튼이 재생 상태와 동기화되어야 하므로)
 
 export default async function CollectionDetailPage({ params }) {
   const collection = await getCollection(id);
   
   return (
     <div>
-      {/* 배너, 타이틀 — 서버 렌더 유지 */}
-      <CollectionPageClient playlists={collection.items} />
+      {/* 배너 이미지 — 서버 렌더 유지 */}
+      <div className="max-w-4xl mx-auto px-4">
+        <CollectionPageClient
+          playlists={collection.items}
+          locale={locale}
+          collectionTitle={collection.title}
+          collectionDescription={collection.description}
+          itemCount={collection.items.length}
+        />
+      </div>
     </div>
   );
 }
@@ -92,22 +102,29 @@ export default async function CollectionDetailPage({ params }) {
 ```tsx
 'use client';
 // Design Ref: §3.2 — 상태 소유자. CollectionGrid + CollectionPlayer 조율
+// 타이틀 영역 렌더링 포함 (플레이 버튼 상태 연동을 위해 서버 컴포넌트에서 이관)
 
 interface Props {
   playlists: Playlist[];
+  locale: string;
+  collectionTitle: string;
+  collectionDescription: string | null;
+  itemCount: number;
 }
 
 // 내부 상태:
-//   currentIndex, isPlaying, isTracklistOpen, tracks, tracksLoading
-// YouTube player ref (useRef): seekTo, loadVideoById, stopVideo
+//   currentIndex, isPlaying, isTracklistOpen
+//   tracks, tracksLoading, activeTrackIndex
 
-// onPlay(index):
-//   1. currentIndex 업데이트
-//   2. isPlaying = true
-//   3. tracks fetch (GET /api/playlists/[id]/tracks 또는 기존 tracks 재사용)
-//   4. player.loadVideoById(playlists[index].youtube_id)
+// 타이틀 플레이 버튼:
+//   currentIndex === null → handlePlay(0) (처음부터)
+//   currentIndex !== null → handleTogglePlay()
+//   showPause = currentIndex !== null && isPlaying
 
-// onPrev/onNext: index 변경 + loadVideoById
+// onPlay(index): currentIndex 설정, isPlaying=true, tracks fetch, activeTrackIndex=null
+// onPrev/onNext: index 변경 + activeTrackIndex=null
+// onSeek(sec, trackIndex): seekTo + activeTrackIndex 업데이트
+// onStop: 전체 상태 초기화 (하단 바 숨김)
 
 // player ref는 CollectionPlayer에서 registerPlayer(ref) 콜백으로 주입
 ```
@@ -217,34 +234,52 @@ const fetchTracks = async (playlistId: string): Promise<Track[]> => {
 
 ## 5. UI 상세
 
+### 5.0 타이틀 영역 플레이 버튼 (추가됨)
+
+```
+┌──────────────────────────────────────────────────┬──────┐
+│  큐레이션 컬렉션 · 플리 N개                          │  ◉  │
+│  컬렉션 제목                                        │      │
+│  설명                                               │      │
+└──────────────────────────────────────────────────┴──────┘
+
+◉ = w-14 h-14 rounded-full bg-white, 아이콘 w-8 h-8 text-black
+재생 전: ▶ (처음부터 재생)
+재생 중: ⏸ (일시정지 토글)
+상태: isPlaying과 동기화
+```
+
 ### 5.1 하단 바 레이아웃
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│  [썸48x48] [제목 line-clamp-1 / 채널명 text-xs]  [◀◀][▶][▶▶][🔼][✕]  │
-└────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┬───┐
+│  ← max-w-4xl px-4 ──────────────────────────────────── →│   │
+│  [썸48x48]          [◀◀(22)]  [▶/⏸(28)]  [▶▶(22)]    [≡] │ ✕ │
+│  body 좌측 정렬      ← 중앙 정렬 →              body 우측│끝│
+└──────────────────────────────────────────────────────────┴───┘
 
-모바일 (< 375px):
-  제목만, 채널명 숨김
-  버튼 간격 축소
+height: 64px, z-index: 40
+모바일: 컨트롤 gap-4, 아이콘 24/32px / sm+: gap-7, 아이콘 28/36px
+우측 컬럼 pr-8 sm:pr-0 (닫기 버튼 겹침 방지)
+닫기(✕): absolute right-3, 페이지 끝 고정
 
-◀◀ / ▶▶ 비활성:
-  opacity-30, pointer-events-none
-  (첫 번째: ◀◀ 비활성 / 마지막: ▶▶ 비활성)
+◀◀ / ▶▶ 비활성: opacity-30, pointer-events-none
+하단 바: currentIndex !== null 일 때만 렌더링 (재생 전 미노출)
 ```
 
 ### 5.2 트랙리스트 패널
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│ 트랙리스트 · {플리 제목}                              [🔽 닫기] │
+│ 트랙리스트 (uppercase)                              [🔽 닫기]  │
 ├────────────────────────────────────────────────────────────────┤
-│  ▶  1  트랙 제목                     아티스트    0:00         │  ← 재생 중 강조
-│     2  트랙 제목                     아티스트    1:23         │
+│  ▶  1  트랙 제목                     아티스트    0:00         │  ← 재생 중: bg-[var(--muted)] + accent ▶
+│     2  트랙 제목                     아티스트    1:23         │  ← hover: bg-[var(--muted)]
 │     3  ...                                                    │
 └────────────────────────────────────────────────────────────────┘
-  max-height: 60vh, overflow-y: auto, scrollbar-hide
-  트랙 클릭 → onSeek(track.start_sec)
+  max-height: 60vh, overflow-y: auto
+  트랙 클릭 → onSeek(track.start_sec, trackIndex)
+  activeTrackIndex 상태로 동기화
 ```
 
 ### 5.3 재생 중인 카드 강조
@@ -256,6 +291,10 @@ const fetchTracks = async (playlistId: string): Promise<Track[]> => {
 │  ▶ 재생 중       │  ← 좌하단 뱃지 (text-xs, bg-black/60, text-white)
 └──────────────────┘
 제목                   ← text-[var(--accent)] (강조)
+
+카드 재생 버튼:
+  데스크톱: 썸네일 호버 시 중앙 오버레이 (opacity-0 → opacity-100)
+  모바일: 우하단 항상 표시 (w-8 h-8, sm:hidden)
 ```
 
 ---

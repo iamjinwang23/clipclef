@@ -2,9 +2,9 @@
   "project": "clipclef",
   "projectAlias": "ClipClef",
   "level": "Dynamic",
-  "phase": "design",
+  "phase": "done",
   "feature": "collection-player",
-  "updatedAt": "2026-04-12T01:00:00Z",
+  "updatedAt": "2026-04-13T00:00:00Z",
   "stack": {
     "framework": "Next.js 16.2.2 (App Router)",
     "backend": "Supabase (PostgreSQL + Auth + RLS)",
@@ -17,6 +17,7 @@
   "history": [
     { "phase": "do", "feature": "clipclef", "date": "2026-04-07", "summary": "Initial implementation: playlist listing, detail, admin, auth" },
     { "phase": "do", "feature": "clipclef", "date": "2026-04-08", "summary": "User playlists, collections, curated sections, channel stories" },
-    { "phase": "do", "feature": "clipclef", "date": "2026-04-11", "summary": "Upload for all users, profile redesign, uploader info, follow, verified badge, auth middleware, service rename to ClipClef" }
+    { "phase": "do", "feature": "clipclef", "date": "2026-04-11", "summary": "Upload for all users, profile redesign, uploader info, follow, verified badge, auth middleware, service rename to ClipClef" },
+    { "phase": "done", "feature": "collection-player", "date": "2026-04-13", "summary": "Spotify-style bottom player for curation detail page: play button in title, bottom bar with prev/play/next, slide-up tracklist, card highlight" }
   ]
 }
