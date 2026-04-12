@@ -47,6 +47,7 @@ export default function FilterChip({ label, options, selected, onToggle }: Filte
       <button
         ref={btnRef}
         onClick={handleOpen}
+        style={{ touchAction: 'manipulation' }}
         className={`flex items-center gap-1 text-sm px-3 py-1.5 rounded-full border transition-colors whitespace-nowrap ${
           count > 0
             ? 'bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]'
@@ -68,6 +69,7 @@ export default function FilterChip({ label, options, selected, onToggle }: Filte
             <button
               key={opt}
               onClick={() => { onToggle(opt); }}
+              style={{ touchAction: 'manipulation' }}
               className={`w-full text-left text-sm px-3 py-1.5 rounded-lg hover:bg-[var(--muted)] transition-colors text-[var(--foreground)] ${
                 selected.includes(opt) ? 'font-medium' : ''
               }`}

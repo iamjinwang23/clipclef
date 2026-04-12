@@ -30,6 +30,7 @@ function SortIconButton() {
         onClick={() => setOpen((v) => !v)}
         onBlur={handleBlur}
         title={t('label')}
+        style={{ touchAction: 'manipulation' }}
         className={`p-1.5 rounded-lg border transition-colors ${
           sort !== 'latest'
             ? 'border-[var(--foreground)] text-[var(--foreground)]'
@@ -47,6 +48,7 @@ function SortIconButton() {
             <button
               key={opt.value}
               onClick={() => { setSort(opt.value); setOpen(false); }}
+              style={{ touchAction: 'manipulation' }}
               className={`w-full text-left px-3 py-2 text-xs transition-colors ${
                 sort === opt.value
                   ? 'text-[var(--foreground)] font-medium'
