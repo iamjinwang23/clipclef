@@ -11,6 +11,7 @@ import type { User } from '@supabase/supabase-js';
 import { useFilterStore } from '@/features/filter/store';
 import UserAvatar from '@/components/ui/UserAvatar';
 import SearchOverlay from '@/components/ui/SearchOverlay';
+import { isInAppBrowser } from '@/lib/browser';
 
 export default function Header() {
   const t = useTranslations('common');
@@ -43,6 +44,10 @@ export default function Header() {
   }, []);
 
   const handleLogin = async () => {
+    if (isInAppBrowser()) {
+      alert('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다.\nSafari 또는 Chrome에서 접속해 주세요.');
+      return;
+    }
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/api/auth/callback` },

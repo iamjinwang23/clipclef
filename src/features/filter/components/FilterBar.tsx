@@ -46,7 +46,7 @@ function SortIconButton() {
           {options.map((opt) => (
             <button
               key={opt.value}
-              onMouseDown={() => { setSort(opt.value); setOpen(false); }}
+              onClick={() => { setSort(opt.value); setOpen(false); }}
               className={`w-full text-left px-3 py-2 text-xs transition-colors ${
                 sort === opt.value
                   ? 'text-[var(--foreground)] font-medium'

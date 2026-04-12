@@ -16,16 +16,18 @@ export default function FilterChip({ label, options, selected, onToggle }: Filte
   const ref = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  // 외부 클릭 + 스크롤 시 닫기
+  // 외부 클릭(+ 터치) + 스크롤 시 닫기
   useEffect(() => {
     const close = () => setOpen(false);
-    const handleMouse = (e: MouseEvent) => {
+    const handleOutside = (e: MouseEvent | TouchEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener('mousedown', handleMouse);
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('touchstart', handleOutside, { passive: true });
     window.addEventListener('scroll', close, { passive: true });
     return () => {
-      document.removeEventListener('mousedown', handleMouse);
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
       window.removeEventListener('scroll', close);
     };
   }, []);
@@ -65,7 +67,7 @@ export default function FilterChip({ label, options, selected, onToggle }: Filte
           {options.map((opt) => (
             <button
               key={opt}
-              onMouseDown={() => { onToggle(opt); }}
+              onClick={() => { onToggle(opt); }}
               className={`w-full text-left text-sm px-3 py-1.5 rounded-lg hover:bg-[var(--muted)] transition-colors text-[var(--foreground)] ${
                 selected.includes(opt) ? 'font-medium' : ''
               }`}
