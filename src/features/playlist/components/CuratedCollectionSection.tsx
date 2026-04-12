@@ -181,11 +181,11 @@ export default function CuratedCollectionSection() {
                       <p className="text-[11px] font-semibold text-white/50 uppercase tracking-widest mb-2">
                         큐레이션 콜렉션
                       </p>
-                      <h3 className={`font-black text-white leading-tight line-clamp-2 mb-2 tracking-tight ${isMobile ? 'text-xl' : 'text-4xl'}`}>
+                      <h3 className={`font-black text-white leading-tight line-clamp-2 mb-2 tracking-tight whitespace-pre-line ${isMobile ? 'text-2xl' : 'text-4xl'}`}>
                         {col.title}
                       </h3>
                       {col.description && (
-                        <p className="text-sm text-white/75 leading-snug line-clamp-2 italic">
+                        <p className="text-sm text-white/75 leading-snug line-clamp-2 italic whitespace-pre-line">
                           {col.description}
                         </p>
                       )}

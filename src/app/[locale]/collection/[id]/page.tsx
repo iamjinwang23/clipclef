@@ -45,9 +45,9 @@ export default async function CollectionDetailPage({
 
   return (
     <div>
-      {/* 헤더 — 배너 이미지 + 제목 (full-width, flush with header) */}
+      {/* 배너 이미지 (full-width) */}
       {thumbUrl && (
-        <div className="relative w-full h-64 sm:h-80 overflow-hidden mb-6">
+        <div className="relative w-full h-64 sm:h-80 overflow-hidden">
           <Image
             src={thumbUrl}
             alt={collection.title}
@@ -56,21 +56,22 @@ export default async function CollectionDetailPage({
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 p-6 max-w-4xl">
-            <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
-              큐레이션 컬렉션 · 플리 {collection.items.length}개
-            </p>
-            <h1 className="text-2xl font-bold text-white leading-snug">{collection.title}</h1>
-            {collection.description && (
-              <p className="text-sm text-white/75 mt-1">{collection.description}</p>
-            )}
-          </div>
         </div>
       )}
 
+      {/* 타이틀 — 배너 아래, body width 정렬 */}
+      <div className="max-w-4xl mx-auto px-4 pt-5 pb-2">
+        <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
+          큐레이션 컬렉션 · 플리 {collection.items.length}개
+        </p>
+        <h1 className="text-2xl font-bold leading-snug whitespace-pre-line">{collection.title}</h1>
+        {collection.description && (
+          <p className="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-line">{collection.description}</p>
+        )}
+      </div>
+
       {/* 플리 그리드 */}
-      <div className="max-w-4xl mx-auto px-4 pb-6">
+      <div className="max-w-4xl mx-auto px-4 pt-4 pb-6">
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {collection.items.map((playlist: Playlist) => (
           <Link

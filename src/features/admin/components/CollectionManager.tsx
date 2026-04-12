@@ -74,6 +74,7 @@ function CollectionCard({
   const [saving, setSaving] = useState(false);
   // editable fields
   const [editTitle, setEditTitle] = useState(collection.title);
+  const [editDescription, setEditDescription] = useState(collection.description ?? '');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [removeBanner, setRemoveBanner] = useState(false);
@@ -81,6 +82,7 @@ function CollectionCard({
 
   const hasChanges =
     editTitle.trim() !== collection.title ||
+    editDescription !== (collection.description ?? '') ||
     pendingFile !== null ||
     removeBanner;
 
@@ -120,7 +122,11 @@ function CollectionCard({
         bannerUrl = urlData?.publicUrl ?? null;
       }
 
-      const body: Record<string, unknown> = { collectionId: collection.id, title: editTitle.trim() };
+      const body: Record<string, unknown> = {
+        collectionId: collection.id,
+        title: editTitle.trim(),
+        description: editDescription.trim() || null,
+      };
       if (bannerUrl !== undefined) body.banner_image_url = bannerUrl;
 
       const res = await fetch('/api/admin/collections', {
@@ -140,6 +146,7 @@ function CollectionCard({
         ...(bannerUrl !== undefined ? { banner_image_url: bannerUrl } : {}),
       };
       onUpdate(updated);
+      setEditDescription(updated.description ?? '');
       setPendingFile(null);
       setPreviewUrl(null);
       setRemoveBanner(false);
@@ -209,11 +216,32 @@ function CollectionCard({
         <div className="border-t border-[var(--border)] px-4 py-3 space-y-3">
           {/* 타이틀 수정 */}
           <div>
-            <p className="text-xs text-[var(--text-secondary)] mb-1.5 font-medium">타이틀</p>
-            <input
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs text-[var(--text-secondary)] font-medium">타이틀</p>
+              <span className="text-[10px] text-[var(--subtle)]">{editTitle.length}/30</span>
+            </div>
+            <textarea
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
-              className="w-full text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
+              maxLength={30}
+              rows={2}
+              className="w-full text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] resize-none"
+            />
+          </div>
+
+          {/* 설명 수정 */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs text-[var(--text-secondary)] font-medium">설명 (선택)</p>
+              <span className="text-[10px] text-[var(--subtle)]">{editDescription.length}/30</span>
+            </div>
+            <textarea
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              maxLength={30}
+              rows={2}
+              placeholder="짧은 설명을 입력하세요"
+              className="w-full text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] resize-none"
             />
           </div>
 
@@ -349,7 +377,8 @@ export default function CollectionManager() {
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-          placeholder="컬렉션 이름 (예: 새벽감성 재즈 모음)"
+          maxLength={30}
+          placeholder="컬렉션 이름 (최대 30자)"
           className="flex-1 text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
         />
         <button
