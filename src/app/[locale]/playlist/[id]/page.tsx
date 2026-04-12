@@ -6,8 +6,7 @@ import type { Playlist, Track } from '@/types';
 import PlaylistPlayer from '@/features/playlist/components/PlaylistPlayer';
 import ChannelAvatar from '@/features/playlist/components/ChannelAvatar';
 import LikeButton from '@/features/interaction/components/LikeButton';
-import CollectionButton from '@/features/interaction/components/CollectionButton';
-import AddToPlaylistButton from '@/features/user-playlist/components/AddToPlaylistButton';
+import SaveButton from '@/features/interaction/components/SaveButton';
 import CommentList from '@/features/interaction/components/CommentList';
 import CommentForm from '@/features/interaction/components/CommentForm';
 import UploaderCard from '@/features/interaction/components/UploaderCard';
@@ -78,8 +77,7 @@ export default async function PlaylistDetailPage({
         {/* 액션 버튼 */}
         <div className="flex items-center gap-2 mb-2">
           <LikeButton playlistId={p.id} initialCount={p.like_count} />
-          <CollectionButton playlistId={p.id} variant="responsive" />
-          <AddToPlaylistButton playlistId={p.id} isLoggedIn={!!user} responsive />
+          <SaveButton playlistId={p.id} isLoggedIn={!!user} responsive />
           <a
             href={`https://www.youtube.com/watch?v=${p.youtube_id}`}
             target="_blank"
