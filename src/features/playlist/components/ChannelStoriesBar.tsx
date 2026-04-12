@@ -100,7 +100,7 @@ export default function ChannelStoriesBar() {
         <div className="relative flex-1 min-w-0">
           {/* ALL 옆 그라데이션 — 필터바와 동일 패턴 */}
           <div
-            className="absolute left-0 top-0 bottom-0 w-8 pointer-events-none z-10"
+            className="absolute left-0 top-0 bottom-0 w-4 pointer-events-none z-10"
             style={{ background: 'linear-gradient(to right, var(--background), transparent)' }}
           />
           {/* 우측 그라데이션 */}

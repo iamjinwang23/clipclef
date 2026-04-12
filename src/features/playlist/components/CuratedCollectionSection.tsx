@@ -69,7 +69,7 @@ export default function CuratedCollectionSection() {
 
   useEffect(() => {
     if (!isPlaying || n === 0) return;
-    const id = setInterval(scrollToNext, 5000);
+    const id = setInterval(scrollToNext, 7000);
     return () => clearInterval(id);
   }, [isPlaying, scrollToNext, n]);
 
