@@ -88,7 +88,7 @@ export default function ChannelStoriesBar() {
 
   return (
     <div className="bg-[var(--background)]">
-      <div className="max-w-6xl mx-auto py-3 px-4 flex items-start gap-3">
+      <div className="max-w-6xl mx-auto py-3 px-4 flex items-start gap-5">
 
         {/* 고정: 전체(ALL) */}
         <AllItem
