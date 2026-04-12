@@ -1,8 +1,9 @@
 'use client';
-// Design Ref: §5.3 — Header: 로고, 검색창, 프로필 드롭다운
+// Design Ref: §5.3 — Header: 로고, 검색창(가운데), 프로필 드롭다운
 // mobile: 검색창 숨김 → 검색 아이콘, +만들기 → 아이콘
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -12,7 +13,201 @@ import { useFilterStore } from '@/features/filter/store';
 import UserAvatar from '@/components/ui/UserAvatar';
 import SearchOverlay from '@/components/ui/SearchOverlay';
 import { isInAppBrowser } from '@/lib/browser';
+import type { Playlist } from '@/types';
 
+// ─── 최근 검색어 localStorage 유틸 ───────────────────────────────────────────
+const STORAGE_KEY = 'clipclef_recent_searches';
+const MAX_RECENT = 8;
+
+function loadRecent(): string[] {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]'); } catch { return []; }
+}
+function saveRecent(terms: string[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(terms.slice(0, MAX_RECENT)));
+}
+
+// ─── 데스크톱 검색바 (드롭다운 포함) ─────────────────────────────────────────
+function DesktopSearchBar() {
+  const locale = useLocale();
+  const { query, setQuery } = useFilterStore();
+  const [value, setValue] = useState(query);
+  const [focused, setFocused] = useState(false);
+  const [recent, setRecent] = useState<string[]>([]);
+  const [results, setResults] = useState<Playlist[]>([]);
+  const [loading, setLoading] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 외부 query 변경 동기화 (예: 모바일 검색 후)
+  useEffect(() => { setValue(query); }, [query]);
+
+  // 포커스 시 최근 검색어 로드
+  useEffect(() => {
+    if (focused) setRecent(loadRecent());
+  }, [focused]);
+
+  // 실시간 검색 (debounce 300ms)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const term = value.trim();
+    if (!term || !focused) { setResults([]); return; }
+
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const supabase = createClient();
+        const escaped = term.replace(/[%_]/g, '\\$&');
+        const { data: trackMatches } = await supabase
+          .from('tracks').select('playlist_id')
+          .or(`title.ilike.%${escaped}%,artist.ilike.%${escaped}%`);
+        const trackIds = [...new Set((trackMatches ?? []).map((t: { playlist_id: string }) => t.playlist_id))];
+        let q = supabase.from('playlists').select('*').eq('is_active', true);
+        const titleFilter = `title.ilike.%${escaped}%,channel_name.ilike.%${escaped}%`;
+        if (trackIds.length > 0) q = q.or(`${titleFilter},id.in.(${trackIds.join(',')})`);
+        else q = q.or(titleFilter);
+        const { data } = await q.order('like_count', { ascending: false }).limit(6);
+        setResults((data ?? []) as Playlist[]);
+      } finally { setLoading(false); }
+    }, 300);
+
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [value, focused]);
+
+  // 외부 클릭 시 닫기
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setFocused(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const applySearch = (term: string) => {
+    if (!term.trim()) return;
+    setQuery(term.trim());
+    setValue(term.trim());
+    const next = [term.trim(), ...recent.filter((r) => r !== term.trim())];
+    setRecent(next);
+    saveRecent(next);
+    setFocused(false);
+  };
+
+  const removeRecent = (term: string) => {
+    const next = recent.filter((r) => r !== term);
+    setRecent(next);
+    saveRecent(next);
+  };
+
+  const clearAll = () => { setRecent([]); saveRecent([]); };
+
+  const showResults = value.trim().length > 0;
+  const showDropdown = focused && (showResults || recent.length > 0);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      {/* 검색 입력 */}
+      <div className="relative">
+        <svg
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)] pointer-events-none"
+          fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
+        >
+          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+        </svg>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') applySearch(value);
+            if (e.key === 'Escape') setFocused(false);
+          }}
+          placeholder="검색"
+          className="w-full pl-9 pr-8 py-1.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
+        />
+        {value && (
+          <button
+            onClick={() => { setValue(''); setQuery(''); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--foreground)]"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
+      {/* 드롭다운 */}
+      {showDropdown && (
+        <div className="absolute top-full mt-1 left-0 right-0 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl z-50 overflow-hidden max-h-80 overflow-y-auto">
+          {showResults ? (
+            /* 실시간 검색 결과 */
+            <div className="p-2">
+              {loading && <p className="text-xs text-[var(--subtle)] px-2 py-1.5">검색 중...</p>}
+              {!loading && results.length === 0 && (
+                <p className="text-sm text-[var(--subtle)] text-center py-4">검색 결과가 없습니다</p>
+              )}
+              {results.map((playlist) => (
+                <Link
+                  key={playlist.id}
+                  href={`/${locale}/playlist/${playlist.id}`}
+                  onClick={() => applySearch(value)}
+                  className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-[var(--muted)] transition-colors"
+                >
+                  {playlist.thumbnail_url && (
+                    <div className="relative w-14 h-8 rounded overflow-hidden flex-shrink-0">
+                      <Image src={playlist.thumbnail_url} alt="" fill className="object-cover" sizes="56px" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate text-[var(--foreground)]">{playlist.title}</p>
+                    <p className="text-xs text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
+                  </div>
+                </Link>
+              ))}
+              {results.length > 0 && (
+                <button
+                  onClick={() => applySearch(value)}
+                  className="w-full text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)] py-2.5 text-center border-t border-[var(--border)] mt-1"
+                >
+                  &apos;{value}&apos; 전체 결과 보기 →
+                </button>
+              )}
+            </div>
+          ) : (
+            /* 최근 검색어 */
+            <div className="p-2">
+              <div className="flex items-center justify-between px-2 py-1.5 mb-1">
+                <span className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">최근 검색</span>
+                <button onClick={clearAll} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)]">
+                  전체 삭제
+                </button>
+              </div>
+              <ul className="space-y-0.5">
+                {recent.map((term) => (
+                  <li key={term} className="flex items-center gap-2 rounded-lg hover:bg-[var(--muted)] px-2 py-1.5 group">
+                    <svg className="w-3.5 h-3.5 text-[var(--subtle)] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" strokeLinecap="round" />
+                    </svg>
+                    <button className="flex-1 text-left text-sm text-[var(--foreground)]" onClick={() => applySearch(term)}>
+                      {term}
+                    </button>
+                    <button
+                      onClick={() => removeRecent(term)}
+                      className="opacity-0 group-hover:opacity-100 text-[var(--subtle)] hover:text-[var(--text-secondary)] text-base leading-none transition-opacity"
+                    >
+                      ×
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
 export default function Header() {
   const t = useTranslations('common');
   const locale = useLocale();
@@ -23,7 +218,6 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { query, setQuery } = useFilterStore();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -67,42 +261,24 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-4">
-          {/* 로고 */}
-          <Link href={`/${locale}`} className="flex items-center flex-shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.svg" alt="ClipClef" className="hidden sm:block h-6 w-auto" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/mobile_logo.svg" alt="ClipClef" className="sm:hidden h-6 w-auto" />
-          </Link>
-
-          {/* 검색창 — 데스크톱 전용 */}
-          <div className="hidden sm:block flex-1 max-w-sm relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)] pointer-events-none"
-              fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-            </svg>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="검색"
-              className="w-full pl-9 pr-8 py-1.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--foreground)]"
-              >
-                ×
-              </button>
-            )}
+        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center">
+          {/* 좌측: 로고 */}
+          <div className="flex-1 flex items-center">
+            <Link href={`/${locale}`} className="flex items-center flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.svg" alt="ClipClef" className="hidden sm:block h-6 w-auto" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/mobile_logo.svg" alt="ClipClef" className="sm:hidden h-6 w-auto" />
+            </Link>
           </div>
 
-          {/* 우측 */}
-          <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+          {/* 가운데: 검색창 (데스크톱 전용) */}
+          <div className="hidden sm:block w-80">
+            <DesktopSearchBar />
+          </div>
+
+          {/* 우측: 액션 */}
+          <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
             {/* 검색 아이콘 — 모바일 전용 */}
             <button
               onClick={() => setSearchOpen(true)}
