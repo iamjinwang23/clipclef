@@ -66,7 +66,7 @@ export default async function PlaylistDetailPage({
             {allTags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs px-2 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded-full"
+                className="text-sm px-2.5 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded-full"
               >
                 {tag}
               </span>

@@ -40,7 +40,7 @@ export default async function LocaleLayout({
           <QueryProvider>
             <Header />
             <main className="flex-1">{children}</main>
-            <footer className="py-8 text-[11px] text-[var(--subtle)]">
+            <footer className="py-8 text-sm text-[var(--subtle)]">
               <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
                 <div className="flex items-center gap-5">
                   <Link href={`/${locale}`} className="flex-shrink-0">

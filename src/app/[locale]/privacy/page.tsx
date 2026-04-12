@@ -2,7 +2,7 @@ export default function PrivacyPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-2xl font-bold mb-2 text-[var(--foreground)]">개인정보처리방침</h1>
-      <p className="text-xs text-[var(--subtle)] mb-10">최종 수정일: 2026년 4월 11일</p>
+      <p className="text-sm text-[var(--subtle)] mb-10">최종 수정일: 2026년 4월 11일</p>
 
       <Section title="제1조 (개인정보의 처리 목적)">
         <p>
@@ -125,7 +125,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <p className="mt-10 text-xs text-[var(--subtle)]">시행일: 2026년 4월 11일</p>
+      <p className="mt-10 text-sm text-[var(--subtle)]">시행일: 2026년 4월 11일</p>
     </main>
   );
 }
