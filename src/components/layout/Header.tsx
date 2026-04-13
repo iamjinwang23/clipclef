@@ -12,6 +12,7 @@ import type { User } from '@supabase/supabase-js';
 import { useFilterStore } from '@/features/filter/store';
 import UserAvatar from '@/components/ui/UserAvatar';
 import SearchOverlay from '@/components/ui/SearchOverlay';
+import NotificationBell from '@/features/notification/components/NotificationBell';
 import { isInAppBrowser } from '@/lib/browser';
 import type { Playlist } from '@/types';
 
@@ -215,6 +216,7 @@ export default function Header() {
   const supabase = createClient();
 
   const [user, setUser] = useState<User | null>(null);
+  const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -226,6 +228,17 @@ export default function Header() {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  // Design Ref: §5.4 — profiles.avatar_url 우선, fallback은 OAuth 메타데이터
+  useEffect(() => {
+    if (!user) { setProfileAvatarUrl(undefined); return; }
+    supabase
+      .from('profiles')
+      .select('avatar_url')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => setProfileAvatarUrl(data?.avatar_url ?? undefined));
+  }, [user]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -255,7 +268,7 @@ export default function Header() {
     router.refresh();
   };
 
-  const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
+  const avatarUrl = profileAvatarUrl ?? (user?.user_metadata?.avatar_url as string | undefined);
   const displayName = user?.user_metadata?.full_name as string | undefined;
 
   return (
@@ -308,6 +321,9 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
                 </Link>
+
+                {/* 알림 벨 */}
+                <NotificationBell userId={user.id} locale={locale} />
 
                 {/* 프로필 드롭다운 */}
                 <div ref={dropdownRef} className="relative">

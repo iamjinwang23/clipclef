@@ -1,8 +1,10 @@
 'use client';
+// Design Ref: §5.2 — 닉네임 수정 폼 (중복 체크 + 사진 업로드 연결)
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import UserAvatar from '@/components/ui/UserAvatar';
+import AvatarUploadButton from '@/components/ui/AvatarUploadButton';
 
 interface ProfileFormProps {
   userId: string;
@@ -14,15 +16,43 @@ interface ProfileFormProps {
 export default function ProfileForm({ userId, email, initialDisplayName, avatarUrl }: ProfileFormProps) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState(initialDisplayName);
+  const [currentAvatarUrl, setCurrentAvatarUrl] = useState(avatarUrl);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setNameError(null);
+
+    const trimmed = displayName.trim();
+    if (!trimmed) {
+      setNameError('닉네임을 입력해 주세요');
+      return;
+    }
+
     setSaving(true);
+
+    // Plan SC: 중복 닉네임 저장 차단
+    const res = await fetch(
+      `/api/profiles/check-name?name=${encodeURIComponent(trimmed)}&userId=${userId}`
+    );
+    const json = await res.json();
+
+    if (!res.ok || json.error) {
+      setNameError('닉네임 확인에 실패했습니다');
+      setSaving(false);
+      return;
+    }
+    if (!json.available) {
+      setNameError('이미 사용 중인 닉네임입니다');
+      setSaving(false);
+      return;
+    }
+
     const supabase = createClient();
-    await supabase.from('profiles').update({ display_name: displayName }).eq('id', userId);
+    await supabase.from('profiles').update({ display_name: trimmed }).eq('id', userId);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -32,7 +62,6 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
     if (!confirm('계정을 탈퇴하면 모든 데이터가 삭제됩니다. 정말 탈퇴하시겠습니까?')) return;
     setDeleting(true);
     const supabase = createClient();
-    // 댓글, 좋아요, 컬렉션 삭제 (프로필은 cascade 삭제됨)
     await supabase.from('comments').delete().eq('user_id', userId);
     await supabase.from('likes').delete().eq('user_id', userId);
     await supabase.from('collections').delete().eq('user_id', userId);
@@ -44,13 +73,17 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
 
   return (
     <div className="space-y-8">
-      {/* 아바타 + 이메일 */}
+      {/* 기본정보: 아바타 + 이름/이메일 + 사진 변경 버튼(우측) */}
       <div className="flex items-center gap-4">
-        <UserAvatar src={avatarUrl} name={displayName} size={56} />
-        <div>
-          <p className="text-sm font-medium">{displayName || '이름 없음'}</p>
-          <p className="text-xs text-[var(--text-secondary)]">{email}</p>
+        <UserAvatar src={currentAvatarUrl} name={displayName} size={56} />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">{displayName || '이름 없음'}</p>
+          <p className="text-xs text-[var(--text-secondary)] truncate">{email}</p>
         </div>
+        <AvatarUploadButton
+          userId={userId}
+          onUploadComplete={(newUrl) => setCurrentAvatarUrl(newUrl)}
+        />
       </div>
 
       {/* 닉네임 수정 */}
@@ -59,10 +92,13 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
           <label className="block text-sm font-medium mb-1.5">닉네임</label>
           <input
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={(e) => { setDisplayName(e.target.value); setNameError(null); }}
             maxLength={30}
             className="w-full text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
           />
+          {nameError && (
+            <p className="text-xs text-red-400 mt-1">{nameError}</p>
+          )}
         </div>
         <button
           type="submit"

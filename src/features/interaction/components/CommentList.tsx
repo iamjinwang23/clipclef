@@ -7,15 +7,10 @@ import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 import UserAvatar from '@/components/ui/UserAvatar';
 import VerifiedBadge from '@/components/ui/VerifiedBadge';
+import { formatRelativeTime } from '@/features/notification/lib/formatRelativeTime';
 
 interface CommentListProps {
   playlistId: string;
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ko-KR', {
-    year: 'numeric', month: 'short', day: 'numeric',
-  });
 }
 
 export default function CommentList({ playlistId }: CommentListProps) {
@@ -47,7 +42,7 @@ export default function CommentList({ playlistId }: CommentListProps) {
                 <span className="text-xs font-medium">{comment.profiles.display_name ?? '익명'}</span>
                 {comment.profiles.is_verified && <VerifiedBadge size={12} />}
               </span>
-              <span className="text-xs text-[var(--text-secondary)]">{formatDate(comment.created_at)}</span>
+              <span className="text-xs text-[var(--text-secondary)]">{formatRelativeTime(comment.created_at)}</span>
               {currentUserId === comment.user_id && (
                 <button
                   onClick={() => deleteComment.mutate(comment.id)}
