@@ -24,7 +24,7 @@ export default function CollectionGrid({ playlists, currentIndex, locale, onPlay
             <Link href={`/${locale}/playlist/${playlist.id}`}>
               {/* 썸네일 */}
               <div
-                className={`relative w-full aspect-video rounded-2xl overflow-hidden bg-[var(--muted)] mb-2 transition-all duration-200 ${
+                className={`relative w-full aspect-video rounded-xl overflow-hidden bg-[var(--muted)] mb-2 transition-all duration-200 ${
                   isActive ? 'ring-2 ring-[var(--accent)]' : ''
                 }`}
               >
