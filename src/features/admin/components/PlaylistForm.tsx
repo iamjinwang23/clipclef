@@ -299,6 +299,7 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
           editor_note: editorNote.trim() || null,
           is_active: true,
           track_count: tracks.length,
+          comment_count: 0,
           tracks,
           uploaded_by: uploadedBy ?? null,
         });

@@ -72,10 +72,16 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
           </div>
         )}
 
-        {/* 좋아요 수 */}
-        <div className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
-          <span>♥</span>
-          <span>{playlist.like_count.toLocaleString()}</span>
+        {/* 좋아요 수 + 댓글 수 */}
+        <div className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
+          <span className="flex items-center gap-1">
+            <span>♥</span>
+            <span>{playlist.like_count.toLocaleString()}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span>💬</span>
+            <span>{playlist.comment_count.toLocaleString()}</span>
+          </span>
         </div>
       </div>
     </Link>

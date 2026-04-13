@@ -12,6 +12,7 @@ export interface Playlist {
   track_count: number;
   view_count: number;
   like_count: number;
+  comment_count: number;
   genre: string[];
   mood: string[];
   place: string[];
