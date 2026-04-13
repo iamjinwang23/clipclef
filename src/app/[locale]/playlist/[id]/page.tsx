@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { Playlist, Track } from '@/types';
 import PlaylistPlayer from '@/features/playlist/components/PlaylistPlayer';
 import ChannelAvatar from '@/features/playlist/components/ChannelAvatar';
+import PlaylistOwnerMenu from '@/features/playlist/components/PlaylistOwnerMenu';
 import LikeButton from '@/features/interaction/components/LikeButton';
 import SaveButton from '@/features/interaction/components/SaveButton';
 import CommentList from '@/features/interaction/components/CommentList';
@@ -31,19 +32,38 @@ export default async function PlaylistDetailPage({
   const t = (tracks ?? []) as Track[];
   const allTags = [...p.genre, ...p.mood, ...p.place, ...p.era];
 
+  // Plan SC: 소유자만 수정/삭제 버튼 노출
+  const isOwner = !!user && user.id === p.uploaded_by;
+
   return (
     <div className="max-w-4xl mx-auto px-4 pb-6">
       {/* 플레이어 (영상 아래에 제목/채널/태그/액션 삽입 후 트랙리스트) */}
       <PlaylistPlayer youtubeId={p.youtube_id} tracks={t}>
         {/* 제목 + 채널 */}
         <div className="mt-4 mb-3">
-          <div className="flex items-start gap-2 mb-1">
-            {p.is_ai && (
-              <span className="mt-0.5 flex-shrink-0 bg-violet-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                AI
-              </span>
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="flex items-start gap-2 min-w-0">
+              {p.is_ai && (
+                <span className="mt-0.5 flex-shrink-0 bg-violet-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                  AI
+                </span>
+              )}
+              <h1 className="text-xl font-semibold leading-snug">{p.title}</h1>
+            </div>
+            {isOwner && (
+              <PlaylistOwnerMenu
+                playlistId={p.id}
+                locale={locale}
+                initialData={{
+                  editorNote: p.editor_note,
+                  genre: p.genre,
+                  mood: p.mood,
+                  place: p.place,
+                  era: p.era,
+                }}
+                tracks={t}
+              />
             )}
-            <h1 className="text-xl font-semibold leading-snug">{p.title}</h1>
           </div>
           <div className="flex items-center gap-2 ml-0.5">
             <ChannelAvatar channelId={p.channel_id} channelName={p.channel_name} size={18} />
@@ -103,8 +123,8 @@ export default async function PlaylistDetailPage({
             isVerified={p.uploader.is_verified}
           />
         )}
-        <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-          댓글
+        <h2 className="text-base font-semibold text-white mb-4">
+          댓글 {p.comment_count}개
         </h2>
         <div className="mb-6">
           <CommentForm playlistId={p.id} isLoggedIn={!!user} />
