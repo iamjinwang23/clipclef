@@ -27,12 +27,10 @@ interface NotificationItemProps {
 export default function NotificationItem({ notification, onClick }: NotificationItemProps) {
   const { id, type, actor, entity_id, entity_type, is_read, created_at } = notification;
   const actorName = actor.display_name ?? '알 수 없음';
+  const className = `w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--muted)] ${!is_read ? 'border-l-2 border-blue-400' : 'border-l-2 border-transparent'}`;
 
-  return (
-    <button
-      onClick={() => onClick?.(id, entity_id, entity_type)}
-      className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--muted)] ${!is_read ? 'border-l-2 border-blue-400' : 'border-l-2 border-transparent'}`}
-    >
+  const inner = (
+    <>
       <div className="flex-shrink-0 mt-0.5">
         <UserAvatar src={actor.avatar_url} name={actorName} size={36} />
       </div>
@@ -43,6 +41,20 @@ export default function NotificationItem({ notification, onClick }: Notification
         </p>
         <p className="text-xs text-[var(--text-secondary)] mt-0.5">{formatRelativeTime(created_at)}</p>
       </div>
+    </>
+  );
+
+  // <Link>로 감쌀 때는 <a><button> 중첩을 피하기 위해 div로 렌더링
+  if (!onClick) {
+    return <div className={className}>{inner}</div>;
+  }
+
+  return (
+    <button
+      onClick={() => onClick(id, entity_id, entity_type)}
+      className={className}
+    >
+      {inner}
     </button>
   );
 }
