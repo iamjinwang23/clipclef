@@ -19,7 +19,11 @@ export async function proxy(request: NextRequest) {
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
-        setAll: (toSet) => { pendingCookies.push(...toSet); },
+        setAll: (toSet) => {
+          pendingCookies.push(...toSet);
+          // request.cookies도 업데이트 → 서버 컴포넌트가 갱신된 토큰을 읽을 수 있도록
+          toSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        },
       },
     }
   );
