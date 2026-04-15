@@ -8,7 +8,9 @@
       "WebFetch(domain:m3.material.io)",
       "Bash(sed:*)",
       "Bash(python3:*)",
-      "Skill(bkit:pdca)"
+      "Skill(bkit:pdca)",
+      "Bash(npx vercel:*)",
+      "mcp__claude_ai_Vercel__list_deployments"
     ]
   }
 }
