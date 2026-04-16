@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'assets.fanart.tv' },
       { protocol: 'https', hostname: 'www.theaudiodb.com' },
       { protocol: 'https', hostname: 'cdn.theaudiodb.com' },
+      { protocol: 'https', hostname: 'r2.theaudiodb.com' },
     ],
   },
 };
