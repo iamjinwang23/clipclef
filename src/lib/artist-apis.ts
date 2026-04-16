@@ -17,6 +17,23 @@ export function extractMainArtist(name: string): string {
     .trim();
 }
 
+/**
+ * "A, B, C" 형식의 아티스트명을 개별 아티스트로 분리.
+ * 각 파트에 extractMainArtist를 적용하여 ft./feat. 등 제거.
+ * 결과가 없거나 공백만 남으면 제외.
+ *
+ * 예시:
+ *   "2oo7, Shai Nowell, DivineDevine" → ["2oo7", "Shai Nowell", "DivineDevine"]
+ *   "A feat. B"                        → ["A"]   (extractMainArtist 처리)
+ *   "A, B feat. C"                     → ["A", "B"]
+ */
+export function splitArtists(rawName: string): string[] {
+  return rawName
+    .split(',')
+    .map((part) => extractMainArtist(part.trim()))
+    .filter(Boolean);
+}
+
 /** 아티스트명 → URL slug 변환 */
 export function toArtistSlug(name: string): string {
   const main = extractMainArtist(name);

@@ -12,7 +12,7 @@ import CommentList from '@/features/interaction/components/CommentList';
 import CommentForm from '@/features/interaction/components/CommentForm';
 import UploaderCard from '@/features/interaction/components/UploaderCard';
 import ArtistStrip from '@/features/artist/components/ArtistStrip';
-import { toArtistSlug, extractMainArtist } from '@/lib/artist-apis';
+import { toArtistSlug, splitArtists } from '@/lib/artist-apis';
 
 export default async function PlaylistDetailPage({
   params,
@@ -38,12 +38,16 @@ export default async function PlaylistDetailPage({
   const isOwner = !!user && user.id === p.uploaded_by;
 
   // Design Ref: §6.2 — 트랙에서 고유 아티스트 slug 추출 (최대 5명, not_found 제외는 ArtistStrip이 처리)
+  // Design Ref: §6.2 — 트랙에서 고유 아티스트 slug 추출 (최대 5명)
+  // "A, B" 형식은 splitArtists로 개별 분리, not_found 제외는 ArtistStrip이 처리
   const artistMap = new Map<string, { name: string; slug: string }>();
   for (const track of t) {
     if (!track.artist) continue;
-    const slug = toArtistSlug(track.artist);
-    if (slug && !artistMap.has(slug)) {
-      artistMap.set(slug, { name: extractMainArtist(track.artist), slug });
+    for (const name of splitArtists(track.artist)) {
+      const slug = toArtistSlug(name);
+      if (slug && !artistMap.has(slug)) {
+        artistMap.set(slug, { name, slug });
+      }
     }
   }
   const artistSlugs = [...artistMap.values()].slice(0, 5);
