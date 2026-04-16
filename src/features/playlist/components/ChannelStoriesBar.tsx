@@ -21,12 +21,12 @@ function AllItem({ isSelected, onClick }: { isSelected: boolean; onClick: () => 
         <div className="rounded-full bg-[var(--background)] p-[2px]">
           <div className="w-[58px] h-[58px] rounded-full bg-[var(--muted)] flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/mobile_logo.svg" alt="전체" className="w-8 h-auto" />
+            <img src="/mobile_logo.svg" alt="전체 채널" className="w-8 h-auto" />
           </div>
         </div>
       </div>
       <span className="text-xs text-[var(--text-secondary)] max-w-[64px] text-center leading-tight">
-        전체
+        전체 채널
       </span>
     </button>
   );
@@ -86,9 +86,9 @@ export default function ChannelStoriesBar() {
 
   return (
     <div className="bg-[var(--background)]">
-      <div className="max-w-6xl mx-auto py-3 px-4 flex items-start gap-5">
+      <div className="max-w-6xl mx-auto py-4 px-4 flex items-start gap-5">
 
-        {/* 고정: 전체(ALL) */}
+        {/* 고정: 전체 채널(ALL) */}
         <AllItem
           isSelected={channelId === null}
           onClick={() => setChannelId(null)}
@@ -98,12 +98,12 @@ export default function ChannelStoriesBar() {
         <div className="relative flex-1 min-w-0">
           {/* ALL 옆 그라데이션 — 필터바와 동일 패턴 */}
           <div
-            className="absolute left-0 top-0 bottom-0 w-4 pointer-events-none z-10"
+            className="absolute left-0 top-0 bottom-0 w-6 pointer-events-none z-10"
             style={{ background: 'linear-gradient(to right, var(--background), transparent)' }}
           />
           {/* 우측 그라데이션 */}
           <div
-            className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none z-10"
+            className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none z-10"
             style={{ background: 'linear-gradient(to left, var(--background), transparent)' }}
           />
 

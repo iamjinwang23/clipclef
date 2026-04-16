@@ -33,6 +33,7 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
   const [value, setValue] = useState('');
   const [recent, setRecent] = useState<string[]>([]);
   const [results, setResults] = useState<Playlist[]>([]);
+  const [artistResults, setArtistResults] = useState<{ name: string; slug: string; image_url: string | null }[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -64,11 +65,29 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
         const supabase = createClient();
         const escaped = term.replace(/[%_]/g, '\\$&');
 
+        // 아티스트 검색 (artists 테이블)
+        const artistsPromise = supabase
+          .from('artists')
+          .select('name, slug, image_url')
+          .ilike('name', `%${escaped}%`)
+          .eq('not_found', false)
+          .limit(3);
+
         // 트랙 검색으로 playlist_id 수집
-        const { data: trackMatches } = await supabase
+        const tracksPromise = supabase
           .from('tracks')
           .select('playlist_id')
           .or(`title.ilike.%${escaped}%,artist.ilike.%${escaped}%`);
+
+        const [{ data: artistData }, { data: trackMatches }] = await Promise.all([
+          artistsPromise,
+          tracksPromise,
+        ]);
+
+        setArtistResults(
+          (artistData ?? []) as { name: string; slug: string; image_url: string | null }[]
+        );
+
         const trackIds = [...new Set((trackMatches ?? []).map((t: { playlist_id: string }) => t.playlist_id))];
 
         let q = supabase.from('playlists').select('*').eq('is_active', true);
@@ -146,9 +165,45 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
             {loading && (
               <p className="text-xs text-[var(--subtle)] mb-2">검색 중...</p>
             )}
-            {!loading && results.length === 0 && (
+            {!loading && results.length === 0 && artistResults.length === 0 && (
               <p className="text-sm text-[var(--subtle)] text-center mt-8">검색 결과가 없습니다</p>
             )}
+
+            {/* 아티스트 섹션 */}
+            {!loading && artistResults.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                  아티스트
+                </p>
+                {artistResults.map((artist) => (
+                  <a
+                    key={artist.slug}
+                    href={`/${locale}/artist/${artist.slug}`}
+                    onClick={onClose}
+                    className="flex items-center gap-3 py-2 hover:bg-[var(--muted)] rounded-lg px-2 -mx-2 transition-colors"
+                  >
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-[var(--muted)]">
+                      {artist.image_url ? (
+                        <img
+                          src={artist.image_url}
+                          alt={artist.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-[var(--text-secondary)]">
+                          {artist.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-[var(--foreground)]">
+                      {artist.name}
+                    </span>
+                    <span className="ml-auto text-xs text-[var(--subtle)]">아티스트</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
             {results.map((playlist) => (
               <Link
                 key={playlist.id}

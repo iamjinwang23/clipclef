@@ -11,6 +11,8 @@ import SaveButton from '@/features/interaction/components/SaveButton';
 import CommentList from '@/features/interaction/components/CommentList';
 import CommentForm from '@/features/interaction/components/CommentForm';
 import UploaderCard from '@/features/interaction/components/UploaderCard';
+import ArtistStrip from '@/features/artist/components/ArtistStrip';
+import { toArtistSlug, extractMainArtist } from '@/lib/lastfm';
 
 export default async function PlaylistDetailPage({
   params,
@@ -35,8 +37,31 @@ export default async function PlaylistDetailPage({
   // Plan SC: 소유자만 수정/삭제 버튼 노출
   const isOwner = !!user && user.id === p.uploaded_by;
 
+  // Design Ref: §6.2 — 트랙에서 고유 아티스트 slug 추출 (최대 5명, not_found 제외는 ArtistStrip이 처리)
+  const artistMap = new Map<string, { name: string; slug: string }>();
+  for (const track of t) {
+    if (!track.artist) continue;
+    const slug = toArtistSlug(track.artist);
+    if (slug && !artistMap.has(slug)) {
+      artistMap.set(slug, { name: extractMainArtist(track.artist), slug });
+    }
+  }
+  const artistSlugs = [...artistMap.values()].slice(0, 5);
+
   return (
     <div className="max-w-4xl mx-auto px-4 pb-6">
+      {/* 업로더 프로필 — 최상단 */}
+      {p.uploaded_by && p.uploader && (
+        <div className="pt-4 pb-0">
+          <UploaderCard
+            uploadedBy={p.uploaded_by}
+            displayName={p.uploader.display_name}
+            avatarUrl={p.uploader.avatar_url}
+            isVerified={p.uploader.is_verified}
+          />
+        </div>
+      )}
+
       {/* 플레이어 (영상 아래에 제목/채널/태그/액션 삽입 후 트랙리스트) */}
       <PlaylistPlayer youtubeId={p.youtube_id} tracks={t}>
         {/* 제목 + 채널 */}
@@ -112,17 +137,13 @@ export default async function PlaylistDetailPage({
         </div>
       </PlaylistPlayer>
 
+      {/* 아티스트 카드 — 트랙리스트 아래, 댓글 위 */}
+      {artistSlugs.length > 0 && (
+        <ArtistStrip artists={artistSlugs} locale={locale} />
+      )}
+
       {/* 댓글 */}
       <section className="mt-10">
-        {/* 업로더 정보 */}
-        {p.uploaded_by && p.uploader && (
-          <UploaderCard
-            uploadedBy={p.uploaded_by}
-            displayName={p.uploader.display_name}
-            avatarUrl={p.uploader.avatar_url}
-            isVerified={p.uploader.is_verified}
-          />
-        )}
         <h2 className="text-base font-semibold text-white mb-4">
           댓글 {p.comment_count}개
         </h2>

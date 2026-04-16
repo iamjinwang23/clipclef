@@ -11,7 +11,7 @@ import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import '../globals.css';
 
 export const metadata: Metadata = {
-  title: 'ClipClef',
+  title: 'clip/clef',
   description: '유튜브 플레이리스트 큐레이션 아카이브',
 };
 
@@ -47,22 +47,22 @@ export default async function LocaleLayout({
                 <div className="flex items-center gap-5">
                   <Link href={`/${locale}`} className="flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.svg" alt="ClipClef" className="h-3.5 w-auto opacity-40" />
+                    <img src="/logo.svg" alt="ClipClef" className="h-4.5 w-auto opacity-40" />
                   </Link>
                   <Link href={`/${locale}/terms`} className="hover:text-[var(--foreground)] transition-colors">
-                    이용약관
+                    Agreement
                   </Link>
                   <Link href={`/${locale}/privacy`} className="hover:text-[var(--foreground)] transition-colors">
-                    개인정보처리방침
+                    Privacy
                   </Link>
                   <a
                     href={`mailto:${process.env.ADMIN_EMAIL}`}
                     className="hover:text-[var(--foreground)] transition-colors"
                   >
-                    문의하기
+                    Contact
                   </a>
                 </div>
-                <p>2026 copyright ©ClipClef, all rights reserved.</p>
+                <p>2026 ©clip/clef, all rights reserved.</p>
               </div>
             </footer>
           </QueryProvider>

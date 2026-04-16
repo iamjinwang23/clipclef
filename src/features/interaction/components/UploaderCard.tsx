@@ -19,7 +19,7 @@ export default function UploaderCard({ uploadedBy, displayName, avatarUrl, isVer
   const name = displayName ?? '알 수 없음';
 
   return (
-    <div className="flex items-center justify-between py-4 border-b border-[var(--border)] mb-4">
+    <div className="flex items-center justify-between py-2">
       <Link href={`/${locale}/profile/${uploadedBy}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
         <UserAvatar src={avatarUrl} name={name} size={36} />
         <div>

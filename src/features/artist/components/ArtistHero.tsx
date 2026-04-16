@@ -1,0 +1,48 @@
+// Design Ref: §5.3 — ArtistHero: 대형 이미지 + 이름 + 리스너 수
+import Image from 'next/image';
+
+interface ArtistHeroProps {
+  name: string;
+  imageUrl: string | null;
+  listeners: number | null;
+}
+
+function formatListeners(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M listeners`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K listeners`;
+  return `${n} listeners`;
+}
+
+export default function ArtistHero({ name, imageUrl, listeners }: ArtistHeroProps) {
+  const initial = name.charAt(0).toUpperCase();
+
+  return (
+    <div className="relative w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 aspect-video rounded-none sm:rounded-xl overflow-hidden bg-[var(--muted)]">
+      {imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={name}
+          fill
+          className="object-cover"
+          sizes="(max-width: 640px) 100vw, 896px"
+          priority
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <span className="text-7xl font-bold text-[var(--text-secondary)] opacity-30">
+            {initial}
+          </span>
+        </div>
+      )}
+
+      {/* 그라디언트 오버레이 + 텍스트 */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 pb-5 pt-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight">{name}</h1>
+        {listeners !== null && listeners > 0 && (
+          <p className="text-sm text-white/70 mt-1">{formatListeners(listeners)}</p>
+        )}
+      </div>
+    </div>
+  );
+}

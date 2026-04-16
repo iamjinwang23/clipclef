@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'ClipClef',
+  title: 'clip/clef',
   description: '유튜브 플레이리스트 큐레이션 아카이브',
 };
 

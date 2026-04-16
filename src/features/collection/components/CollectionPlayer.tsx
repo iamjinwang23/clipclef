@@ -23,7 +23,6 @@ interface CollectionPlayerProps {
   onTogglePlay: () => void;
   onPrev: () => void;
   onNext: () => void;
-  onStop: () => void;
   onToggleTracklist: () => void;
   onSeek: (sec: number, trackIndex: number) => void;
   registerPlayer: (player: any) => void;
@@ -47,7 +46,6 @@ export default function CollectionPlayer({
   onTogglePlay,
   onPrev,
   onNext,
-  onStop,
   onToggleTracklist,
   onSeek,
   registerPlayer,
@@ -123,8 +121,21 @@ export default function CollectionPlayer({
         <div ref={iframeContainerRef} />
       </div>
 
-      {/* 트랙리스트 패널 */}
-      <div
+      {/* 딤 오버레이 — 트랙리스트 열릴 때 */}
+      {currentIndex !== null && (
+        <div
+          onClick={onToggleTracklist}
+          className="fixed inset-0 z-30 bg-black transition-opacity duration-300"
+          style={{
+            bottom: 64,
+            opacity: isTracklistOpen ? 0.8 : 0,
+            pointerEvents: isTracklistOpen ? 'auto' : 'none',
+          }}
+        />
+      )}
+
+      {/* 트랙리스트 패널 — 재생 중일 때만 마운트 */}
+      {currentIndex !== null && <div
         className="fixed left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] overflow-y-auto transition-transform duration-300 ease-in-out"
         style={{
           bottom: 64,
@@ -194,7 +205,7 @@ export default function CollectionPlayer({
             </table>
           </div>
         )}
-      </div>
+      </div>}
 
       {/* 하단 플레이어 바 */}
       {currentIndex !== null && (
@@ -227,9 +238,7 @@ export default function CollectionPlayer({
                 className={`p-1.5 transition-opacity ${isFirst ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
                 aria-label="이전 플리"
               >
-                <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
-                </svg>
+                <img src="/backward.svg" alt="" aria-hidden="true" className="w-6 h-6 max-sm:w-10 max-sm:h-10 invert" />
               </button>
 
               <button
@@ -237,15 +246,12 @@ export default function CollectionPlayer({
                 className="p-1.5 hover:opacity-70 transition-opacity"
                 aria-label={isPlaying ? '일시정지' : '재생'}
               >
-                {isPlaying ? (
-                  <svg className="w-8 h-8 sm:w-9 sm:h-9" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                  </svg>
-                ) : (
-                  <svg className="w-8 h-8 sm:w-9 sm:h-9" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                )}
+                <img
+                  src={isPlaying ? '/Pause.svg' : '/Play.svg'}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-8 h-8 max-sm:w-12 max-sm:h-12 invert"
+                />
               </button>
 
               <button
@@ -254,36 +260,21 @@ export default function CollectionPlayer({
                 className={`p-1.5 transition-opacity ${isLast ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
                 aria-label="다음 플리"
               >
-                <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 18 14.5 12 6 6v12zm2.5-6 5.5 4V8zM16 6h2v12h-2z" />
-                </svg>
+                <img src="/Forward.svg" alt="" aria-hidden="true" className="w-6 h-6 max-sm:w-10 max-sm:h-10 invert" />
               </button>
             </div>
 
-            {/* 우: 트랙리스트 — 닫기 버튼 너비만큼 패딩 확보 */}
-            <div className="flex items-center justify-end pr-8 sm:pr-0">
+            {/* 우: 트랙리스트 */}
+            <div className="flex items-center justify-end">
               <button
                 onClick={onToggleTracklist}
-                className={`p-2 transition-opacity hover:opacity-70 ${isTracklistOpen ? 'text-[var(--accent)]' : ''}`}
+                className={`p-2 transition-opacity hover:opacity-70 ${isTracklistOpen ? 'opacity-100' : 'opacity-60'}`}
                 aria-label="트랙리스트"
               >
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24">
-                  <path d="M4 6h16M4 10h16M4 14h10" />
-                </svg>
+                <img src="/tracklist.svg" alt="" aria-hidden="true" className="w-5 h-5 invert" />
               </button>
             </div>
           </div>
-
-          {/* 닫기 — 페이지 제일 우측 고정 */}
-          <button
-            onClick={onStop}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:opacity-70 transition-opacity p-1.5"
-            aria-label="재생 종료"
-          >
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-            </svg>
-          </button>
         </div>
       )}
     </>

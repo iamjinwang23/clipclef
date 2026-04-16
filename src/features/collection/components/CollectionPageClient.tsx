@@ -173,7 +173,6 @@ export default function CollectionPageClient({
         onTogglePlay={handleTogglePlay}
         onPrev={handlePrev}
         onNext={handleNext}
-        onStop={handleStop}
         onToggleTracklist={handleToggleTracklist}
         onSeek={handleSeek}
         registerPlayer={registerPlayer}
