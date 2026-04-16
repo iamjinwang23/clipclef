@@ -11,8 +11,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'yt3.googleusercontent.com' },
       { protocol: 'https', hostname: 'yt3.ggpht.com' },
       { protocol: 'https', hostname: '*.supabase.co' },
-      { protocol: 'https', hostname: 'lastfm.freetls.fastly.net' },
-      { protocol: 'https', hostname: 'cdn-images.dzcdn.net' },
+      { protocol: 'https', hostname: 'assets.fanart.tv' },
+      { protocol: 'https', hostname: 'www.theaudiodb.com' },
+      { protocol: 'https', hostname: 'cdn.theaudiodb.com' },
     ],
   },
 };

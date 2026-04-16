@@ -7,7 +7,7 @@ import {
   fetchArtistWithCache,
   getArtistPlaylists,
 } from '@/features/artist/lib/artist.server';
-import { extractMainArtist } from '@/lib/lastfm';
+import { extractMainArtist } from '@/lib/artist-apis';
 
 export default async function ArtistPage({
   params,

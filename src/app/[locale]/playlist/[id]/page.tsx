@@ -12,7 +12,7 @@ import CommentList from '@/features/interaction/components/CommentList';
 import CommentForm from '@/features/interaction/components/CommentForm';
 import UploaderCard from '@/features/interaction/components/UploaderCard';
 import ArtistStrip from '@/features/artist/components/ArtistStrip';
-import { toArtistSlug, extractMainArtist } from '@/lib/lastfm';
+import { toArtistSlug, extractMainArtist } from '@/lib/artist-apis';
 
 export default async function PlaylistDetailPage({
   params,

@@ -1,6 +1,6 @@
-// Design Ref: §4.1 — GET /api/artists/[slug]
-// 캐시 확인 → stale이면 Last.fm 재조회 → 응답
-// Plan SC: 서버 컴포넌트에서만 Last.fm 직접 호출 (API Key 노출 방지)
+// Design Ref: §4 — GET /api/artists/[slug]
+// Plan SC-06: MusicBrainz MBID는 클라이언트(ArtistStrip)에서 전달받음 → 서버 IP 고정 우회
+// mbid 없으면 artist.server.ts 내부에서 MusicBrainz 폴백 호출
 
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchArtistWithCache } from '@/features/artist/lib/artist.server';
@@ -11,13 +11,13 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  // name 쿼리 파라미터: ArtistStrip이 원본 아티스트명을 전달 (더 정확한 Last.fm 검색)
-  // 없으면 slug에서 복원 (하이픈 → 공백)
   const nameParam = req.nextUrl.searchParams.get('name');
+  const mbidParam = req.nextUrl.searchParams.get('mbid');
+
   const artistName = nameParam?.trim() || slug.replace(/-/g, ' ');
 
   try {
-    const artist = await fetchArtistWithCache(slug, artistName);
+    const artist = await fetchArtistWithCache(slug, artistName, mbidParam ?? null);
 
     if (!artist) {
       return NextResponse.json({ not_found: true });

@@ -1,9 +1,16 @@
-// Design Ref: §4.1, §5.4 — 캐시 조회/갱신 서버 유틸
+// Design Ref: §6 — 캐시 조회/갱신 서버 유틸
 // API 라우트(/api/artists/[slug])와 아티스트 상세 페이지에서 공용 사용
 // 서버 전용 — createAdminClient는 SUPABASE_SERVICE_ROLE_KEY 필요
 
 import { createClient as createSupabaseJs } from '@supabase/supabase-js';
-import { fetchArtistFromLastFm } from '@/lib/lastfm';
+import {
+  searchMbid,
+  fetchFanartImages,
+  fetchTheAudioDB,
+  fetchWikipediaBio,
+  resolveImage,
+  resolveBio,
+} from '@/lib/artist-apis';
 import type { Playlist } from '@/types';
 
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7일
@@ -12,9 +19,10 @@ export interface ArtistRow {
   id: string;
   name: string;
   slug: string;
+  mbid: string | null;       // MusicBrainz ID
   image_url: string | null;
   bio_en: string | null;
-  listeners: number | null;
+  listeners: number | null;  // Last.fm 제거 후 더 이상 갱신 안 함. 기존 데이터 유지.
   not_found: boolean;
   cached_at: string;
   created_at: string;
@@ -33,12 +41,17 @@ function isStale(cachedAt: string): boolean {
 
 /**
  * slug 기반으로 artists 테이블을 확인하고,
- * 없거나 stale이면 Last.fm에서 재조회 후 upsert.
+ * 없거나 stale이면 MusicBrainz → Fanart.tv/TheAudioDB/Wikipedia에서 재조회 후 upsert.
  * not_found 캐시된 경우 재시도 없이 null 반환.
+ *
+ * @param slug URL slug
+ * @param artistName 원본 아티스트명 (Wikipedia/MusicBrainz 검색에 사용)
+ * @param mbid ArtistStrip에서 클라이언트 직접 조회한 MBID (있으면 MusicBrainz 서버 호출 생략)
  */
 export async function fetchArtistWithCache(
   slug: string,
-  artistName: string
+  artistName: string,
+  mbid?: string | null
 ): Promise<ArtistRow | null> {
   const supabase = createAdminClient();
 
@@ -57,13 +70,13 @@ export async function fetchArtistWithCache(
     return existing as ArtistRow;
   }
 
-  // 2. Last.fm 호출
-  const lfData = await fetchArtistFromLastFm(artistName);
+  // 2. MBID 확정 — 파라미터로 받은 mbid 우선, 없으면 서버에서 MusicBrainz 조회
+  const resolvedMbid = mbid ?? await searchMbid(artistName);
 
-  if (!lfData) {
-    if (existing) return existing as ArtistRow; // stale이지만 네트워크 에러 → 기존 반환
+  if (!resolvedMbid) {
+    if (existing) return existing as ArtistRow; // stale이지만 MBID 획득 실패 → 기존 반환
 
-    // 신규 + Last.fm 미발견 → not_found upsert
+    // 신규 + MBID 미발견 → not_found upsert
     await supabase.from('artists').upsert(
       {
         name: artistName,
@@ -76,17 +89,26 @@ export async function fetchArtistWithCache(
     return null;
   }
 
-  // 3. upsert
+  // 3. Fanart.tv + TheAudioDB + Wikipedia 병렬 호출
+  // Plan SC-01, SC-02: 이미지와 바이오 데이터 수집
+  const [fanart, audiodb, wikiBio] = await Promise.all([
+    fetchFanartImages(resolvedMbid),
+    fetchTheAudioDB(resolvedMbid),
+    fetchWikipediaBio(artistName),
+  ]);
+
   const row = {
-    name: lfData.name,
+    name: artistName,
     slug,
-    image_url: lfData.imageUrl,
-    bio_en: lfData.bioSummary,
-    listeners: lfData.listeners,
+    mbid: resolvedMbid,
+    image_url: resolveImage(fanart, audiodb),
+    bio_en: resolveBio(wikiBio, audiodb?.strBiographyEN ?? null),
+    listeners: null,  // Last.fm 제거로 더 이상 수집 안 함
     not_found: false,
     cached_at: new Date().toISOString(),
   };
 
+  // 4. upsert
   const { data: upserted, error } = await supabase
     .from('artists')
     .upsert(row, { onConflict: 'slug' })
@@ -94,7 +116,7 @@ export async function fetchArtistWithCache(
     .maybeSingle();
 
   if (error) {
-    // upsert 실패 시 Last.fm 데이터로 임시 반환 (id, created_at 없음)
+    // upsert 실패 시 메모리 데이터로 임시 반환
     return { ...row, id: '', created_at: row.cached_at } as ArtistRow;
   }
 
@@ -108,7 +130,6 @@ export async function getArtistPlaylists(artistName: string): Promise<Playlist[]
   const supabase = createAdminClient();
   const escaped = artistName.replace(/[%_]/g, '\\$&');
 
-  // tracks 테이블에서 아티스트 포함 playlist_id 수집
   const { data: trackMatches } = await supabase
     .from('tracks')
     .select('playlist_id')

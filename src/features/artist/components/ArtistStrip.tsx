@@ -1,9 +1,11 @@
 'use client';
-// Design Ref: §5.2 — ArtistStrip: slug 배열 받아 /api/artists/[slug] 병렬 fetch
-// 로딩 스켈레톤 → 결과 카드 렌더, not_found 카드 미표시
+// Design Ref: §5.1 — ArtistStrip: React Query 2-step
+// Plan SC-04: staleTime 30분으로 세션 중 중복 호출 없음
+// Plan SC-06: searchMbid는 클라이언트 직접 호출 (MusicBrainz IP 분산)
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import ArtistCard from './ArtistCard';
+import { searchMbid } from '@/lib/artist-apis';
 import type { ArtistRow } from '@/features/artist/lib/artist.server';
 
 interface ArtistStripProps {
@@ -11,65 +13,79 @@ interface ArtistStripProps {
   locale: string;
 }
 
-type ArtistResult = (ArtistRow & { not_found?: false }) | { not_found: true };
+type ArtistResult = ArtistRow | { not_found: true };
+
+const STALE_TIME = 30 * 60 * 1000; // 30분
+
+/** 단일 아티스트 카드: MBID 조회 → 아티스트 데이터 조회 2-step */
+function ArtistStripItem({
+  name,
+  slug,
+  locale,
+}: {
+  name: string;
+  slug: string;
+  locale: string;
+}) {
+  // Step 1: MusicBrainz 클라이언트 직접 호출 → MBID
+  const { data: mbid, isPending: mbidPending } = useQuery({
+    queryKey: ['mbid', slug, name],
+    queryFn: () => searchMbid(name),
+    staleTime: STALE_TIME,
+    retry: 1,
+  });
+
+  // Step 2: mbid 조회 완료 후 아티스트 데이터 요청 (null 포함 — not_found upsert 방지 목적 없음)
+  const { data: artist, isPending: artistPending } = useQuery({
+    queryKey: ['artist', slug, mbid],
+    queryFn: async () => {
+      const params = new URLSearchParams({ name });
+      if (mbid) params.set('mbid', mbid);
+      const res = await fetch(
+        `/api/artists/${encodeURIComponent(slug)}?${params.toString()}`
+      );
+      return res.json() as Promise<ArtistResult>;
+    },
+    enabled: !mbidPending, // mbid 쿼리 완료 후 실행 (mbid가 null이어도 진행)
+    staleTime: STALE_TIME,
+    retry: 1,
+  });
+
+  // 로딩 중: 스켈레톤
+  if (mbidPending || artistPending) {
+    return (
+      <div className="flex flex-col items-center gap-2 flex-shrink-0 w-20">
+        <div className="w-20 h-20 rounded-full bg-[var(--muted)] animate-pulse" />
+        <div className="w-12 h-3 rounded bg-[var(--muted)] animate-pulse" />
+      </div>
+    );
+  }
+
+  // not_found 또는 에러 → 미표시 (ArtistRow는 'id' 필드 보유, not_found 응답은 미보유)
+  if (!artist || !('id' in artist)) return null;
+
+  return (
+    <ArtistCard
+      name={artist.name}
+      slug={artist.slug}
+      imageUrl={artist.image_url}
+      locale={locale}
+    />
+  );
+}
 
 export default function ArtistStrip({ artists, locale }: ArtistStripProps) {
-  const [results, setResults] = useState<(ArtistRow | null)[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (artists.length === 0) {
-      setLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-
-    Promise.all(
-      artists.map(({ name, slug }) =>
-        fetch(`/api/artists/${encodeURIComponent(slug)}?name=${encodeURIComponent(name)}`)
-          .then((r) => r.json() as Promise<ArtistResult>)
-          .then((data) => ('not_found' in data && data.not_found ? null : (data as ArtistRow)))
-          .catch(() => null)
-      )
-    ).then((data) => {
-      if (!cancelled) {
-        setResults(data);
-        setLoading(false);
-      }
-    });
-
-    return () => { cancelled = true; };
-  }, [artists]);
-
-  const visible = results.filter((r): r is ArtistRow => r !== null && !r.not_found);
-
-  if (!loading && visible.length === 0) return null;
+  if (artists.length === 0) return null;
 
   return (
     <div className="mt-6">
       <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
         아티스트
       </h2>
-
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-        {loading
-          ? // 스켈레톤
-            Array.from({ length: artists.length }).map((_, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 flex-shrink-0 w-20">
-                <div className="w-14 h-14 rounded-full bg-[var(--muted)] animate-pulse" />
-                <div className="w-12 h-3 rounded bg-[var(--muted)] animate-pulse" />
-              </div>
-            ))
-          : visible.map((artist) => (
-              <ArtistCard
-                key={artist.slug}
-                name={artist.name}
-                slug={artist.slug}
-                imageUrl={artist.image_url}
-                locale={locale}
-              />
-            ))}
+        {artists.map(({ name, slug }) => (
+          <ArtistStripItem key={slug} name={name} slug={slug} locale={locale} />
+        ))}
       </div>
     </div>
   );
