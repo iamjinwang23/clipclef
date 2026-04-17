@@ -134,7 +134,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
                           <p className="text-xs text-[var(--text-secondary)] mt-0.5">{track.artist}</p>
                         )}
                       </td>
-                      <td className="py-2.5 pl-3 text-[var(--text-secondary)] tabular-nums text-right whitespace-nowrap">
+                      <td className="py-2.5 pl-3 pr-3 text-[var(--text-secondary)] tabular-nums text-right whitespace-nowrap">
                         {formatDuration(track.duration_sec)}
                       </td>
                     </tr>
