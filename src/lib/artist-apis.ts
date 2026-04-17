@@ -6,7 +6,7 @@
 
 const FEATURING_RE = /\s+(ft\.|feat\.|featuring|×|x\s|\s&\s|\s\/\s|with)\s.*/i;
 const PARENS_RE = /\s+\([^)]*\)/g;
-const SLUG_ALLOWED_RE = /[^a-z0-9-]/g;
+const SLUG_ALLOWED_RE = /[^\p{L}\p{N}-]/gu;
 const CONSECUTIVE_HYPHEN_RE = /-{2,}/g;
 
 /** 피처링·콜라보를 제거한 메인 아티스트명 반환 */
