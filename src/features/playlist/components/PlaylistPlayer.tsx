@@ -107,7 +107,13 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
             트랙리스트
           </h2>
           <div className="overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm table-fixed">
+              <colgroup>
+                <col className="w-8" />
+                <col />                              {/* 모바일: 나머지 전부 */}
+                <col className="hidden md:table-column w-[25%]" />
+                <col className="w-12" />
+              </colgroup>
               <tbody>
                 {tracksWithStart.map((track, index) => {
                   const isActive = activeIndex === index;
@@ -119,20 +125,20 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
                         isActive ? 'bg-[var(--muted)]' : 'hover:bg-[var(--muted)]'
                       }`}
                     >
-                      <td className="py-2.5 pr-3 w-8 text-right">
+                      <td className="py-2.5 pr-3 text-right">
                         {isActive ? (
                           <span className="text-[var(--accent)] text-xs">▶</span>
                         ) : (
                           <span className="text-[var(--text-secondary)] tabular-nums">{track.position}</span>
                         )}
                       </td>
-                      <td className="py-2.5 px-2 max-w-0 md:w-[70%]">
+                      <td className="py-2.5 px-2 overflow-hidden">
                         <p className="font-medium truncate">{track.title}</p>
                         {track.artist && (
                           <p className="md:hidden text-xs text-[var(--text-secondary)] truncate mt-0.5">{track.artist}</p>
                         )}
                       </td>
-                      <td className="hidden md:table-cell py-2.5 px-2 text-[var(--text-secondary)] max-w-0 w-[25%]">
+                      <td className="hidden md:table-cell py-2.5 px-2 text-[var(--text-secondary)] overflow-hidden">
                         <p className="truncate">{track.artist ?? ''}</p>
                       </td>
                       <td className="py-2.5 pl-3 pr-3 text-[var(--text-secondary)] tabular-nums text-right whitespace-nowrap">
