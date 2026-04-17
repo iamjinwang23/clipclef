@@ -70,7 +70,7 @@ function StoryItem({
           )}
         </div>
       </div>
-      <span className="text-xs text-[var(--text-secondary)] max-w-[64px] text-center leading-tight line-clamp-2">
+      <span className="text-xs text-[var(--text-secondary)] max-w-[64px] text-center leading-tight truncate block">
         {label}
       </span>
     </button>

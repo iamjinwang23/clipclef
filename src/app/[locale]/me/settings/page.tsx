@@ -23,14 +23,18 @@ export default async function SettingsPage({
   const avatarUrl = profile?.avatar_url ?? (user.user_metadata?.avatar_url as string | undefined) ?? '';
 
   return (
-    <div className="max-w-md mx-auto px-4 py-8">
-      <h1 className="text-xl font-semibold mb-6">기본 정보</h1>
-      <ProfileForm
-        userId={user.id}
-        email={user.email ?? ''}
-        initialDisplayName={displayName}
-        avatarUrl={avatarUrl}
-      />
+    <div className="max-w-md mx-auto px-0">
+      <div className="px-4 py-4 border-b border-[var(--border)]">
+        <h1 className="text-base font-semibold text-[var(--foreground)]">기본 정보</h1>
+      </div>
+      <div className="px-4 py-6">
+        <ProfileForm
+          userId={user.id}
+          email={user.email ?? ''}
+          initialDisplayName={displayName}
+          avatarUrl={avatarUrl}
+        />
+      </div>
     </div>
   );
 }

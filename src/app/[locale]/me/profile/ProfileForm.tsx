@@ -21,6 +21,7 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
   const [saved, setSaved] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +57,14 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/ko');
+    router.refresh();
   };
 
   const handleDelete = async () => {
@@ -108,6 +117,19 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
           {saved ? '저장됨' : saving ? '저장 중...' : '저장'}
         </button>
       </form>
+
+      {/* 로그아웃 */}
+      <div className="pt-6 border-t border-[var(--border)]">
+        <p className="text-sm font-medium text-[var(--foreground)] mb-2">로그아웃</p>
+        <p className="text-xs text-[var(--text-secondary)] mb-3">현재 기기에서 계정에서 로그아웃합니다.</p>
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="text-sm text-[var(--foreground)] hover:text-[var(--text-secondary)] underline disabled:opacity-40"
+        >
+          {loggingOut ? '처리 중...' : '로그아웃'}
+        </button>
+      </div>
 
       {/* 탈퇴 */}
       <div className="pt-6 border-t border-[var(--border)]">
