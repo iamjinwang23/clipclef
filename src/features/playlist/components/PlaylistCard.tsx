@@ -44,12 +44,6 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
             </div>
           </div>
 
-          {/* 모바일: 항상 표시되는 작은 재생 버튼 (우하단) */}
-          <div className="absolute bottom-2 right-2 sm:hidden w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-            <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
         </div>
 
         {/* 제목 */}
