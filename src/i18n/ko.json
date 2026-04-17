@@ -36,7 +36,12 @@
     "loginRequired": "로그인 후 댓글을 작성할 수 있습니다",
     "submit": "등록",
     "delete": "삭제",
-    "empty": "첫 번째 댓글을 남겨보세요"
+    "empty": "첫 번째 댓글을 남겨보세요",
+    "reply": "답글",
+    "replyPlaceholder": "답글을 작성하세요 (최대 500자)",
+    "replyCancel": "취소",
+    "replySubmit": "등록",
+    "replyLoginRequired": "로그인 후 답글을 작성할 수 있습니다"
   },
   "collection": {
     "title": "내 컬렉션",

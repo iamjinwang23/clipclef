@@ -36,7 +36,12 @@
     "loginRequired": "Please log in to write a comment",
     "submit": "Post",
     "delete": "Delete",
-    "empty": "Be the first to comment"
+    "empty": "Be the first to comment",
+    "reply": "Reply",
+    "replyPlaceholder": "Write a reply (max 500 chars)",
+    "replyCancel": "Cancel",
+    "replySubmit": "Submit",
+    "replyLoginRequired": "Please log in to reply"
   },
   "collection": {
     "title": "My Collection",

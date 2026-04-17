@@ -49,9 +49,11 @@ export interface Comment {
   id: string;
   playlist_id: string;
   user_id: string;
+  parent_id: string | null;
   content: string;
   created_at: string;
   profiles: { display_name: string | null; avatar_url: string | null; is_verified: boolean };
+  replies?: Comment[];
 }
 
 export interface Profile {

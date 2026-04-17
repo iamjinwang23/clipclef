@@ -151,7 +151,7 @@ export default async function PlaylistDetailPage({
         <div className="mb-6">
           <CommentForm playlistId={p.id} isLoggedIn={!!user} />
         </div>
-        <CommentList playlistId={p.id} />
+        <CommentList playlistId={p.id} isLoggedIn={!!user} />
       </section>
     </div>
   );
