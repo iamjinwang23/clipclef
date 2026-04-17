@@ -2,22 +2,21 @@
 
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
-import SearchOverlay from '@/components/ui/SearchOverlay';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { isInAppBrowser } from '@/lib/browser';
 
 export default function MobileBottomNav() {
   const locale = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
   const supabase = createClient();
 
   const [user, setUser] = useState<User | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
-  const [searchOpen, setSearchOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -65,6 +64,7 @@ export default function MobileBottomNav() {
   };
 
   const isHome = pathname === `/${locale}` || pathname === `/${locale}/`;
+  const isSearch = pathname === `/${locale}/search`;
   const isUpload = pathname.includes('/upload');
   const isNotif = pathname.includes('/me/notifications');
   const isProfile = pathname.includes('/me/') && !isNotif;
@@ -91,8 +91,8 @@ export default function MobileBottomNav() {
           </Link>
 
           {/* 검색 */}
-          <button onClick={() => setSearchOpen(true)} className={item(false)}>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+          <button onClick={() => router.push(`/${locale}/search`)} className={item(isSearch)}>
+            <svg className="w-5 h-5" fill={isSearch ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8" />
               <path strokeLinecap="round" d="m21 21-4.35-4.35" />
             </svg>
@@ -156,7 +156,6 @@ export default function MobileBottomNav() {
         </div>
       </nav>
 
-      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
     </>
   );
 }

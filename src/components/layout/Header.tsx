@@ -5,13 +5,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { useFilterStore } from '@/features/filter/store';
 import UserAvatar from '@/components/ui/UserAvatar';
-import SearchOverlay from '@/components/ui/SearchOverlay';
 import NotificationBell from '@/features/notification/components/NotificationBell';
 import { isInAppBrowser } from '@/lib/browser';
 import type { Playlist } from '@/types';
@@ -208,17 +207,24 @@ function DesktopSearchBar() {
   );
 }
 
+const TAB_ROOTS = new Set(['/upload', '/search', '/me/notifications', '/me/profile']);
+
 // ─── Header ──────────────────────────────────────────────────────────────────
 export default function Header() {
   const t = useTranslations('common');
   const locale = useLocale();
   const router = useRouter();
+  const pathname = usePathname();
   const supabase = createClient();
+
+  const isTabRoot =
+    pathname === `/${locale}` ||
+    pathname === `/${locale}/` ||
+    TAB_ROOTS.has(pathname.replace(`/${locale}`, ''));
 
   const [user, setUser] = useState<User | null>(null);
   const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -275,8 +281,19 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center">
-          {/* 좌측: 로고 */}
-          <div className="flex-1 flex items-center">
+          {/* 좌측: 뒤로가기(모바일 depth2+) + 로고 */}
+          <div className="flex-1 flex items-center gap-1">
+            {!isTabRoot && (
+              <button
+                onClick={() => router.back()}
+                className="sm:hidden p-1 -ml-1 text-[var(--foreground)]"
+                aria-label="뒤로가기"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
             <Link href={`/${locale}`} className="flex items-center flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.svg" alt="ClipClef" className="hidden sm:block h-6 w-auto" />
@@ -292,41 +309,23 @@ export default function Header() {
 
           {/* 우측: 액션 */}
           <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
-            {/* 검색 아이콘 — 모바일 전용 */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="sm:hidden p-2 rounded-full text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
-              aria-label="검색"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-              </svg>
-            </button>
-
             {user ? (
               <>
-                {/* +만들기 — 데스크톱: 텍스트, 모바일: 아이콘 */}
+                {/* +만들기 — 데스크톱 전용 */}
                 <Link
                   href={`/${locale}/upload`}
                   className="hidden sm:flex items-center text-sm font-medium px-3 py-1.5 rounded-full bg-white text-black hover:bg-white/90 transition-colors flex-shrink-0"
                 >
                   + 만들기
                 </Link>
-                <Link
-                  href={`/${locale}/upload`}
-                  className="sm:hidden p-2 rounded-full text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
-                  aria-label="업로드"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                </Link>
 
-                {/* 알림 벨 */}
-                <NotificationBell userId={user.id} locale={locale} />
+                {/* 알림 벨 — 데스크톱 전용 */}
+                <span className="hidden sm:block">
+                  <NotificationBell userId={user.id} locale={locale} />
+                </span>
 
-                {/* 프로필 드롭다운 */}
-                <div ref={dropdownRef} className="relative">
+                {/* 프로필 드롭다운 — 데스크톱 전용 */}
+                <div ref={dropdownRef} className="relative hidden sm:block">
                   <button
                     onClick={() => setOpen((v) => !v)}
                     className="rounded-full border-2 border-transparent hover:border-[var(--subtle)] transition-colors flex-shrink-0"
@@ -358,7 +357,7 @@ export default function Header() {
             ) : (
               <button
                 onClick={handleLogin}
-                className="text-sm font-medium px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded hover:opacity-80 transition-opacity"
+                className="hidden sm:block text-sm font-medium px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded hover:opacity-80 transition-opacity"
               >
                 {t('login')}
               </button>
@@ -367,8 +366,6 @@ export default function Header() {
         </div>
       </header>
 
-      {/* 검색 오버레이 — 모바일 */}
-      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
     </>
   );
 }
