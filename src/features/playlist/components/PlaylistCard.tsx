@@ -61,6 +61,10 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
             "{playlist.editor_note}"
           </p>
         )}
+        <div className="flex items-center gap-3 text-xs text-[var(--subtle)] mt-1">
+          <span>♥ {playlist.like_count.toLocaleString()}</span>
+          <span>💬 {playlist.comment_count.toLocaleString()}</span>
+        </div>
       </Link>
     </div>
   );
