@@ -47,7 +47,7 @@ export default async function PlaylistDetailPage({
       artistMap.set(slug, { name: extractMainArtist(track.artist), slug });
     }
   }
-  const artistSlugs = [...artistMap.values()].slice(0, 5);
+  const artistSlugs = [...artistMap.values()];
 
   return (
     <div className="max-w-4xl mx-auto px-4 pb-6">
