@@ -9,7 +9,8 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
 
   const nameParam = req.nextUrl.searchParams.get('name');
   const mbidParam = req.nextUrl.searchParams.get('mbid');

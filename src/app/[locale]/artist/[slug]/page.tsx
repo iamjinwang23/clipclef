@@ -14,7 +14,8 @@ export default async function ArtistPage({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
 
   // slug에서 아티스트명 복원 (하이픈 → 공백, 후에 DB에 실제 이름 있음)
   const artistName = slug.replace(/-/g, ' ');
