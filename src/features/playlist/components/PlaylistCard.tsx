@@ -62,8 +62,14 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
           </p>
         )}
         <div className="flex items-center gap-3 text-xs text-[var(--subtle)] mt-1">
-          <span>♥ {playlist.like_count.toLocaleString()}</span>
-          <span>💬 {playlist.comment_count.toLocaleString()}</span>
+          <span className="flex items-center gap-0.5">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            {playlist.like_count.toLocaleString()}
+          </span>
+          <span className="flex items-center gap-0.5">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5 3a8.5 8.5 0 0 1 0 17H13v.99A1.01 1.01 0 0 1 11.989 22c-2.46-.002-4.952-.823-6.843-2.504C3.238 17.798 2.002 15.275 2 12.009V11.5A8.5 8.5 0 0 1 10.5 3zm-5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/></svg>
+            {playlist.comment_count.toLocaleString()}
+          </span>
         </div>
       </Link>
     </div>
