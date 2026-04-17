@@ -126,14 +126,14 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
                           <span className="text-[var(--text-secondary)] tabular-nums">{track.position}</span>
                         )}
                       </td>
-                      <td className="py-2.5 px-2 font-medium truncate max-w-0 md:w-[60%]">
-                        {track.title}
+                      <td className="py-2.5 px-2 max-w-0 md:w-[70%]">
+                        <p className="font-medium truncate">{track.title}</p>
                         {track.artist && (
-                          <p className="md:hidden text-xs font-normal text-[var(--text-secondary)] mt-0.5">{track.artist}</p>
+                          <p className="md:hidden text-xs text-[var(--text-secondary)] truncate mt-0.5">{track.artist}</p>
                         )}
                       </td>
-                      <td className="hidden md:table-cell py-2.5 px-2 text-[var(--text-secondary)] truncate max-w-0 w-[25%]">
-                        {track.artist ?? ''}
+                      <td className="hidden md:table-cell py-2.5 px-2 text-[var(--text-secondary)] max-w-0 w-[25%]">
+                        <p className="truncate">{track.artist ?? ''}</p>
                       </td>
                       <td className="py-2.5 pl-3 pr-3 text-[var(--text-secondary)] tabular-nums text-right whitespace-nowrap">
                         {formatDuration(track.duration_sec)}
