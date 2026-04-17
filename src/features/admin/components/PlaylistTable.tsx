@@ -27,15 +27,15 @@ export default function PlaylistTable({ onEdit }: PlaylistTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <colgroup>
-          <col className="w-[45%]" />
-          <col className="w-[25%]" />
+          <col className="w-[55%]" />
+          <col className="w-[18%]" />
           <col className="w-14" />
           <col className="w-16" />
           <col className="w-20" />
         </colgroup>
         <thead>
           <tr className="border-b border-[var(--border)]">
-            <th className="text-left py-2 pr-3 text-xs font-medium text-[var(--text-secondary)]">플레이리스트</th>
+            <th className="text-left py-2 pl-3 pr-3 text-xs font-medium text-[var(--text-secondary)]">플레이리스트</th>
             <th className="text-left py-2 px-3 text-xs font-medium text-[var(--text-secondary)]">채널</th>
             <th className="text-right py-2 px-3 text-xs font-medium text-[var(--text-secondary)]">좋아요</th>
             <th className="text-center py-2 px-3 text-xs font-medium text-[var(--text-secondary)]">공개</th>
@@ -45,7 +45,7 @@ export default function PlaylistTable({ onEdit }: PlaylistTableProps) {
         <tbody>
           {items.map((pl) => (
             <tr key={pl.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--muted)] transition-colors">
-              <td className="py-3 pr-3 max-w-0">
+              <td className="py-3 pl-3 pr-3 max-w-0">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="relative flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
