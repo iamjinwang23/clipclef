@@ -49,16 +49,28 @@ function parseTracklist(description: string, totalSec: number): {
 
   if (raw.length === 0) return [];
 
-  return raw.map((t, i) => ({
-    position: i + 1,
-    title: t.title,
-    artist: t.artist,
-    start_sec: t.startSec,
-    duration_sec: i < raw.length - 1
-      ? raw[i + 1].startSec - t.startSec
-      : Math.max(0, totalSec - t.startSec) || null,
-    youtube_video_id: null,
-  }));
+  return raw.map((t, i) => {
+    let duration_sec: number | null;
+    if (i < raw.length - 1) {
+      duration_sec = raw[i + 1].startSec - t.startSec;
+    } else if (totalSec > t.startSec) {
+      duration_sec = totalSec - t.startSec;
+    } else if (raw.length >= 2) {
+      // totalSec 누락/이상 시 이전 트랙 평균 길이로 추정
+      const avg = Math.round(t.startSec / (raw.length - 1));
+      duration_sec = avg > 0 ? avg : null;
+    } else {
+      duration_sec = null;
+    }
+    return {
+      position: i + 1,
+      title: t.title,
+      artist: t.artist,
+      start_sec: t.startSec,
+      duration_sec,
+      youtube_video_id: null,
+    };
+  });
 }
 
 export async function POST(req: NextRequest) {

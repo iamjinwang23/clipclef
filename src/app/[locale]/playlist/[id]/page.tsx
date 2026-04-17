@@ -32,6 +32,17 @@ export default async function PlaylistDetailPage({
 
   const p = playlist as Playlist & { uploader?: { display_name: string | null; avatar_url: string | null; is_verified: boolean } | null };
   const t = (tracks ?? []) as Track[];
+
+  // FK embed가 null을 반환해도 uploaded_by가 있으면 프로필을 별도 조회하여 fallback
+  let uploader = p.uploader ?? null;
+  if (p.uploaded_by && !uploader) {
+    const { data: uploaderRow } = await supabase
+      .from('profiles')
+      .select('display_name, avatar_url, is_verified')
+      .eq('id', p.uploaded_by)
+      .single();
+    if (uploaderRow) uploader = uploaderRow as typeof uploader;
+  }
   const allTags = [...p.genre, ...p.mood, ...p.place, ...p.era];
 
   // Plan SC: 소유자만 수정/삭제 버튼 노출
@@ -52,13 +63,13 @@ export default async function PlaylistDetailPage({
   return (
     <div className="max-w-4xl mx-auto px-4 pb-6">
       {/* 업로더 프로필 — 최상단 */}
-      {p.uploaded_by && p.uploader && (
+      {p.uploaded_by && (
         <div className="pt-4 pb-0">
           <UploaderCard
             uploadedBy={p.uploaded_by}
-            displayName={p.uploader.display_name}
-            avatarUrl={p.uploader.avatar_url}
-            isVerified={p.uploader.is_verified}
+            displayName={uploader?.display_name ?? null}
+            avatarUrl={uploader?.avatar_url ?? null}
+            isVerified={uploader?.is_verified ?? false}
           />
         </div>
       )}
