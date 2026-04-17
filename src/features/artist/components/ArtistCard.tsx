@@ -28,8 +28,8 @@ export default function ArtistCard({ name, slug, imageUrl, locale }: ArtistCardP
             sizes="80px"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-xl font-bold text-[var(--text-secondary)]">
-            /{initial}
+          <div className="w-full h-full flex items-center justify-center font-bold text-[var(--text-secondary)]">
+            <span className="text-sm">/</span><span className="text-xl">{initial}</span>
           </div>
         )}
       </div>
