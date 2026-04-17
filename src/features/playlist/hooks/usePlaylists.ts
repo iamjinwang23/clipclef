@@ -1,18 +1,30 @@
 'use client';
-// Design Ref: §4.3 — Supabase 목록 쿼리 (필터 + 정렬)
+// Design Ref: §4.3 — Supabase 목록 쿼리 (필터 + 정렬 + 무한스크롤)
+// Plan SC: 16개씩 offset 페이지네이션, 필터 변경 시 자동 리셋
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
 import { useFilterStore } from '@/features/filter/store';
 import type { Playlist } from '@/types';
 
+const PAGE_SIZE = 16;
+
 export function usePlaylists() {
   const { genre, mood, place, era, sort, channelId, query } = useFilterStore();
 
-  return useQuery<Playlist[]>({
+  return useInfiniteQuery<Playlist[]>({
     queryKey: ['playlists', { genre, mood, place, era, sort, channelId, query }],
-    queryFn: async () => {
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+      // 마지막 페이지 결과가 PAGE_SIZE 미만이면 더 이상 없음
+      if (lastPage.length < PAGE_SIZE) return undefined;
+      return (lastPageParam as number) + 1;
+    },
+    queryFn: async ({ pageParam }) => {
       const supabase = createClient();
+      const page = pageParam as number;
+      const from = page * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
       const term = query.trim().replace(/[%_]/g, '\\$&');
 
       // 트랙 검색: 검색어가 있을 때 title/artist 매칭되는 playlist_id 수집
@@ -37,7 +49,6 @@ export function usePlaylists() {
       if (era.length > 0) q = q.overlaps('era', era);
 
       if (term) {
-        // 플리 제목/채널명 OR 트랙 제목/아티스트 매칭
         const titleFilter = `title.ilike.%${term}%,channel_name.ilike.%${term}%`;
         if (trackPlaylistIds.length > 0) {
           q = q.or(`${titleFilter},id.in.(${trackPlaylistIds.join(',')})`);
@@ -50,9 +61,10 @@ export function usePlaylists() {
       else if (sort === 'likes') q = q.order('like_count', { ascending: false });
       else if (sort === 'views') q = q.order('view_count', { ascending: false });
 
-      const { data, error } = await q;
+      const { data, error } = await q.range(from, to);
       if (error) throw new Error(error.message);
-      return data as Playlist[];
+      return (data ?? []) as Playlist[];
     },
+    placeholderData: (prev) => prev, // Plan SC: 필터 변경 시 이전 데이터 유지하며 부드럽게 교체
   });
 }
