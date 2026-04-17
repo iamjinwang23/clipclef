@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import type { Playlist } from '@/types';
+import ChannelAvatar from './ChannelAvatar';
 
 interface PlaylistCardProps {
   playlist: Playlist;
@@ -55,13 +56,16 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
         <p className="text-sm font-medium line-clamp-2 leading-snug group-hover:text-[var(--text-secondary)] transition-colors">
           {playlist.title}
         </p>
-        <p className="text-xs text-[var(--subtle)] mt-0.5 truncate">{playlist.channel_name}</p>
+        <div className="flex items-center gap-1.5 mt-0.5">
+          <ChannelAvatar channelId={playlist.channel_id} channelName={playlist.channel_name} size={14} />
+          <p className="text-xs text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
+        </div>
         {playlist.editor_note && (
           <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2 italic leading-relaxed">
             "{playlist.editor_note}"
           </p>
         )}
-        <div className="flex items-center gap-3 text-xs text-[var(--subtle)] mt-1">
+        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] mt-1">
           <span className="flex items-center gap-0.5">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             {playlist.like_count.toLocaleString()}
