@@ -16,5 +16,5 @@ export default async function AdminPage({
     redirect(`/${locale}`);
   }
 
-  return <AdminContent />;
+  return <AdminContent uploadedBy={user.id} />;
 }

@@ -34,7 +34,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'dashboard',   label: '방문자 대시보드' },
 ];
 
-export default function AdminContent() {
+export default function AdminContent({ uploadedBy }: { uploadedBy?: string }) {
   const { fetchTracks } = useAdminPlaylists();
   const [activeTab, setActiveTab] = useState<Tab>('playlists');
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
@@ -87,6 +87,7 @@ export default function AdminContent() {
                 key={editTarget?.playlist.id ?? 'new'}
                 editTarget={editTarget ?? undefined}
                 onComplete={handleComplete}
+                uploadedBy={uploadedBy}
               />
             </div>
           </section>
