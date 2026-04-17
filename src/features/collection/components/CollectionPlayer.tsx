@@ -121,24 +121,22 @@ export default function CollectionPlayer({
         <div ref={iframeContainerRef} />
       </div>
 
-      {/* 딤 오버레이 — 트랙리스트 열릴 때 */}
+      {/* 딤 오버레이 — 트랙리스트 열릴 때 (모바일 하단 탭바 위로 올림) */}
       {currentIndex !== null && (
         <div
           onClick={onToggleTracklist}
-          className="fixed inset-0 z-30 bg-black transition-opacity duration-300"
+          className="fixed left-0 right-0 top-0 z-30 bg-black transition-opacity duration-300 bottom-[calc(64px+56px+env(safe-area-inset-bottom))] sm:bottom-16"
           style={{
-            bottom: 64,
             opacity: isTracklistOpen ? 0.8 : 0,
             pointerEvents: isTracklistOpen ? 'auto' : 'none',
           }}
         />
       )}
 
-      {/* 트랙리스트 패널 — 재생 중일 때만 마운트 */}
+      {/* 트랙리스트 패널 — 재생 중일 때만 마운트 (모바일 하단 탭바 위로 올림) */}
       {currentIndex !== null && <div
-        className="fixed left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] overflow-y-auto transition-transform duration-300 ease-in-out"
+        className="fixed left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] overflow-y-auto transition-transform duration-300 ease-in-out bottom-[calc(64px+56px+env(safe-area-inset-bottom))] sm:bottom-16"
         style={{
-          bottom: 64,
           maxHeight: '60vh',
           transform: isTracklistOpen ? 'translateY(0)' : 'translateY(100%)',
         }}
@@ -207,11 +205,11 @@ export default function CollectionPlayer({
         )}
       </div>}
 
-      {/* 하단 플레이어 바 */}
+      {/* 하단 플레이어 바 — 모바일에선 탭바(56px + safe-area) 위에 고정 */}
       {currentIndex !== null && (
         <div
-          className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)]"
-          style={{ height: 64, paddingBottom: 'env(safe-area-inset-bottom)' }}
+          className="fixed left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] bottom-[calc(56px+env(safe-area-inset-bottom))] sm:bottom-0 sm:pb-[env(safe-area-inset-bottom)]"
+          style={{ height: 64 }}
         >
           {/* body 정렬 컨테이너 — 썸네일(좌) / 컨트롤(중앙) / 트랙리스트(우) */}
           <div className="max-w-4xl mx-auto px-4 h-full grid grid-cols-3 items-center">
