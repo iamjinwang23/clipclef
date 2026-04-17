@@ -110,7 +110,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
             <table className="w-full text-sm table-fixed">
               <colgroup>
                 <col className="w-8" />
-                <col />                              {/* 모바일: 나머지 전부 */}
+                <col />
                 <col className="hidden md:table-column w-[25%]" />
                 <col className="w-12" />
               </colgroup>
