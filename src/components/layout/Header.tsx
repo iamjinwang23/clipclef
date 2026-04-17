@@ -207,8 +207,6 @@ function DesktopSearchBar() {
   );
 }
 
-const TAB_ROOTS = new Set(['/upload', '/search', '/me/notifications', '/me/profile']);
-
 // ─── Header ──────────────────────────────────────────────────────────────────
 export default function Header() {
   const t = useTranslations('common');
@@ -217,10 +215,14 @@ export default function Header() {
   const pathname = usePathname();
   const supabase = createClient();
 
-  const isTabRoot =
-    pathname === `/${locale}` ||
-    pathname === `/${locale}/` ||
-    TAB_ROOTS.has(pathname.replace(`/${locale}`, ''));
+  const isTabRoot = [
+    `/${locale}`,
+    `/${locale}/`,
+    `/${locale}/search`,
+    `/${locale}/upload`,
+    `/${locale}/me/notifications`,
+    `/${locale}/me/profile`,
+  ].includes(pathname);
 
   const [user, setUser] = useState<User | null>(null);
   const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | undefined>(undefined);
