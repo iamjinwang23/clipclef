@@ -14,24 +14,23 @@ export function useComments(playlistId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('comments')
-        .select(`
-          *,
-          profiles(display_name, avatar_url, is_verified),
-          replies:comments!comments_parent_id_fkey(
-            *,
-            profiles(display_name, avatar_url, is_verified)
-          )
-        `)
+        .select('*, profiles(display_name, avatar_url, is_verified)')
         .eq('playlist_id', playlistId)
-        .is('parent_id', null)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: true });
       if (error) throw error;
-      return (data as Comment[]).map((c) => ({
-        ...c,
-        replies: (c.replies ?? []).sort(
-          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        ),
-      }));
+      const all = data as Comment[];
+      const replyMap = new Map<string, Comment[]>();
+      for (const c of all) {
+        if (c.parent_id) {
+          const bucket = replyMap.get(c.parent_id) ?? [];
+          bucket.push(c);
+          replyMap.set(c.parent_id, bucket);
+        }
+      }
+      return all
+        .filter((c) => !c.parent_id)
+        .map((c) => ({ ...c, replies: replyMap.get(c.id) ?? [] }))
+        .reverse();
     },
   });
 
