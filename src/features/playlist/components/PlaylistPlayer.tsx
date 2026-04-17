@@ -112,7 +112,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
                 <col className="w-8" />
                 <col />
                 <col className="hidden md:table-column w-[25%]" />
-                <col className="w-12" />
+                <col className="w-14" />
               </colgroup>
               <tbody>
                 {tracksWithStart.map((track, index) => {
