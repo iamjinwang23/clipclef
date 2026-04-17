@@ -14,20 +14,17 @@ function SkeletonCards({ count }: { count: number }) {
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-[var(--card)] rounded-xl overflow-hidden animate-pulse">
-          <div className="aspect-video bg-[var(--muted)]" />
-          <div className="p-4 space-y-2">
-            <div className="h-4 bg-[var(--muted)] rounded w-full" />
-            <div className="h-4 bg-[var(--muted)] rounded w-3/4" />
-            <div className="flex items-center gap-1.5 pt-0.5">
-              <div className="w-4 h-4 rounded-full bg-[var(--muted)] flex-shrink-0" />
-              <div className="h-3 bg-[var(--muted)] rounded w-1/3" />
-            </div>
-            <div className="flex gap-1 pt-0.5">
-              <div className="h-5 w-10 bg-[var(--muted)] rounded" />
-              <div className="h-5 w-12 bg-[var(--muted)] rounded" />
-            </div>
-            <div className="h-3 bg-[var(--muted)] rounded w-8" />
+        <div key={i} className="animate-pulse">
+          <div className="aspect-video rounded-md sm:rounded-xl bg-[var(--muted)] mb-2" />
+          <div className="h-3.5 bg-[var(--muted)] rounded w-full mb-1.5" />
+          <div className="h-3.5 bg-[var(--muted)] rounded w-4/5 mb-1.5" />
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="w-3.5 h-3.5 rounded-full bg-[var(--muted)] flex-shrink-0" />
+            <div className="h-3 bg-[var(--muted)] rounded w-1/3" />
+          </div>
+          <div className="flex gap-3 mt-1">
+            <div className="h-3 w-7 bg-[var(--muted)] rounded" />
+            <div className="h-3 w-7 bg-[var(--muted)] rounded" />
           </div>
         </div>
       ))}

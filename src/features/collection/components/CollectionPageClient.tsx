@@ -2,6 +2,7 @@
 // Design Ref: §3.2 — 상태 소유자. CollectionGrid + CollectionPlayer 조율
 
 import { useState, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import type { Playlist, Track } from '@/types';
 import CollectionGrid from './CollectionGrid';
@@ -13,6 +14,7 @@ interface CollectionPageClientProps {
   collectionTitle: string;
   collectionDescription: string | null;
   itemCount: number;
+  bannerImageUrl: string | null;
 }
 
 export default function CollectionPageClient({
@@ -21,6 +23,7 @@ export default function CollectionPageClient({
   collectionTitle,
   collectionDescription,
   itemCount,
+  bannerImageUrl,
 }: CollectionPageClientProps) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -79,16 +82,6 @@ export default function CollectionPageClient({
     fetchTracks(playlists[prev].id);
   }, [currentIndex, playlists, fetchTracks]);
 
-  // Plan SC-06: 종료
-  const handleStop = useCallback(() => {
-    setCurrentIndex(null);
-    setIsPlaying(false);
-    setIsTracklistOpen(false);
-    setTracks([]);
-    setActiveTrackIndex(null);
-    playerRef.current?.stopVideo?.();
-  }, []);
-
   // 재생/일시정지 토글
   const handleTogglePlay = useCallback(() => {
     setIsPlaying((prev) => !prev);
@@ -125,34 +118,65 @@ export default function CollectionPageClient({
 
   return (
     <div className={currentIndex !== null ? 'pb-20' : ''}>
-      {/* 타이틀 + Spotify 스타일 플레이 버튼 */}
-      <div className="flex items-center justify-between pt-5 pb-4">
-        <div className="min-w-0 pr-4">
-          <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
-            큐레이션 컬렉션 · 플리 {itemCount}개
-          </p>
-          <h1 className="text-2xl font-bold leading-snug whitespace-pre-line">{collectionTitle}</h1>
-          {collectionDescription && (
-            <p className="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-line">{collectionDescription}</p>
-          )}
-        </div>
+      {/* 히어로: 배너 이미지 + 그라디언트 + 타이틀 오버레이 */}
+      <div className="relative -mx-4 w-[calc(100%+2rem)] sm:mx-0 sm:w-full aspect-square sm:aspect-[16/6] sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-6">
+        {bannerImageUrl && (
+          <Image
+            src={bannerImageUrl}
+            alt={collectionTitle}
+            fill
+            className="object-cover"
+            priority
+            sizes="(max-width: 640px) 100vw, 896px"
+          />
+        )}
+        {!bannerImageUrl && (
+          <div className="absolute inset-0 flex flex-col justify-end px-4 sm:px-6 pb-5">
+            <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
+              큐레이션 컬렉션 · 플리 {itemCount}개
+            </p>
+            <h1 className="text-2xl font-bold leading-snug whitespace-pre-line">{collectionTitle}</h1>
+            {collectionDescription && (
+              <p className="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-line">{collectionDescription}</p>
+            )}
+          </div>
+        )}
+        {bannerImageUrl && (
+          <>
+            {/* 하단 그라디언트 오버레이 */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0D0D0D 0%, rgba(13,13,13,0.7) 40%, transparent 100%)' }} />
 
-        {/* 흰색 원 + 검정 아이콘 */}
-        <button
-          onClick={handleTitlePlay}
-          className="flex-shrink-0 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform duration-150"
-          aria-label={showPause ? '일시정지' : '처음부터 재생'}
-        >
-          {showPause ? (
-            <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-            </svg>
-          ) : (
-            <svg className="w-8 h-8 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </button>
+            {/* 타이틀 + 플레이 버튼 */}
+            <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 pb-5 pt-10 flex items-end justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
+                  큐레이션 컬렉션 · 플리 {itemCount}개
+                </p>
+                <h1 className="text-2xl font-bold leading-snug whitespace-pre-line text-white">{collectionTitle}</h1>
+                {collectionDescription && (
+                  <p className="text-sm text-white/70 mt-1 whitespace-pre-line">{collectionDescription}</p>
+                )}
+              </div>
+
+              {/* 흰색 원 + 검정 아이콘 */}
+              <button
+                onClick={handleTitlePlay}
+                className="flex-shrink-0 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-transform duration-150"
+                aria-label={showPause ? '일시정지' : '처음부터 재생'}
+              >
+                {showPause ? (
+                  <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <CollectionGrid
