@@ -145,17 +145,39 @@ export async function fetchTheAudioDB(mbid: string): Promise<TheAudioDBData | nu
  * 아티스트명으로 Wikipedia 한국어 요약 조회.
  * @returns extract 문자열 (최대 500자) 또는 null
  */
-export async function fetchWikipediaBio(name: string): Promise<string | null> {
+/**
+ * MBID로 MusicBrainz URL 관계에서 Wikipedia 링크를 찾아 정확한 바이오를 반환.
+ * 동명이인 disambiguation 문제를 방지.
+ */
+export async function fetchWikipediaBio(mbid: string): Promise<string | null> {
   try {
-    const encoded = encodeURIComponent(name);
-    const url = `https://ko.wikipedia.org/api/rest_v1/page/summary/${encoded}`;
-    const res = await fetch(url, { next: { revalidate: 0 } });
-
+    const res = await fetch(
+      `${MB_BASE}/artist/${mbid}?inc=url-rels&fmt=json`,
+      { headers: { 'User-Agent': MB_USER_AGENT }, next: { revalidate: 0 } }
+    );
     if (!res.ok) return null;
 
     const data = await res.json();
-    const extract: string = data?.extract ?? '';
-    return extract ? extract.slice(0, 500) : null;
+    const relations: { type: string; url: { resource: string } }[] = data?.relations ?? [];
+
+    const wikiRel = relations.find(
+      (r) => r.type === 'wikipedia' && r.url?.resource?.includes('wikipedia.org')
+    );
+    if (!wikiRel) return null;
+
+    const wikiUrl = wikiRel.url.resource;
+    const match = wikiUrl.match(/(\w+)\.wikipedia\.org\/wiki\/(.+)/);
+    if (!match) return null;
+
+    const [, lang, title] = match;
+    const summaryRes = await fetch(
+      `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${title}`,
+      { next: { revalidate: 0 } }
+    );
+    if (!summaryRes.ok) return null;
+
+    const summary = await summaryRes.json();
+    return summary?.extract?.slice(0, 500) ?? null;
   } catch {
     return null;
   }

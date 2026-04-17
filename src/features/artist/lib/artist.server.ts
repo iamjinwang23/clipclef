@@ -94,7 +94,7 @@ export async function fetchArtistWithCache(
   const [fanart, audiodb, wikiBio] = await Promise.all([
     fetchFanartImages(resolvedMbid),
     fetchTheAudioDB(resolvedMbid),
-    fetchWikipediaBio(artistName),
+    fetchWikipediaBio(resolvedMbid),
   ]);
 
   const row = {
