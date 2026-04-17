@@ -129,11 +129,11 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
                         {isActive ? (
                           <span className="text-[var(--accent)] text-xs">▶</span>
                         ) : (
-                          <span className="text-[var(--text-secondary)] tabular-nums">{track.position}</span>
+                          <span className="text-white font-bold tabular-nums">{track.position}</span>
                         )}
                       </td>
                       <td className="py-3.5 px-2 overflow-hidden">
-                        <p className="font-medium truncate">{track.title}</p>
+                        <p className="font-bold truncate">{track.title}</p>
                         {track.artist && (
                           <p className="md:hidden text-xs text-[var(--text-secondary)] truncate mt-0.5">{track.artist}</p>
                         )}
