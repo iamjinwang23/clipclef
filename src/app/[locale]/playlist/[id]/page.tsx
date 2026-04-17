@@ -106,20 +106,6 @@ export default async function PlaylistDetailPage({
           </blockquote>
         )}
 
-        {/* 태그 */}
-        {allTags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {allTags.map((tag) => (
-              <span
-                key={tag}
-                className="text-sm px-2.5 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded-full"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* 액션 버튼 */}
         <div className="flex items-center gap-2 mb-2">
           <LikeButton playlistId={p.id} initialCount={p.like_count} />
@@ -138,7 +124,21 @@ export default async function PlaylistDetailPage({
         </div>
       </PlaylistPlayer>
 
-      {/* 아티스트 카드 — 트랙리스트 아래, 댓글 위 */}
+      {/* 태그 */}
+      {allTags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mt-6">
+          {allTags.map((tag) => (
+            <span
+              key={tag}
+              className="text-sm px-2.5 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* 아티스트 카드 */}
       {artistSlugs.length > 0 && (
         <ArtistStrip artists={artistSlugs} locale={locale} />
       )}
