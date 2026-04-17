@@ -5,7 +5,7 @@
 // ─── 유틸 (lastfm.ts에서 이전) ───────────────────────────────────────────────
 
 const FEATURING_RE = /\s+(ft\.|feat\.|featuring|×|x\s|\s&\s|\s\/\s|with)\s.*/i;
-const PARENS_RE = /\s+\([^)]*\)/g;
+const PARENS_RE = /\s*\([^)]*\)/g;
 const SLUG_ALLOWED_RE = /[^a-z0-9-]/g;
 const CONSECUTIVE_HYPHEN_RE = /-{2,}/g;
 
