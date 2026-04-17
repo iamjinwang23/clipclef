@@ -51,7 +51,7 @@ export default async function ArtistPage({
           <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
             출연 플레이리스트
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {playlists.map((playlist) => (
               <PlaylistCard key={playlist.id} playlist={playlist} />
             ))}
