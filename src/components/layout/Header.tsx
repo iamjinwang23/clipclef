@@ -298,9 +298,7 @@ export default function Header() {
             )}
             <Link href={`/${locale}`} className="flex items-center flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.svg" alt="ClipClef" className="hidden sm:block h-6 w-auto" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/mobile_logo.svg" alt="ClipClef" className="sm:hidden h-6 w-auto" />
+              <img src="/logo.svg" alt="ClipClef" className="h-6 w-auto" />
             </Link>
           </div>
 
