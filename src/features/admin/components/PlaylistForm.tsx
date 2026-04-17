@@ -119,10 +119,18 @@ function TrackEditor({ tracks, onChange }: { tracks: TrackRow[]; onChange: (t: T
 
   const handleTimeBlur = (i: number) => {
     const raw = timeInputs[i];
-    // ':' 없이 숫자만 입력한 경우 자동 포맷 (예: "1234" → "12:34")
     const formatted = raw.includes(':') ? raw : autoFormatDigits(raw);
     const sec = timestampToSeconds(formatted);
-    onChange(tracks.map((t, idx) => (idx === i ? { ...t, start_sec: sec } : t)));
+    const updated = tracks.map((t, idx) => (idx === i ? { ...t, start_sec: sec } : t));
+    // start_sec 변경 시 인접 트랙의 duration_sec 재계산
+    const withDuration = updated.map((t, idx) => {
+      const next = updated[idx + 1];
+      if (t.start_sec !== null && next && next.start_sec !== null) {
+        return { ...t, duration_sec: next.start_sec - t.start_sec };
+      }
+      return t;
+    });
+    onChange(withDuration);
     setTimeInputs((prev) =>
       prev.map((v, idx) => (idx === i ? secondsToTimestamp(sec) : v))
     );
