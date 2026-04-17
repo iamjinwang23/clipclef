@@ -33,16 +33,7 @@ export default async function NotificationsPage({
   return (
     <div className="max-w-lg mx-auto px-0">
       {/* 헤더 */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-[var(--border)]">
-        <Link
-          href={`/${locale}/me/profile`}
-          className="p-1 -ml-1 text-[var(--foreground)] hover:text-[var(--text-secondary)] transition-colors"
-          aria-label="뒤로"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </Link>
+      <div className="px-4 py-4 border-b border-[var(--border)]">
         <h1 className="text-base font-semibold text-[var(--foreground)]">알림</h1>
       </div>
 
