@@ -29,7 +29,7 @@ export default function ArtistCard({ name, slug, imageUrl, locale }: ArtistCardP
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-lg font-bold text-[var(--text-secondary)]">
-            {initial}
+            /{initial}
           </div>
         )}
       </div>
