@@ -23,9 +23,7 @@ export default async function ArtistPage({
   const artist = await fetchArtistWithCache(slug, artistName);
   if (!artist) notFound();
 
-  const [playlists] = await Promise.all([
-    getArtistPlaylists(extractMainArtist(artist.name)),
-  ]);
+  const playlists = await getArtistPlaylists(extractMainArtist(artist.name!));
 
   return (
     <div className="max-w-4xl mx-auto px-4 pb-10">
@@ -33,7 +31,6 @@ export default async function ArtistPage({
       <ArtistHero
         name={artist.name}
         imageUrl={artist.image_url}
-        listeners={artist.listeners}
       />
 
       {/* 바이오그래피 */}

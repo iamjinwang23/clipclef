@@ -1,7 +1,7 @@
 {
-  "feature": "youchoose-playlist-archive",
-  "projectName": "YouClef",
-  "phase": "do",
+  "feature": "artist-api-refactor",
+  "projectName": "ClipClef",
+  "phase": "design",
   "completedModules": [
     "module-1",
     "module-2"
@@ -27,9 +27,9 @@
   },
   "notes": "Supabase 프로젝트 미생성 - .env.local에 실제 값 입력 필요",
   "updatedAt": "2026-04-06",
-  "sessionCount": 17,
+  "sessionCount": 34,
   "lastSession": {
-    "startedAt": "2026-04-12T03:22:39.250Z",
+    "startedAt": "2026-04-17T13:19:50.365Z",
     "platform": "claude",
     "level": "Dynamic"
   }

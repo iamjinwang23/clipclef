@@ -4,16 +4,9 @@ import Image from 'next/image';
 interface ArtistHeroProps {
   name: string;
   imageUrl: string | null;
-  listeners: number | null;
 }
 
-function formatListeners(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M listeners`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K listeners`;
-  return `${n} listeners`;
-}
-
-export default function ArtistHero({ name, imageUrl, listeners }: ArtistHeroProps) {
+export default function ArtistHero({ name, imageUrl }: ArtistHeroProps) {
   const initial = name.charAt(0).toUpperCase();
 
   return (
@@ -39,10 +32,7 @@ export default function ArtistHero({ name, imageUrl, listeners }: ArtistHeroProp
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 pb-5 pt-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight">{name}</h1>
-        {listeners !== null && listeners > 0 && (
-          <p className="text-sm text-white/70 mt-1">{formatListeners(listeners)}</p>
-        )}
-      </div>
+        </div>
     </div>
   );
 }

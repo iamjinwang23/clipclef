@@ -10,7 +10,8 @@
       "Bash(python3:*)",
       "Skill(bkit:pdca)",
       "Bash(npx vercel:*)",
-      "mcp__claude_ai_Vercel__list_deployments"
+      "mcp__claude_ai_Vercel__list_deployments",
+      "Bash(npx tsc *)"
     ]
   }
 }

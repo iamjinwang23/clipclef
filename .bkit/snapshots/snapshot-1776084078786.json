@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-04-12T01:43:11.657Z",
+  "timestamp": "2026-04-13T12:41:18.785Z",
   "reason": "compaction",
   "status": {
     "version": "3.0",
-    "lastUpdated": "2026-04-12T01:42:49.477Z",
+    "lastUpdated": "2026-04-13T12:40:48.960Z",
     "activeFeatures": [
       "youchoose",
       "supabase",
@@ -31,7 +31,11 @@
       "privacy",
       "upload",
       "settings",
-      "ui"
+      "ui",
+      "pip",
+      "check-name",
+      "notification",
+      "notifications"
     ],
     "primaryFeature": "youchoose",
     "features": {
@@ -44,9 +48,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:19:36.507Z",
-          "lastUpdated": "2026-04-11T17:58:31.572Z"
+          "lastUpdated": "2026-04-13T12:09:00.896Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/next.config.ts"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/types/index.ts"
       },
       "supabase": {
         "phase": "do",
@@ -83,7 +87,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:21:09.844Z",
-          "lastUpdated": "2026-04-12T01:25:33.088Z"
+          "lastUpdated": "2026-04-13T11:51:27.483Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/components/layout/Header.tsx"
       },
@@ -96,7 +100,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:21:17.277Z",
-          "lastUpdated": "2026-04-12T01:27:15.933Z"
+          "lastUpdated": "2026-04-12T14:12:17.561Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/layout.tsx"
       },
@@ -109,7 +113,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:21:30.009Z",
-          "lastUpdated": "2026-04-11T16:43:11.869Z"
+          "lastUpdated": "2026-04-12T06:56:36.811Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/filter/components/FilterBar.tsx"
       },
@@ -122,9 +126,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:22:14.498Z",
-          "lastUpdated": "2026-04-12T01:32:37.581Z"
+          "lastUpdated": "2026-04-13T12:40:48.958Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/playlist/components/CuratedCollectionSection.tsx"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/playlist/components/PlaylistCard.tsx"
       },
       "callback": {
         "phase": "do",
@@ -148,7 +152,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:22:50.986Z",
-          "lastUpdated": "2026-04-12T01:42:49.475Z"
+          "lastUpdated": "2026-04-13T12:19:04.911Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/playlist/[id]/page.tsx"
       },
@@ -161,9 +165,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:22:56.358Z",
-          "lastUpdated": "2026-04-07T14:57:38.133Z"
+          "lastUpdated": "2026-04-12T15:21:58.806Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/collection/page.tsx"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/collection/components/CollectionPageClient.tsx"
       },
       "admin": {
         "phase": "do",
@@ -174,9 +178,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T13:23:00.422Z",
-          "lastUpdated": "2026-04-11T17:48:14.237Z"
+          "lastUpdated": "2026-04-13T12:09:30.894Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/admin/components/CollectionManager.tsx"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/admin/components/PlaylistForm.tsx"
       },
       "interaction": {
         "phase": "do",
@@ -187,9 +191,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T14:02:26.965Z",
-          "lastUpdated": "2026-04-11T15:43:36.369Z"
+          "lastUpdated": "2026-04-13T11:46:20.322Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/interaction/components/CollectionButton.tsx"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/interaction/components/CommentList.tsx"
       },
       "youtube": {
         "phase": "do",
@@ -239,9 +243,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-06T15:36:59.664Z",
-          "lastUpdated": "2026-04-11T11:59:40.144Z"
+          "lastUpdated": "2026-04-13T11:27:01.679Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/me/profile/page.tsx"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/me/profile/ProfileForm.tsx"
       },
       "channels": {
         "phase": "do",
@@ -330,7 +334,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-11T07:07:30.168Z",
-          "lastUpdated": "2026-04-11T12:15:50.993Z"
+          "lastUpdated": "2026-04-12T05:25:53.061Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/terms/page.tsx"
       },
@@ -343,7 +347,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-11T07:07:53.714Z",
-          "lastUpdated": "2026-04-11T12:16:02.104Z"
+          "lastUpdated": "2026-04-12T05:26:05.318Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/privacy/page.tsx"
       },
@@ -369,7 +373,7 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-11T11:00:50.753Z",
-          "lastUpdated": "2026-04-11T11:00:50.753Z"
+          "lastUpdated": "2026-04-13T11:25:25.821Z"
         },
         "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/me/settings/page.tsx"
       },
@@ -382,9 +386,61 @@
         "documents": {},
         "timestamps": {
           "started": "2026-04-11T11:48:23.679Z",
-          "lastUpdated": "2026-04-11T14:57:22.120Z"
+          "lastUpdated": "2026-04-13T11:26:41.044Z"
         },
-        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/components/ui/SearchOverlay.tsx"
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/components/ui/AvatarUploadButton.tsx"
+      },
+      "pip": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-12T13:55:29.048Z",
+          "lastUpdated": "2026-04-12T14:10:00.566Z"
+        },
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/pip/components/PipPlayerLoader.tsx"
+      },
+      "check-name": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-13T11:24:55.475Z",
+          "lastUpdated": "2026-04-13T11:24:55.475Z"
+        },
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/api/profiles/check-name/route.ts"
+      },
+      "notification": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-13T11:46:13.048Z",
+          "lastUpdated": "2026-04-13T11:51:44.375Z"
+        },
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/features/notification/components/NotificationBell.tsx"
+      },
+      "notifications": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-04-13T11:49:36.160Z",
+          "lastUpdated": "2026-04-13T11:51:50.311Z"
+        },
+        "lastFile": "/Users/jinwang/Desktop/Claude Code Workspace/youchoose/src/app/[locale]/me/notifications/page.tsx"
       }
     },
     "pipeline": {
@@ -395,7 +451,7 @@
     "session": {
       "startedAt": "2026-04-06T12:38:33.544Z",
       "onboardingCompleted": false,
-      "lastActivity": "2026-04-12T01:42:49.477Z"
+      "lastActivity": "2026-04-13T12:40:48.960Z"
     },
     "history": [
       {
@@ -2969,6 +3025,846 @@
       {
         "timestamp": "2026-04-12T01:42:49.477Z",
         "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T01:44:31.137Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T01:44:40.967Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T01:45:09.106Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T01:45:48.136Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:12:52.394Z",
+        "feature": "interaction",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:12:59.706Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:13:04.800Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:08.123Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:13.262Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:18.325Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:23.407Z",
+        "feature": "youchoose",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:42.295Z",
+        "feature": "interaction",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:51.727Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T02:28:55.990Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T03:01:52.555Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T03:08:38.706Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T03:08:47.235Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T03:08:52.014Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T03:13:18.683Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T04:04:11.377Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T04:53:28.049Z",
+        "feature": "profile",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T04:58:55.863Z",
+        "feature": "profile",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:13:17.986Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:23:50.231Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:24:06.417Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:24:48.278Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:25:09.505Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:25:35.096Z",
+        "feature": "terms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:25:53.062Z",
+        "feature": "terms",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T05:26:05.319Z",
+        "feature": "privacy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:02:44.732Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:02:52.228Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:08:58.203Z",
+        "feature": "interaction",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:09:34.823Z",
+        "feature": "interaction",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:10:08.886Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:19:01.080Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:20:55.166Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:56:36.813Z",
+        "feature": "filter",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:56:58.317Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:57:09.985Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T06:57:14.800Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:15:08.101Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:20:13.288Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:35:16.756Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:35:27.398Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:28.323Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:36.975Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:41.158Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:45.127Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:48.394Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:52.164Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:45:55.709Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:46:03.895Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:46:09.486Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:54:32.435Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T07:59:01.019Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T08:01:48.618Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T08:54:46.506Z",
+        "feature": "youchoose",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T08:56:55.977Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T08:57:00.160Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T08:57:03.819Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:30:51.470Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:31:30.570Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:31:34.803Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:31:40.153Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:31:46.618Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:48:23.109Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:48:28.643Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:48:44.806Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:48:51.135Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T10:48:55.637Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:04:22.995Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:16:40.362Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:16:50.635Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:16:56.689Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:17:02.432Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:17:10.565Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T11:17:25.120Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:28:36.060Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:55:29.049Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:55:35.215Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:56:02.819Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:56:26.366Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:56:30.194Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:56:33.754Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T13:56:36.951Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:04:04.822Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:04:21.727Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:04:26.830Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:06:44.395Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:06:48.579Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:06:59.570Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:10:00.567Z",
+        "feature": "pip",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:10:06.297Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:10:09.070Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:12:14.609Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:12:17.562Z",
+        "feature": "[locale]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:12:21.337Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:12:40.894Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:44:31.717Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:44:46.805Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:45:06.761Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:45:10.778Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:45:18.836Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:53:40.756Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:53:46.213Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:53:54.646Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:53:59.692Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:54:04.744Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:56:42.377Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T14:59:21.550Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T15:13:20.786Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T15:15:33.341Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T15:20:46.368Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T15:20:54.697Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-12T15:21:58.808Z",
+        "feature": "collection",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:24:46.345Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:24:55.476Z",
+        "feature": "check-name",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:25:15.696Z",
+        "feature": "profile",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:25:20.499Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:25:25.822Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:25:33.850Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:25:37.599Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:26:41.046Z",
+        "feature": "ui",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:27:01.680Z",
+        "feature": "profile",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:46:13.050Z",
+        "feature": "notification",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:46:17.222Z",
+        "feature": "interaction",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:46:20.324Z",
+        "feature": "interaction",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:47:28.004Z",
+        "feature": "notification",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:47:53.813Z",
+        "feature": "notification",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:49:36.161Z",
+        "feature": "notifications",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:51:19.620Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:51:27.484Z",
+        "feature": "layout",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:51:44.376Z",
+        "feature": "notification",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T11:51:50.312Z",
+        "feature": "notifications",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T12:09:00.898Z",
+        "feature": "youchoose",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T12:09:12.712Z",
+        "feature": "playlist",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T12:09:30.895Z",
+        "feature": "admin",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T12:19:04.913Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-04-13T12:40:48.960Z",
+        "feature": "playlist",
         "phase": "do",
         "action": "updated"
       }

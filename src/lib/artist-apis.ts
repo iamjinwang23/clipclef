@@ -90,7 +90,7 @@ export async function fetchFanartImages(mbid: string): Promise<FanartImages | nu
 
   try {
     const url = `https://webservice.fanart.tv/v3/music/${encodeURIComponent(mbid)}?api_key=${apiKey}`;
-    const res = await fetch(url, { next: { revalidate: 0 } });
+    const res = await fetch(url, { next: { revalidate: 86400 } });
 
     if (!res.ok) return null;
 
@@ -118,7 +118,7 @@ export async function fetchTheAudioDB(mbid: string): Promise<TheAudioDBData | nu
 
   try {
     const url = `https://www.theaudiodb.com/api/v1/json/${apiKey}/artist-mb.php?i=${encodeURIComponent(mbid)}`;
-    const res = await fetch(url, { next: { revalidate: 0 } });
+    const res = await fetch(url, { next: { revalidate: 86400 } });
 
     if (!res.ok) return null;
 
@@ -130,7 +130,7 @@ export async function fetchTheAudioDB(mbid: string): Promise<TheAudioDBData | nu
       strArtistThumb: artist.strArtistThumb ?? null,
       strArtistFanart: artist.strArtistFanart ?? null,
       strBiographyEN: artist.strBiographyEN
-        ? (artist.strBiographyEN as string).slice(0, 500)
+        ? trimBio(artist.strBiographyEN as string)
         : null,
     };
   } catch {
@@ -153,7 +153,7 @@ export async function fetchWikipediaBio(mbid: string): Promise<string | null> {
   try {
     const res = await fetch(
       `${MB_BASE}/artist/${mbid}?inc=url-rels&fmt=json`,
-      { headers: { 'User-Agent': MB_USER_AGENT }, next: { revalidate: 0 } }
+      { headers: { 'User-Agent': MB_USER_AGENT }, next: { revalidate: 86400 } }
     );
     if (!res.ok) return null;
 
@@ -172,18 +172,25 @@ export async function fetchWikipediaBio(mbid: string): Promise<string | null> {
     const [, lang, title] = match;
     const summaryRes = await fetch(
       `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${title}`,
-      { next: { revalidate: 0 } }
+      { next: { revalidate: 86400 } }
     );
     if (!summaryRes.ok) return null;
 
     const summary = await summaryRes.json();
-    return summary?.extract?.slice(0, 500) ?? null;
+    return summary?.extract ? trimBio(summary.extract) : null;
   } catch {
     return null;
   }
 }
 
 // ─── 폴백 헬퍼 ───────────────────────────────────────────────────────────────
+
+function trimBio(text: string, maxLen = 500): string {
+  if (text.length <= maxLen) return text;
+  const cut = text.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut) + '…';
+}
 // Design Ref: §3.5 — 이미지·바이오 폴백 체인
 
 /**
