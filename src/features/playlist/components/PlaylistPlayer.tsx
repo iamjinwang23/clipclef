@@ -102,7 +102,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
 
       {/* 트랙리스트 */}
       {tracks.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-6 md:-mx-10 lg:-mx-20">
           <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
             트랙리스트
           </h2>
