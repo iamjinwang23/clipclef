@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Playlist } from '@/types';
+import ChannelAvatar from '@/features/playlist/components/ChannelAvatar';
 
 interface CollectionGridProps {
   playlists: Playlist[];
@@ -24,7 +25,7 @@ export default function CollectionGrid({ playlists, currentIndex, locale, onPlay
             <Link href={`/${locale}/playlist/${playlist.id}`}>
               {/* 썸네일 */}
               <div
-                className={`relative w-full aspect-video rounded-xl overflow-hidden bg-[var(--muted)] mb-2 transition-all duration-200 ${
+                className={`relative w-full aspect-video rounded-md sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-2 transition-all duration-200 ${
                   isActive ? 'ring-2 ring-[var(--accent)]' : ''
                 }`}
               >
@@ -87,13 +88,16 @@ export default function CollectionGrid({ playlists, currentIndex, locale, onPlay
 
               {/* 제목 */}
               <p
-                className={`text-sm font-medium line-clamp-2 leading-snug transition-colors ${
-                  isActive ? 'text-[var(--accent)]' : 'group-hover:text-[var(--text-secondary)]'
+                className={`text-sm font-medium line-clamp-2 leading-snug ${
+                  isActive ? 'text-[var(--accent)]' : ''
                 }`}
               >
                 {playlist.title}
               </p>
-              <p className="text-xs text-[var(--subtle)] mt-0.5 truncate">{playlist.channel_name}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <ChannelAvatar channelId={playlist.channel_id} channelName={playlist.channel_name} size={14} />
+                <p className="text-xs text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
+              </div>
               {playlist.editor_note && (
                 <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2 italic leading-relaxed">
                   "{playlist.editor_note}"

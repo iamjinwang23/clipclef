@@ -19,7 +19,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
     <div className="group relative">
       <Link href={`/${locale}/playlist/${playlist.id}`}>
         {/* 썸네일 */}
-        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-[var(--muted)] mb-2">
+        <div className="relative w-full aspect-video rounded-md sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-2">
           <Image
             src={playlist.thumbnail_url}
             alt={playlist.title}
@@ -53,7 +53,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
         </div>
 
         {/* 제목 */}
-        <p className="text-sm font-medium line-clamp-2 leading-snug group-hover:text-[var(--text-secondary)] transition-colors">
+        <p className="text-sm font-medium line-clamp-2 leading-snug">
           {playlist.title}
         </p>
         <div className="flex items-center gap-1.5 mt-0.5">

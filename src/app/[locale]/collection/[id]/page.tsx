@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import { createClient } from '@supabase/supabase-js';
 import type { Playlist } from '@/types';
 import CollectionPageClient from '@/features/collection/components/CollectionPageClient';
@@ -45,21 +44,6 @@ export default async function CollectionDetailPage({
 
   return (
     <div>
-      {/* 배너 이미지 (full-width) */}
-      {thumbUrl && (
-        <div className="relative w-full h-64 sm:h-80 overflow-hidden">
-          <Image
-            src={thumbUrl}
-            alt={collection.title}
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-        </div>
-      )}
-
-      {/* 타이틀 + 그리드 + 플레이어 (Client — 플레이 버튼 상태 연동) */}
       <div className="max-w-4xl mx-auto px-4">
         <CollectionPageClient
           playlists={collection.items}
@@ -67,6 +51,7 @@ export default async function CollectionDetailPage({
           collectionTitle={collection.title}
           collectionDescription={collection.description}
           itemCount={collection.items.length}
+          bannerImageUrl={thumbUrl ?? null}
         />
       </div>
     </div>
