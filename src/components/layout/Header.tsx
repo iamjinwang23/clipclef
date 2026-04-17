@@ -308,7 +308,7 @@ export default function Header() {
                 {/* +만들기 — 데스크톱: 텍스트, 모바일: 아이콘 */}
                 <Link
                   href={`/${locale}/upload`}
-                  className="hidden sm:flex items-center text-sm font-medium px-3 py-1.5 rounded-full border border-[var(--border)] text-[var(--foreground)] hover:border-[var(--subtle)] transition-colors flex-shrink-0"
+                  className="hidden sm:flex items-center text-sm font-medium px-3 py-1.5 rounded-full bg-white text-black hover:bg-white/90 transition-colors flex-shrink-0"
                 >
                   + 만들기
                 </Link>
