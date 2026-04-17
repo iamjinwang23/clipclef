@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { routing } from '@/i18n/routing';
 import QueryProvider from './QueryProvider';
 import Header from '@/components/layout/Header';
+import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import '../globals.css';
 
@@ -40,7 +41,8 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-14 sm:pb-0">{children}</main>
+            <MobileBottomNav />
             <AuthErrorToast />
             <footer className="pt-20 pb-10 text-sm text-[var(--subtle)]">
               <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
