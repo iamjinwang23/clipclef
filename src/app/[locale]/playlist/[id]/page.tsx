@@ -34,14 +34,15 @@ export default async function PlaylistDetailPage({
   const t = (tracks ?? []) as Track[];
 
   // FK embed가 null을 반환해도 uploaded_by가 있으면 프로필을 별도 조회하여 fallback
-  let uploader = p.uploader ?? null;
+  type UploaderInfo = { display_name: string | null; avatar_url: string | null; is_verified: boolean };
+  let uploader: UploaderInfo | null = p.uploader ?? null;
   if (p.uploaded_by && !uploader) {
     const { data: uploaderRow } = await supabase
       .from('profiles')
       .select('display_name, avatar_url, is_verified')
       .eq('id', p.uploaded_by)
       .single();
-    if (uploaderRow) uploader = uploaderRow as typeof uploader;
+    if (uploaderRow) uploader = uploaderRow as UploaderInfo;
   }
   const allTags = [...p.genre, ...p.mood, ...p.place, ...p.era];
 

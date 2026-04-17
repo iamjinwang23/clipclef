@@ -24,15 +24,16 @@ function timestampToSeconds(ts: string): number {
   return parts[0] * 60 + parts[1];
 }
 
-function extractArtist(title: string): { cleanTitle: string; artist: string | null } {
-  const match = title.match(/^(.+?)\s*[-–]\s*(.+)$/);
-  if (match) return { artist: match[1].trim(), cleanTitle: match[2].trim() };
-  return { artist: null, cleanTitle: title };
+// 기본 포맷: "제목 - 아티스트" (대다수 한국·글로벌 플리 표기 관행에 맞춤)
+function extractArtist(raw: string): { cleanTitle: string; artist: string | null } {
+  const match = raw.match(/^(.+?)\s*[-–—]\s*(.+)$/);
+  if (match) return { cleanTitle: match[1].trim(), artist: match[2].trim() };
+  return { artist: null, cleanTitle: raw };
 }
 
 function parseTracklist(description: string, totalSec: number): {
   position: number; title: string; artist: string | null;
-  duration_sec: number | null; youtube_video_id: string | null;
+  start_sec: number; duration_sec: number | null; youtube_video_id: string | null;
 }[] {
   const lines = description.split('\n');
   // 타임스탬프 패턴: "0:00", "00:00", "1:23:45" 로 시작하는 줄
@@ -104,7 +105,34 @@ export async function POST(req: NextRequest) {
 
   const totalSec = parseDuration(video.contentDetails.duration);
   const description: string = video.snippet.description ?? '';
-  const tracks = parseTracklist(description, totalSec);
+  let tracks = parseTracklist(description, totalSec);
+
+  // 1차(description) 실패 시 상위 댓글 5개 스캔 — relevance 순 (고정 댓글이 있다면 보통 1번)
+  // 가사 타임스탬프 댓글 등 false-positive 방지:
+  //  - 최소 3개 이상 추출된 경우에만 채택
+  //  - 첫 타임이 60초 이내(실제 트랙리스트는 0:00 근처에서 시작)
+  if (tracks.length === 0) {
+    try {
+      const cRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&order=relevance&maxResults=5&textFormat=plainText&key=${apiKey}`
+      );
+      const cData = await cRes.json();
+      if (!cData.error && Array.isArray(cData.items)) {
+        let best: typeof tracks = [];
+        for (const item of cData.items) {
+          const text: string = item?.snippet?.topLevelComment?.snippet?.textDisplay ?? '';
+          if (!text) continue;
+          const parsed = parseTracklist(text, totalSec);
+          if (parsed.length >= 3 && parsed[0].start_sec < 60 && parsed.length > best.length) {
+            best = parsed;
+          }
+        }
+        tracks = best;
+      }
+    } catch {
+      // 댓글 조회 실패는 조용히 무시 (description 결과로 응답)
+    }
+  }
 
   return NextResponse.json({
     youtube_id: videoId,
