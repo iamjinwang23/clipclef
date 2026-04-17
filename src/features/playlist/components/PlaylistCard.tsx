@@ -1,11 +1,11 @@
 'use client';
-// Design Ref: §5.3 — PlaylistCard: 썸네일, 제목, 채널명, 좋아요수
+// Design Ref: §5.3 — PlaylistCard: CollectionGrid 디자인 통일
+// 썸네일 + 호버 재생 오버레이 + 텍스트 스택 (카드 배경 없음)
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import type { Playlist } from '@/types';
-import ChannelAvatar from './ChannelAvatar';
 
 interface PlaylistCardProps {
   playlist: Playlist;
@@ -13,79 +13,55 @@ interface PlaylistCardProps {
 
 export default function PlaylistCard({ playlist }: PlaylistCardProps) {
   const locale = useLocale();
-  const t = useTranslations('playlist');
 
   return (
-    <Link
-      href={`/${locale}/playlist/${playlist.id}`}
-      className="group block bg-[var(--card)] hover:bg-[var(--card-hover)] rounded-xl overflow-hidden transition-colors duration-200"
-    >
-      {/* 썸네일 */}
-      <div className="relative aspect-video bg-[var(--muted)] overflow-hidden">
-        <Image
-          src={playlist.thumbnail_url}
-          alt={playlist.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        />
-        {/* AI 뱃지 */}
-        {playlist.is_ai && (
-          <div className="absolute top-2 left-2 bg-violet-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-            AI
+    <div className="group relative">
+      <Link href={`/${locale}/playlist/${playlist.id}`}>
+        {/* 썸네일 */}
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-[var(--muted)] mb-2">
+          <Image
+            src={playlist.thumbnail_url}
+            alt={playlist.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          />
+
+          {/* AI 뱃지 */}
+          {playlist.is_ai && (
+            <div className="absolute top-2 left-2 bg-violet-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+              AI
+            </div>
+          )}
+
+          {/* 호버 재생 아이콘 오버레이 (데스크톱) */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="w-11 h-11 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+              <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
           </div>
-        )}
-        {/* 트랙 수 뱃지 */}
-        <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-xs px-1.5 py-0.5 rounded">
-          {t('tracks', { count: Math.max(1, playlist.track_count) })}
-        </div>
-      </div>
 
-      {/* 카드 내용 */}
-      <div className="p-4">
-        <h3 className="font-semibold text-base leading-snug line-clamp-2 mb-2 text-[var(--foreground)]">
+          {/* 모바일: 항상 표시되는 작은 재생 버튼 (우하단) */}
+          <div className="absolute bottom-2 right-2 sm:hidden w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+            <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+
+        {/* 제목 */}
+        <p className="text-sm font-medium line-clamp-2 leading-snug group-hover:text-[var(--text-secondary)] transition-colors">
           {playlist.title}
-        </h3>
-        <div className="flex items-center gap-1.5 mb-2">
-          <ChannelAvatar channelId={playlist.channel_id} channelName={playlist.channel_name} size={16} />
-          <p className="text-sm text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
-        </div>
-
-        {/* 에디터 노트 */}
+        </p>
+        <p className="text-xs text-[var(--subtle)] mt-0.5 truncate">{playlist.channel_name}</p>
         {playlist.editor_note && (
-          <p className="text-sm text-[var(--text-secondary)] italic line-clamp-2 mb-2 leading-relaxed">
+          <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2 italic leading-relaxed">
             "{playlist.editor_note}"
           </p>
         )}
-
-        {/* 태그 */}
-        {!playlist.editor_note && (playlist.genre.length > 0 || playlist.mood.length > 0) && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {[...playlist.genre, ...playlist.mood].slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="text-sm px-2 py-0.5 bg-[var(--muted)] text-[var(--text-secondary)] rounded"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* 좋아요 수 + 댓글 수 */}
-        <div className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
-          <span className="flex items-center gap-1">
-            <span>♥</span>
-            <span>{playlist.like_count.toLocaleString()}</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13.5 3a8.5 8.5 0 0 1 0 17H13v.99A1.01 1.01 0 0 1 11.989 22c-2.46-.002-4.952-.823-6.843-2.504C3.238 17.798 2.002 15.275 2 12.009V11.5A8.5 8.5 0 0 1 10.5 3zm-5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3" />
-            </svg>
-            <span>{playlist.comment_count.toLocaleString()}</span>
-          </span>
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
