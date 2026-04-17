@@ -111,6 +111,14 @@ export default function CollectionPlayer({
     isPlaying ? playerRef.current.playVideo?.() : playerRef.current.pauseVideo?.();
   }, [isPlaying]);
 
+  // 트랙리스트 열릴 때 배경 스크롤 잠금
+  useEffect(() => {
+    if (!isTracklistOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [isTracklistOpen]);
+
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === playlists.length - 1;
 
@@ -121,11 +129,11 @@ export default function CollectionPlayer({
         <div ref={iframeContainerRef} />
       </div>
 
-      {/* 딤 오버레이 — 트랙리스트 열릴 때 (모바일 하단 탭바 위로 올림) */}
+      {/* 딤 오버레이 — 트랙리스트 열릴 때 (페이지 전체 덮음) */}
       {currentIndex !== null && (
         <div
           onClick={onToggleTracklist}
-          className="fixed left-0 right-0 top-0 z-30 bg-black transition-opacity duration-300 bottom-[calc(64px+56px+env(safe-area-inset-bottom))] sm:bottom-16"
+          className="fixed inset-0 z-30 bg-black transition-opacity duration-300"
           style={{
             opacity: isTracklistOpen ? 0.8 : 0,
             pointerEvents: isTracklistOpen ? 'auto' : 'none',
@@ -133,9 +141,9 @@ export default function CollectionPlayer({
         />
       )}
 
-      {/* 트랙리스트 패널 — 재생 중일 때만 마운트 (모바일 하단 탭바 위로 올림) */}
+      {/* 트랙리스트 패널 — 페이지 맨 아래(하단바 아래)까지 꽉 차게 */}
       {currentIndex !== null && <div
-        className="fixed left-0 right-0 z-40 bg-[var(--card)] border-t border-[var(--border)] overflow-y-auto transition-transform duration-300 ease-in-out bottom-[calc(64px+56px+env(safe-area-inset-bottom))] sm:bottom-16"
+        className="fixed left-0 right-0 bottom-0 z-40 bg-[var(--card)] border-t border-[var(--border)] overflow-y-auto transition-transform duration-300 ease-in-out"
         style={{
           maxHeight: '60vh',
           transform: isTracklistOpen ? 'translateY(0)' : 'translateY(100%)',
@@ -167,7 +175,8 @@ export default function CollectionPlayer({
             트랙 정보가 없습니다.
           </div>
         ) : (
-          <div className="overflow-hidden">
+          <div className="overflow-hidden pb-[calc(64px+56px+env(safe-area-inset-bottom))] sm:pb-16">
+            {/* 모바일: 플레이어 바(64) + 하단 탭바(56 + safe-area), 데스크톱: 플레이어 바만 */}
             <table className="w-full text-sm">
               <tbody>
                 {tracks.map((track, i) => {
