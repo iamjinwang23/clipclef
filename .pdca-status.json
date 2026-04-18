@@ -164,5 +164,14 @@
       "module-4": "done"
     },
     "completedAt": "2026-04-18T02:22:25.530Z"
+  },
+  "terminology-cleanup": {
+    "phase": "completed",
+    "matchRate": 100,
+    "iterationCount": 0,
+    "startedAt": "2026-04-18T15:15:39.993Z",
+    "updatedAt": "2026-04-18T15:26:52.946Z",
+    "description": "Terminology cleanup — unify 플리→플레이리스트, 컬렉션→큐레이션, 에디터 노트→노트 입력, 내 목록에 담기→담기",
+    "completedAt": "2026-04-18T15:26:52.947Z"
   }
 }

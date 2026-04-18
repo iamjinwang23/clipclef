@@ -24,7 +24,7 @@ function timestampToSeconds(ts: string): number {
   return parts[0] * 60 + parts[1];
 }
 
-// 기본 포맷: "제목 - 아티스트" (대다수 한국·글로벌 플리 표기 관행에 맞춤)
+// 기본 포맷: "제목 - 아티스트" (대다수 한국·글로벌 플레이리스트 표기 관행에 맞춤)
 function extractArtist(raw: string): { cleanTitle: string; artist: string | null } {
   const match = raw.match(/^(.+?)\s*[-–—]\s*(.+)$/);
   if (match) return { cleanTitle: match[1].trim(), artist: match[2].trim() };

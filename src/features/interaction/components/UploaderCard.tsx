@@ -1,5 +1,5 @@
 'use client';
-// 플리 상세 — 업로더 정보 + 팔로우 버튼
+// 플레이리스트 상세 — 업로더 정보 + 팔로우 버튼
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { useFollow } from '../hooks/useFollow';

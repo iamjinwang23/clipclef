@@ -65,16 +65,16 @@ export default async function MyProfilePage({
         <ProfileSettingsMenu locale={locale} />
       </div>
 
-      {/* 내가 올린 플리 */}
+      {/* 내가 올린 플레이리스트 */}
       <section className="mb-10">
         <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-          내가 올린 플리 ({playlists.length})
+          내가 올린 플레이리스트 ({playlists.length})
         </h2>
         {playlists.length === 0 ? (
           <div className="py-10 text-center text-sm text-[var(--text-secondary)] border border-dashed border-[var(--border)] rounded-xl">
-            <p className="mb-2">아직 올린 플리가 없어요</p>
+            <p className="mb-2">아직 올린 플레이리스트가 없어요</p>
             <Link href={`/${locale}/upload`} className="text-xs underline hover:text-[var(--foreground)]">
-              + 플리 올리기
+              + 플레이리스트 올리기
             </Link>
           </div>
         ) : (
@@ -97,11 +97,11 @@ export default async function MyProfilePage({
         )}
       </section>
 
-      {/* 공개 재생목록 */}
+      {/* 공개 플레이리스트 */}
       {pubLists.length > 0 && (
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-            공개 재생목록 ({pubLists.length})
+            공개 플레이리스트 ({pubLists.length})
           </h2>
           <div className="space-y-2">
             {pubLists.map((up) => (

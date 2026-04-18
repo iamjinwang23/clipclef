@@ -106,7 +106,7 @@ export async function fetchArtistWithCache(
 }
 
 /**
- * 특정 아티스트가 포함된 플리 목록 조회 (최대 20개, like_count 내림차순)
+ * 특정 아티스트가 포함된 플레이리스트 목록 조회 (최대 20개, like_count 내림차순)
  * Critical fix: ilike 에스케이프가 PostgREST에서 작동하지 않는 문제 → slug 기반 정확 매칭으로 변경
  */
 export async function getArtistPlaylists(artistName: string): Promise<Playlist[]> {

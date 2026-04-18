@@ -168,7 +168,7 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
       {open && (
         <div className="absolute left-0 mt-2 w-60 bg-[var(--card)] rounded-xl border border-[var(--border)] shadow-2xl z-50 py-1">
           {sortedPlaylists.length === 0 && !showInput && (
-            <p className="px-4 py-3 text-xs text-[var(--text-secondary)]">아직 만든 재생목록이 없어요</p>
+            <p className="px-4 py-3 text-xs text-[var(--text-secondary)]">아직 만든 플레이리스트이 없어요</p>
           )}
 
           {sortedPlaylists.map((p: UserPlaylist) => {
@@ -182,7 +182,7 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
                 className="w-full flex items-center justify-between px-4 py-2.5 text-sm hover:bg-[var(--muted)] transition-colors disabled:opacity-50"
               >
                 <span className="truncate text-left">
-                  {p.is_default ? '저장한 플리' : p.name}
+                  {p.is_default ? '저장한 플레이리스트' : p.name}
                 </span>
                 {isAdded ? (
                   <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -205,7 +205,7 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-                  placeholder="재생목록 이름"
+                  placeholder="플레이리스트 이름"
                   className="flex-1 text-xs border border-[var(--border)] rounded px-2 py-1.5 bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
                 />
                 <button
@@ -224,7 +224,7 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                새 재생목록 만들기
+                새 플레이리스트 만들기
               </button>
             )}
           </div>

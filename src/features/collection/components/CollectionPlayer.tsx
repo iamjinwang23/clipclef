@@ -64,7 +64,7 @@ export default function CollectionPlayer({
     }
   }, []);
 
-  // 플리 변경 시 player 초기화 또는 loadVideoById
+  // 플레이리스트 변경 시 player 초기화 또는 loadVideoById
   useEffect(() => {
     if (!current) return;
     const videoId = current.youtube_id;
@@ -243,7 +243,7 @@ export default function CollectionPlayer({
                 onClick={onPrev}
                 disabled={isFirst}
                 className={`p-1.5 transition-opacity ${isFirst ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
-                aria-label="이전 플리"
+                aria-label="이전 플레이리스트"
               >
                 <img src="/backward.svg" alt="" aria-hidden="true" className="w-6 h-6 max-sm:w-10 max-sm:h-10 invert" />
               </button>
@@ -265,7 +265,7 @@ export default function CollectionPlayer({
                 onClick={onNext}
                 disabled={isLast}
                 className={`p-1.5 transition-opacity ${isLast ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
-                aria-label="다음 플리"
+                aria-label="다음 플레이리스트"
               >
                 <img src="/Forward.svg" alt="" aria-hidden="true" className="w-6 h-6 max-sm:w-10 max-sm:h-10 invert" />
               </button>

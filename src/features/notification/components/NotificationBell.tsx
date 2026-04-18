@@ -127,7 +127,7 @@ export default function NotificationBell({ userId, locale }: NotificationBellPro
               <p className="text-sm text-[var(--text-secondary)] text-center py-8">알림을 불러오지 못했습니다</p>
             )}
             {!loadingList && !error && notifications.length === 0 && (
-              <p className="text-sm text-[var(--text-secondary)] text-center py-8">알림이 없습니다</p>
+              <p className="text-sm text-[var(--text-secondary)] text-center py-8">알림이 없어요</p>
             )}
             {!loadingList && !error && notifications.map((n) => (
               <NotificationItem key={n.id} notification={n} onClick={handleItemClick} />

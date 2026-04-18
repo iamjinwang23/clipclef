@@ -26,7 +26,7 @@ interface EditTarget {
 type Tab = 'playlists' | 'collections' | 'members' | 'reports' | 'filters' | 'dashboard';
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'playlists',   label: '플리 목록관리' },
+  { id: 'playlists',   label: '플레이리스트 관리' },
   { id: 'collections', label: '큐레이션 관리' },
   { id: 'members',     label: '회원 관리' },
   { id: 'reports',     label: '신고 관리' },

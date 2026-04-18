@@ -111,7 +111,7 @@ export default async function PlaylistDetailPage({
           </div>
         </div>
 
-        {/* 에디터 노트 */}
+        {/* 노트 입력 */}
         {p.editor_note && (
           <blockquote className="mb-3 border-l-2 border-[var(--subtle)] pl-4 py-1">
             <p className="text-sm text-[var(--text-secondary)] italic leading-relaxed">{p.editor_note}</p>

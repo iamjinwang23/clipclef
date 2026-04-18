@@ -14,8 +14,8 @@ export interface NotificationData {
 
 const TYPE_LABEL: Record<NotificationData['type'], string> = {
   follow: '님이 팔로우하기 시작했습니다',
-  like: '님이 플리에 좋아요를 눌렀습니다',
-  comment: '님이 플리에 댓글을 남겼습니다',
+  like: '님이 플레이리스트에 좋아요를 눌렀습니다',
+  comment: '님이 플레이리스트에 댓글을 남겼습니다',
   reply: '님이 댓글에 답글을 남겼습니다',
 };
 

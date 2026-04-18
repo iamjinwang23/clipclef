@@ -143,7 +143,7 @@ export default function SearchDropdown({
 
       {/* 4) 영상 */}
       {videos.length > 0 && (
-        <Section label="영상">
+        <Section label="플레이리스트">
           {videos.map((p) => (
             <Link
               key={p.id}

@@ -26,7 +26,7 @@ export default async function MyLikesPage({
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-xl font-semibold mb-6">내 좋아요</h1>
       {playlists.length === 0 ? (
-        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">좋아요한 플레이리스트가 없습니다</p>
+        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">좋아요한 플레이리스트가 없어요</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {playlists.map((pl) => (

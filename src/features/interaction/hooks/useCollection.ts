@@ -18,7 +18,7 @@ async function getOrCreateDefaultPlaylist(userId: string): Promise<string> {
 
   const { data: created, error } = await supabase
     .from('user_playlists')
-    .insert({ user_id: userId, name: '저장한 플리', is_public: false, is_default: true })
+    .insert({ user_id: userId, name: '저장한 플레이리스트', is_public: false, is_default: true })
     .select('id')
     .single();
 

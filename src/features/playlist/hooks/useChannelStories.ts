@@ -1,5 +1,5 @@
 'use client';
-// 플리 목록에서 유니크 채널 추출 + 24h 신규 여부 + 썸네일 조회
+// 플레이리스트 목록에서 유니크 채널 추출 + 24h 신규 여부 + 썸네일 조회
 
 import { useQuery } from '@tanstack/react-query';
 import type { Playlist } from '@/types';
@@ -8,7 +8,7 @@ export interface ChannelStory {
   channelId: string;
   channelName: string;
   thumbnailUrl: string | null;
-  isNew: boolean; // 최근 24h 이내 플리 업로드 여부
+  isNew: boolean; // 최근 24h 이내 플레이리스트 업로드 여부
   latestCreatedAt: string;
 }
 

@@ -184,7 +184,7 @@ export default function MyPlaylistsPage() {
   };
 
   const handleRemovePlaylist = async (id: string) => {
-    if (!confirm('재생목록을 삭제할까요?')) return;
+    if (!confirm('플레이리스트을 삭제할까요?')) return;
     await remove(id);
     setExpanded((prev) => { const next = new Set(prev); next.delete(id); return next; });
   };
@@ -271,7 +271,7 @@ export default function MyPlaylistsPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">내 재생목록</h1>
+        <h1 className="text-xl font-semibold">내 플레이리스트</h1>
         {userId && (
           <Link href={`/${locale}/profile/${userId}`} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)] underline">
             공개 프로필 보기 →
@@ -279,13 +279,13 @@ export default function MyPlaylistsPage() {
         )}
       </div>
 
-      {/* 새 재생목록 만들기 */}
+      {/* 새 플레이리스트 만들기 */}
       <div className="flex gap-2 mb-6">
         <input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-          placeholder="새 재생목록 이름"
+          placeholder="새 플레이리스트 이름"
           className="flex-1 text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
         />
         <button
@@ -312,7 +312,7 @@ export default function MyPlaylistsPage() {
       )}
 
       {playlists.length === 0 ? (
-        <p className="py-12 text-center text-sm text-[var(--text-secondary)]">아직 만든 재생목록이 없어요</p>
+        <p className="py-12 text-center text-sm text-[var(--text-secondary)]">아직 만든 플레이리스트이 없어요</p>
       ) : (
         <div className="space-y-2">
           {sorted.map((pl) => {
@@ -350,7 +350,7 @@ export default function MyPlaylistsPage() {
                     <button
                       onClick={() => handleExportToYouTube(pl)}
                       disabled={exporting === pl.id}
-                      title="YouTube 계정에 재생목록으로 저장"
+                      title="YouTube 계정에 플레이리스트으로 저장"
                       className="text-xs px-2 py-0.5 rounded-full border border-[var(--border)] text-[var(--text-secondary)] hover:border-red-300 hover:text-red-500 transition-colors disabled:opacity-40"
                     >
                       {exporting === pl.id ? '내보내는 중…' : 'YouTube로 저장'}
@@ -377,7 +377,7 @@ export default function MyPlaylistsPage() {
                     {!items[pl.id] ? (
                       <p className="text-xs text-[var(--text-secondary)] py-2 px-1">불러오는 중...</p>
                     ) : items[pl.id].length === 0 ? (
-                      <p className="text-xs text-[var(--text-secondary)] py-2 px-1">담긴 플리가 없어요</p>
+                      <p className="text-xs text-[var(--text-secondary)] py-2 px-1">담긴 플레이리스트가 없어요</p>
                     ) : (
                       <DndContext
                         sensors={sensors}

@@ -56,7 +56,7 @@ async function createYouTubePlaylist(token: string, title: string): Promise<stri
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      snippet: { title, description: 'ClipClef에서 내보낸 재생목록' },
+      snippet: { title, description: 'ClipClef에서 내보낸 플레이리스트' },
       status: { privacyStatus: 'public' },
     }),
   });

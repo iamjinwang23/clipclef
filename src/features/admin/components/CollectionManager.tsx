@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { CuratedCollection, Playlist } from '@/types';
 
-// ── 컬렉션 항목 플리 선택 팝업 ────────────────────────────────────────────
+// ── 컬렉션 항목 플레이리스트 선택 팝업 ────────────────────────────────────────────
 function PlaylistPicker({
   collectionId,
   currentIds,
@@ -30,12 +30,12 @@ function PlaylistPicker({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-md max-h-[70vh] flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-          <p className="text-sm font-semibold">플리 추가</p>
+          <p className="text-sm font-semibold">플레이리스트 추가</p>
           <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-[var(--foreground)] text-xl leading-none">×</button>
         </div>
         <div className="overflow-y-auto flex-1 divide-y divide-[var(--border)]">
           {available.length === 0 ? (
-            <p className="py-8 text-center text-sm text-[var(--text-secondary)]">추가 가능한 플리가 없습니다</p>
+            <p className="py-8 text-center text-sm text-[var(--text-secondary)]">추가 가능한 플레이리스트가 없어요</p>
           ) : (
             available.map((p) => (
               <button
@@ -284,9 +284,9 @@ function CollectionCard({
             </button>
           )}
 
-          {/* 플리 목록 */}
+          {/* 플레이리스트 목록 */}
           {collection.items.length === 0 ? (
-            <p className="text-xs text-[var(--text-secondary)]">담긴 플리가 없어요</p>
+            <p className="text-xs text-[var(--text-secondary)]">담긴 플레이리스트가 없어요</p>
           ) : (
             collection.items.map((p) => (
               <div key={p.id} className="flex items-center gap-3 group">
@@ -304,7 +304,7 @@ function CollectionCard({
             onClick={() => setShowPicker(true)}
             className="w-full mt-2 py-1.5 text-xs border border-dashed border-[var(--subtle)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:border-[var(--text-secondary)] transition-colors"
           >
-            + 플리 추가
+            + 플레이리스트 추가
           </button>
         </div>
       )}
@@ -356,7 +356,7 @@ export default function CollectionManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('컬렉션을 삭제할까요?')) return;
+    if (!confirm('큐레이션을 삭제할까요?')) return;
     await fetch('/api/admin/collections', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -378,7 +378,7 @@ export default function CollectionManager() {
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
           maxLength={30}
-          placeholder="컬렉션 이름 (최대 30자)"
+          placeholder="큐레이션 이름 (최대 30자)"
           className="flex-1 text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
         />
         <button
@@ -393,7 +393,7 @@ export default function CollectionManager() {
       {loading ? (
         <p className="text-sm text-[var(--text-secondary)]">불러오는 중...</p>
       ) : collections.length === 0 ? (
-        <p className="text-sm text-[var(--text-secondary)] py-4 text-center">아직 컬렉션이 없어요</p>
+        <p className="text-sm text-[var(--text-secondary)] py-4 text-center">아직 큐레이션이 없어요</p>
       ) : (
         <div className="space-y-2">
           {collections.map((c) => (

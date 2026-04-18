@@ -1,5 +1,5 @@
 'use client';
-// Design Ref: §3.3 — 플리 카드 그리드 + 재생 버튼 + 강조 표시
+// Design Ref: §3.3 — 플레이리스트 카드 그리드 + 재생 버튼 + 강조 표시
 
 import Image from 'next/image';
 import Link from 'next/link';

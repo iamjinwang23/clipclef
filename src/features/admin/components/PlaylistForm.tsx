@@ -60,7 +60,7 @@ interface ParsedPlaylist {
 }
 
 interface PlaylistFormProps {
-  // 수정 모드: 대상 플리 + 기존 트랙
+  // 수정 모드: 대상 플레이리스트 + 기존 트랙
   editTarget?: { playlist: Playlist; tracks: TrackRow[] };
   onComplete?: () => void;
   // 일반 회원 업로드 모드: 업로더 user_id + locale 전달 (성공 시 상세 페이지 이동)
@@ -384,10 +384,10 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
             <span className="text-xs bg-violet-600 text-white font-bold px-1.5 py-0.5 rounded">AI</span>
           </label>
 
-          {/* 에디터 노트 */}
+          {/* 노트 입력 */}
           <div>
             <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">
-              에디터 노트
+              노트 입력
             </label>
             <textarea
               value={editorNote}

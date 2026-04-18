@@ -77,7 +77,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
       {/* 영상 */}
       {data.videos.length > 0 && (
         <section>
-          <SectionHeader label="영상" />
+          <SectionHeader label="플레이리스트" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {data.videos.map((p) => (
               <PlaylistCard key={p.id} playlist={p} />
@@ -145,7 +145,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
         </section>
       )}
 
-      {/* 아티스트 — 플리 상세 ArtistStrip과 동일한 가로 스트립 + ArtistCard */}
+      {/* 아티스트 — 플레이리스트 상세 ArtistStrip과 동일한 가로 스트립 + ArtistCard */}
       {data.artists.length > 0 && (
         <section>
           <SectionHeader label="아티스트" />
@@ -185,7 +185,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
   );
 }
 
-// 플리 상세 페이지(ArtistStrip)와 동일한 레이블 스타일로 통일
+// 플레이리스트 상세 페이지(ArtistStrip)와 동일한 레이블 스타일로 통일
 function SectionHeader({ label }: { label: string }) {
   return (
     <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">

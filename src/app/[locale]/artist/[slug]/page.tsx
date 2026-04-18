@@ -1,5 +1,5 @@
 // Design Ref: §6.1 — 아티스트 상세 페이지 (서버 컴포넌트)
-// Plan SC: 아티스트 페이지에 사진·바이오·출연 플리 노출
+// Plan SC: 아티스트 페이지에 사진·바이오·출연 플레이리스트 노출
 import { notFound } from 'next/navigation';
 import ArtistHero from '@/features/artist/components/ArtistHero';
 import PlaylistCard from '@/features/playlist/components/PlaylistCard';
@@ -59,10 +59,10 @@ export default async function ArtistPage({
         </section>
       )}
 
-      {/* 플리 없음 */}
+      {/* 플레이리스트 없음 */}
       {playlists.length === 0 && (
         <p className="mt-8 text-sm text-[var(--subtle)] text-center">
-          등록된 플레이리스트가 없습니다.
+          등록된 플레이리스트가 없어요
         </p>
       )}
     </div>

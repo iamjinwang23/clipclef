@@ -1,5 +1,5 @@
 'use client';
-// 채널 스토리 바 전용 — 채널 필터 없이 전체 플리 조회 (채널 목록 도출용)
+// 채널 스토리 바 전용 — 채널 필터 없이 전체 플레이리스트 조회 (채널 목록 도출용)
 
 import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';

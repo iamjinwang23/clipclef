@@ -103,30 +103,30 @@ export default function AddToPlaylistButton({ playlistId, isLoggedIn, iconOnly =
       {responsive ? (
         <>
           {/* 데스크톱: 텍스트 풀버튼 */}
-          <button onClick={handleOpen} title="내 목록에 담기" className={`hidden sm:flex ${fullBtnClass}`}>
+          <button onClick={handleOpen} title="담기" className={`hidden sm:flex ${fullBtnClass}`}>
             {plusIcon}
-            내 목록에 담기
+            담기
           </button>
           {/* 모바일: 아이콘 전용 */}
-          <button onClick={handleOpen} title="내 목록에 담기" className={`sm:hidden ${iconBtnClass}`}>
+          <button onClick={handleOpen} title="담기" className={`sm:hidden ${iconBtnClass}`}>
             {plusIcon}
           </button>
         </>
       ) : (
         <button
           onClick={handleOpen}
-          title="내 목록에 담기"
+          title="담기"
           className={iconOnly ? iconBtnClass : fullBtnClass}
         >
           {plusIcon}
-          {!iconOnly && '내 목록에 담기'}
+          {!iconOnly && '담기'}
         </button>
       )}
 
       {open && (
         <div className="absolute left-0 mt-2 w-60 bg-[var(--card)] rounded-xl border border-[var(--border)] shadow-2xl z-50 py-1">
           {playlists.length === 0 && !showInput && (
-            <p className="px-4 py-3 text-xs text-[var(--text-secondary)]">아직 만든 재생목록이 없어요</p>
+            <p className="px-4 py-3 text-xs text-[var(--text-secondary)]">아직 만든 플레이리스트이 없어요</p>
           )}
 
           {playlists.map((p) => {
@@ -161,7 +161,7 @@ export default function AddToPlaylistButton({ playlistId, isLoggedIn, iconOnly =
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-                  placeholder="재생목록 이름"
+                  placeholder="플레이리스트 이름"
                   className="flex-1 text-xs border border-[var(--border)] rounded px-2 py-1.5 bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
                 />
                 <button
@@ -180,7 +180,7 @@ export default function AddToPlaylistButton({ playlistId, isLoggedIn, iconOnly =
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                새 재생목록 만들기
+                새 플레이리스트 만들기
               </button>
             )}
           </div>

@@ -1,5 +1,5 @@
 'use client';
-// 프로필 페이지 설정 버튼 — 클릭 시 하위 메뉴(기본정보·내좋아요·내댓글·내재생목록) 토글
+// 프로필 페이지 설정 버튼 — 클릭 시 하위 메뉴(기본정보·내좋아요·내댓글·내플레이리스트) 토글
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -11,7 +11,7 @@ const MENU_ITEMS = [
   { label: '기본 정보', path: 'settings' },
   { label: '내 좋아요', path: 'likes' },
   { label: '내 댓글', path: 'comments' },
-  { label: '내 재생목록', path: 'playlists' },
+  { label: '내 플레이리스트', path: 'playlists' },
 ];
 
 export default function ProfileSettingsMenu({ locale }: Props) {

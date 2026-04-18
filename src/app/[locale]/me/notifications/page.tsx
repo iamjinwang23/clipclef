@@ -39,7 +39,7 @@ export default async function NotificationsPage({
 
       {/* 알림 목록 */}
       {notifications.length === 0 ? (
-        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">알림이 없습니다</p>
+        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">알림이 없어요</p>
       ) : (
         <ul>
           {notifications.map((n) => (

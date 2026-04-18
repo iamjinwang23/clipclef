@@ -1,4 +1,4 @@
-// Design Ref: §4 — 플리 소유자 수정/삭제 API (PATCH/DELETE)
+// Design Ref: §4 — 플레이리스트 소유자 수정/삭제 API (PATCH/DELETE)
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
@@ -33,7 +33,7 @@ export async function PATCH(
   const body = await req.json();
   const { editor_note, genre, mood, place, era, tracks } = body;
 
-  // 플리 필드 업데이트
+  // 플레이리스트 필드 업데이트
   const updateFields: Record<string, unknown> = {};
   if (editor_note !== undefined) updateFields.editor_note = editor_note;
   if (genre !== undefined) updateFields.genre = genre;
@@ -77,14 +77,14 @@ export async function PATCH(
           duration_sec: track.duration_sec ?? null,
         })
         .eq('id', track.id)
-        .eq('playlist_id', id); // 보안: 해당 플리의 트랙만 수정
+        .eq('playlist_id', id); // 보안: 해당 플레이리스트의 트랙만 수정
     }
   }
 
   return NextResponse.json({ ok: true });
 }
 
-// DELETE — 플리 + 연관 데이터 하드 삭제
+// DELETE — 플레이리스트 + 연관 데이터 하드 삭제
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

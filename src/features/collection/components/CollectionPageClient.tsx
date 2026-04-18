@@ -60,7 +60,7 @@ export default function CollectionPageClient({
     fetchTracks(playlists[index].id);
   }, [playlists, fetchTracks]);
 
-  // Plan SC-02: 다음 플리
+  // Plan SC-02: 다음 플레이리스트
   const handleNext = useCallback(() => {
     if (currentIndex === null || currentIndex >= playlists.length - 1) return;
     const next = currentIndex + 1;
@@ -71,7 +71,7 @@ export default function CollectionPageClient({
     fetchTracks(playlists[next].id);
   }, [currentIndex, playlists, fetchTracks]);
 
-  // Plan SC-03: 이전 플리
+  // Plan SC-03: 이전 플레이리스트
   const handlePrev = useCallback(() => {
     if (currentIndex === null || currentIndex <= 0) return;
     const prev = currentIndex - 1;
@@ -133,7 +133,7 @@ export default function CollectionPageClient({
         {!bannerImageUrl && (
           <div className="absolute inset-0 flex flex-col justify-end px-4 sm:px-6 pb-5">
             <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1">
-              큐레이션 컬렉션 · 플리 {itemCount}개
+              큐레이션 · 플레이리스트 {itemCount}개
             </p>
             <h1 className="text-2xl font-bold leading-snug whitespace-pre-line">{collectionTitle}</h1>
             {collectionDescription && (
@@ -150,7 +150,7 @@ export default function CollectionPageClient({
             <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 pb-5 pt-10 flex items-end justify-between gap-4">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
-                  큐레이션 컬렉션 · 플리 {itemCount}개
+                  큐레이션 · 플레이리스트 {itemCount}개
                 </p>
                 <h1 className="text-2xl font-bold leading-snug whitespace-pre-line text-white">{collectionTitle}</h1>
                 {collectionDescription && (

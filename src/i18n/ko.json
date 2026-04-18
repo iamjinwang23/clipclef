@@ -27,7 +27,7 @@
   "playlist": {
     "tracks": "{count}개 트랙",
     "likes": "좋아요 {count}",
-    "noResults": "조건에 맞는 플레이리스트가 없습니다",
+    "noResults": "조건에 맞는 플레이리스트가 없어요",
     "noResultsHint": "필터를 초기화하거나 다른 조건을 선택해보세요"
   },
   "comment": {
@@ -45,7 +45,7 @@
   },
   "collection": {
     "title": "내 컬렉션",
-    "empty": "저장한 플레이리스트가 없습니다",
+    "empty": "저장한 플레이리스트가 없어요",
     "emptyHint": "마음에 드는 플레이리스트를 저장해보세요"
   },
   "admin": {
@@ -59,7 +59,7 @@
     "tagsLabel": "태그 선택",
     "register": "등록하기",
     "registering": "등록 중...",
-    "empty": "등록된 플레이리스트가 없습니다",
+    "empty": "등록된 플레이리스트가 없어요",
     "edit": "수정",
     "delete": "삭제",
     "confirmDelete": "이 플레이리스트를 삭제하시겠습니까?"

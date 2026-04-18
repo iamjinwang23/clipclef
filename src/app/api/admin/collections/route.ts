@@ -61,7 +61,7 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-// POST — 컬렉션에 플리 추가
+// POST — 컬렉션에 플레이리스트 추가
 export async function POST(req: NextRequest) {
   if (!await assertAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 

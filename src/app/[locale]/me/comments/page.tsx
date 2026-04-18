@@ -36,7 +36,7 @@ export default async function MyCommentsPage({
     <div className="max-w-2xl mx-auto px-4 py-8">
       <h1 className="text-xl font-semibold mb-6">내 댓글</h1>
       {comments.length === 0 ? (
-        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">작성한 댓글이 없습니다</p>
+        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">작성한 댓글이 없어요</p>
       ) : (
         <ul className="space-y-3">
           {comments.map((c) => (

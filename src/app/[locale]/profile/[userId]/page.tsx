@@ -26,7 +26,7 @@ export default async function ProfilePage({
 
   if (!profile) notFound();
 
-  // 각 재생목록의 항목(플리) 가져오기
+  // 각 플레이리스트의 항목(플레이리스트) 가져오기
   const playlistsWithItems = await Promise.all(
     (userPlaylists ?? []).map(async (up) => {
       const { data } = await supabase
@@ -55,21 +55,21 @@ export default async function ProfilePage({
             {isVerified && <VerifiedBadge size={18} />}
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-            재생목록 {playlistsWithItems.length}개
+            플레이리스트 {playlistsWithItems.length}개
           </p>
         </div>
       </div>
 
-      {/* 재생목록 목록 */}
+      {/* 플레이리스트 목록 */}
       {playlistsWithItems.length === 0 ? (
-        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">공개된 재생목록이 없어요</p>
+        <p className="py-16 text-center text-sm text-[var(--text-secondary)]">공개된 플레이리스트이 없어요</p>
       ) : (
         <div className="space-y-6">
           {playlistsWithItems.map((up) => (
             <div key={up.id}>
               <h2 className="font-semibold text-base mb-3">{up.name}</h2>
               {up.items.length === 0 ? (
-                <p className="text-xs text-[var(--text-secondary)]">담긴 플리가 없어요</p>
+                <p className="text-xs text-[var(--text-secondary)]">담긴 플레이리스트가 없어요</p>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {up.items.map((p) => (

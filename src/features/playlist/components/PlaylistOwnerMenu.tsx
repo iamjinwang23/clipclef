@@ -205,7 +205,7 @@ export default function PlaylistOwnerMenu({
       if (!res.ok) throw new Error();
       setEditOpen(false);
       router.refresh();
-      showSnackbar('플리가 수정되었습니다.', 'success');
+      showSnackbar('플레이리스트가 수정되었습니다.', 'success');
     } catch {
       showSnackbar('저장 중 오류가 발생했습니다. 다시 시도해 주세요.', 'error');
     } finally {
@@ -254,7 +254,7 @@ export default function PlaylistOwnerMenu({
       <div className="flex items-center gap-1 flex-shrink-0">
         <button
           onClick={openEdit}
-          aria-label="플리 수정"
+          aria-label="플레이리스트 수정"
           className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -263,7 +263,7 @@ export default function PlaylistOwnerMenu({
         </button>
         <button
           onClick={() => setDeleteOpen(true)}
-          aria-label="플리 삭제"
+          aria-label="플레이리스트 삭제"
           className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-900/20 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -284,7 +284,7 @@ export default function PlaylistOwnerMenu({
           >
             {/* 헤더 */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
-              <h2 className="text-base font-semibold">플리 수정</h2>
+              <h2 className="text-base font-semibold">플레이리스트 수정</h2>
               <button
                 onClick={() => setEditOpen(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
@@ -296,15 +296,15 @@ export default function PlaylistOwnerMenu({
             </div>
 
             <div className="px-5 py-4 space-y-5">
-              {/* 에디터 노트 */}
+              {/* 노트 입력 */}
               <div>
-                <label className="text-xs text-[var(--text-secondary)] block mb-1.5">에디터 노트</label>
+                <label className="text-xs text-[var(--text-secondary)] block mb-1.5">노트 입력</label>
                 <textarea
                   value={editorNote}
                   onChange={(e) => setEditorNote(e.target.value)}
                   maxLength={200}
                   rows={3}
-                  placeholder="플리에 대한 짧은 설명을 남겨보세요"
+                  placeholder="플레이리스트에 대한 짧은 설명을 남겨보세요"
                   className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[var(--foreground)] text-[var(--foreground)] placeholder-[var(--text-secondary)]"
                 />
               </div>
@@ -403,7 +403,7 @@ export default function PlaylistOwnerMenu({
             className="bg-[var(--card)] rounded-xl w-full max-w-sm p-6 shadow-2xl border border-[var(--border)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-base font-semibold mb-2">플리를 삭제하시겠습니까?</h2>
+            <h2 className="text-base font-semibold mb-2">플레이리스트를 삭제하시겠습니까?</h2>
             <p className="text-sm text-[var(--text-secondary)] mb-6">
               삭제하면 되돌릴 수 없습니다. 댓글, 좋아요, 저장 정보도 함께 삭제됩니다.
             </p>
