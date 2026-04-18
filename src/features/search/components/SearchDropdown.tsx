@@ -5,13 +5,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearch } from '../hooks/useSearch';
 import { useBatchFollow } from '../hooks/useBatchFollow';
 import { DROPDOWN_LIMITS, type SearchLimits } from '../types';
 import ChannelAvatar from '@/features/playlist/components/ChannelAvatar';
-import { useFilterStore } from '@/features/filter/store';
 import UserFollowChip from './UserFollowChip';
 
 // Small inline debounce hook — avoids a project-wide util file for one use site
@@ -43,19 +41,11 @@ export default function SearchDropdown({
   viewAllLabel,
 }: SearchDropdownProps) {
   const locale = useLocale();
-  const router = useRouter();
-  const setChannelId = useFilterStore((s) => s.setChannelId);
   const debounced = useDebouncedValue(query.trim(), 300);
   const { data, loading } = useSearch(debounced, limits ?? DROPDOWN_LIMITS);
 
   const userIds = useMemo(() => data.users.map((u) => u.id), [data.users]);
   const { map: followMap, meId } = useBatchFollow(userIds);
-
-  const goToChannel = (channelId: string) => {
-    setChannelId(channelId);
-    onSelect?.();
-    router.push(`/${locale}`);
-  };
 
   if (!debounced) return null;
 
@@ -131,22 +121,22 @@ export default function SearchDropdown({
         </Section>
       )}
 
-      {/* 3) 채널 — filterStore.channelId 설정 후 홈 이동 */}
+      {/* 3) 채널 — 전용 채널 랜딩 페이지로 이동 */}
       {channels.length > 0 && (
         <Section label="채널">
           {channels.map((c) => (
-            <button
+            <Link
               key={c.channel_id}
-              type="button"
-              onClick={() => goToChannel(c.channel_id)}
-              className="w-full flex items-center gap-3 py-2 px-2 -mx-2 rounded-lg hover:bg-[var(--muted)] transition-colors text-left"
+              href={`/${locale}/channel/${encodeURIComponent(c.channel_id)}`}
+              onClick={onSelect}
+              className="flex items-center gap-3 py-2 px-2 -mx-2 rounded-lg hover:bg-[var(--muted)] transition-colors"
             >
               <ChannelAvatar channelId={c.channel_id} channelName={c.channel_name} size={32} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--foreground)] truncate">{c.channel_name}</p>
                 <p className="text-xs text-[var(--text-secondary)]">플리 {c.count}개</p>
               </div>
-            </button>
+            </Link>
           ))}
         </Section>
       )}

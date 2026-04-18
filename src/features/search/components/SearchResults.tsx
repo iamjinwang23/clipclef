@@ -68,10 +68,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
     router.push(`/${locale}`);
   };
 
-  const handleChannelClick = (channelId: string) => {
-    filterStore.setChannelId(channelId);
-    router.push(`/${locale}`);
-  };
+  // 채널은 전용 랜딩 페이지 /channel/{id} 로 이동 (Link로 처리)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-10">
@@ -132,17 +129,16 @@ export default function SearchResults({ query }: SearchResultsProps) {
           <ul className="divide-y divide-[var(--border)]">
             {data.channels.map((c) => (
               <li key={c.channel_id}>
-                <button
-                  type="button"
-                  onClick={() => handleChannelClick(c.channel_id)}
-                  className="w-full flex items-center gap-3 py-3 hover:bg-[var(--muted)] rounded-lg px-2 -mx-2 transition-colors text-left"
+                <Link
+                  href={`/${locale}/channel/${encodeURIComponent(c.channel_id)}`}
+                  className="flex items-center gap-3 py-3 hover:bg-[var(--muted)] rounded-lg px-2 -mx-2 transition-colors"
                 >
                   <ChannelAvatar channelId={c.channel_id} channelName={c.channel_name} size={40} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[var(--foreground)] truncate">{c.channel_name}</p>
                     <p className="text-xs text-[var(--text-secondary)]">플리 {c.count}개</p>
                   </div>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
