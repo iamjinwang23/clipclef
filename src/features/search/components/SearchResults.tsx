@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import PlaylistCard from '@/features/playlist/components/PlaylistCard';
 import ChannelAvatar from '@/features/playlist/components/ChannelAvatar';
+import ArtistCard from '@/features/artist/components/ArtistCard';
 import { useSearch } from '../hooks/useSearch';
 import { useBatchFollow } from '../hooks/useBatchFollow';
 import { RESULTS_LIMITS, type TagCategory } from '../types';
@@ -32,11 +33,29 @@ export default function SearchResults({ query }: SearchResultsProps) {
   const hasAny =
     data.videos.length + data.users.length + data.channels.length + data.artists.length + data.tags.length > 0;
 
+  // 로딩 / 빈 결과에도 상단 헤더는 유지해 사용자가 무엇을 검색했는지 맥락 제공
+  const header = (
+    <h1 className="text-xl font-semibold leading-snug">
+      <span className="text-[var(--foreground)]">&apos;{query}&apos;</span>
+      <span className="text-[var(--text-secondary)]"> 검색 결과</span>
+    </h1>
+  );
+
   if (loading && !hasAny) {
-    return <p className="px-4 py-10 text-center text-sm text-[var(--subtle)]">검색 중...</p>;
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        {header}
+        <p className="text-center text-sm text-[var(--subtle)]">검색 중...</p>
+      </div>
+    );
   }
   if (!hasAny) {
-    return <p className="px-4 py-10 text-center text-sm text-[var(--subtle)]">검색 결과가 없습니다</p>;
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        {header}
+        <p className="text-center text-sm text-[var(--subtle)]">검색 결과가 없습니다</p>
+      </div>
+    );
   }
 
   const handleTagClick = (category: TagCategory, label: string) => {
@@ -56,6 +75,8 @@ export default function SearchResults({ query }: SearchResultsProps) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-10">
+      {header}
+
       {/* 영상 */}
       {data.videos.length > 0 && (
         <section>
@@ -128,32 +149,21 @@ export default function SearchResults({ query }: SearchResultsProps) {
         </section>
       )}
 
-      {/* 아티스트 */}
+      {/* 아티스트 — 플리 상세 ArtistStrip과 동일한 가로 스트립 + ArtistCard */}
       {data.artists.length > 0 && (
         <section>
           <SectionHeader label="아티스트" />
-          <ul className="divide-y divide-[var(--border)]">
+          <div className="flex gap-4 overflow-x-auto py-1 scrollbar-hide">
             {data.artists.map((a) => (
-              <li key={a.slug}>
-                <Link
-                  href={`/${locale}/artist/${a.slug}`}
-                  className="flex items-center gap-3 py-3 hover:bg-[var(--muted)] rounded-lg px-2 -mx-2 transition-colors"
-                >
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-[var(--muted)]">
-                    {a.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={a.image_url} alt={a.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm font-bold text-[var(--text-secondary)]">
-                        {a.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-sm font-medium text-[var(--foreground)] truncate">{a.name}</span>
-                </Link>
-              </li>
+              <ArtistCard
+                key={a.slug}
+                name={a.name}
+                slug={a.slug}
+                imageUrl={a.image_url}
+                locale={locale}
+              />
             ))}
-          </ul>
+          </div>
         </section>
       )}
 
@@ -179,8 +189,11 @@ export default function SearchResults({ query }: SearchResultsProps) {
   );
 }
 
+// 플리 상세 페이지(ArtistStrip)와 동일한 레이블 스타일로 통일
 function SectionHeader({ label }: { label: string }) {
   return (
-    <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{label}</h2>
+    <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
+      {label}
+    </h2>
   );
 }
