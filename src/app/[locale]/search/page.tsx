@@ -1,12 +1,12 @@
 'use client';
+// Design Ref: §5.4 — /search page with ?q branch
+//  - ?q present: render SearchResults
+//  - ?q absent: render search input + recent searches + SearchDropdown preview
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
-import { useFilterStore } from '@/features/filter/store';
-import type { Playlist } from '@/types';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import SearchDropdown from '@/features/search/components/SearchDropdown';
+import SearchResults from '@/features/search/components/SearchResults';
 
 const STORAGE_KEY = 'clipclef_recent_searches';
 const MAX_RECENT = 8;
@@ -19,57 +19,36 @@ function saveRecent(terms: string[]) {
 }
 
 export default function SearchPage() {
-  const { setQuery } = useFilterStore();
   const { locale } = useParams<{ locale: string }>();
-  const [value, setValue] = useState('');
+  const router = useRouter();
+  const params = useSearchParams();
+  const q = params.get('q')?.trim() ?? '';
+
+  const [value, setValue] = useState(q);
   const [recent, setRecent] = useState<string[]>([]);
-  const [results, setResults] = useState<Playlist[]>([]);
-  const [artistResults, setArtistResults] = useState<{ name: string; slug: string; image_url: string | null }[]>([]);
-  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setRecent(loadRecent());
-    inputRef.current?.focus();
-  }, []);
+    if (!q) inputRef.current?.focus();
+  }, [q]);
 
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    const term = value.trim();
-    if (!term) { setResults([]); setArtistResults([]); return; }
-
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const supabase = createClient();
-        const escaped = term.replace(/[%_]/g, '\\$&');
-
-        const [{ data: artistData }, { data: trackMatches }] = await Promise.all([
-          supabase.from('artists').select('name, slug, image_url').ilike('name', `%${escaped}%`).eq('not_found', false).limit(3),
-          supabase.from('tracks').select('playlist_id').or(`title.ilike.%${escaped}%,artist.ilike.%${escaped}%`),
-        ]);
-
-        setArtistResults((artistData ?? []) as { name: string; slug: string; image_url: string | null }[]);
-
-        const trackIds = [...new Set((trackMatches ?? []).map((t: { playlist_id: string }) => t.playlist_id))];
-        let q = supabase.from('playlists').select('*').eq('is_active', true);
-        const titleFilter = `title.ilike.%${escaped}%,channel_name.ilike.%${escaped}%`;
-        q = trackIds.length > 0 ? q.or(`${titleFilter},id.in.(${trackIds.join(',')})`) : q.or(titleFilter);
-        const { data } = await q.order('like_count', { ascending: false }).limit(10);
-        setResults((data ?? []) as Playlist[]);
-      } finally { setLoading(false); }
-    }, 300);
-
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [value]);
+  // Keep the input in sync when ?q changes (browser back/forward)
+  useEffect(() => { setValue(q); }, [q]);
 
   const applySearch = (term: string) => {
-    if (!term.trim()) return;
-    setQuery(term.trim());
-    const next = [term.trim(), ...recent.filter((r) => r !== term.trim())];
+    const t = term.trim();
+    if (!t) return;
+    const next = [t, ...recent.filter((r) => r !== t)];
     setRecent(next);
     saveRecent(next);
+    // Navigate to results mode (replace to avoid history stack bloat when user edits)
+    router.replace(`/${locale}/search?q=${encodeURIComponent(t)}`);
+  };
+
+  const clearQuery = () => {
+    setValue('');
+    router.replace(`/${locale}/search`);
   };
 
   const removeRecent = (term: string) => {
@@ -77,8 +56,6 @@ export default function SearchPage() {
     setRecent(next);
     saveRecent(next);
   };
-
-  const showResults = value.trim().length > 0;
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-3.5rem)]">
@@ -93,70 +70,34 @@ export default function SearchPage() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') applySearch(value); }}
-          placeholder="플레이리스트 검색"
+          placeholder="플레이리스트, 아티스트, 사용자 검색"
           className="flex-1 bg-transparent text-[var(--foreground)] text-sm focus:outline-none placeholder:text-[var(--subtle)]"
         />
         {value && (
-          <button type="button" onClick={() => setValue('')} className="text-[var(--text-secondary)] hover:text-[var(--foreground)] text-lg leading-none">
+          <button
+            type="button"
+            onClick={clearQuery}
+            className="text-[var(--text-secondary)] hover:text-[var(--foreground)] text-lg leading-none"
+            aria-label="검색어 지우기"
+          >
             ×
           </button>
         )}
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {showResults ? (
-          <div className="px-4 pt-3">
-            {loading && <p className="text-xs text-[var(--subtle)] mb-2">검색 중...</p>}
-            {!loading && results.length === 0 && artistResults.length === 0 && (
-              <p className="text-sm text-[var(--subtle)] text-center mt-8">검색 결과가 없습니다</p>
-            )}
-
-            {!loading && artistResults.length > 0 && (
-              <div className="mb-4">
-                <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-2">아티스트</p>
-                {artistResults.map((artist) => (
-                  <Link
-                    key={artist.slug}
-                    href={`/${locale}/artist/${artist.slug}`}
-                    onClick={() => applySearch(artist.name)}
-                    className="flex items-center gap-3 py-2 hover:bg-[var(--muted)] rounded-lg px-2 -mx-2 transition-colors"
-                  >
-                    <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-[var(--muted)]">
-                      {artist.image_url ? (
-                        <img src={artist.image_url} alt={artist.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-[var(--text-secondary)]">
-                          {artist.name.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-sm font-medium text-[var(--foreground)]">{artist.name}</span>
-                    <span className="ml-auto text-xs text-[var(--subtle)]">아티스트</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            {results.map((playlist) => (
-              <Link
-                key={playlist.id}
-                href={`/${locale}/playlist/${playlist.id}`}
-                onClick={() => applySearch(value)}
-                className="flex items-center gap-3 py-2.5 hover:bg-[var(--muted)] rounded-lg px-2 -mx-2 transition-colors"
-              >
-                {playlist.thumbnail_url && (
-                  <div className="relative w-16 h-9 rounded-md overflow-hidden flex-shrink-0">
-                    <Image src={playlist.thumbnail_url} alt="" fill className="object-cover" sizes="64px" />
-                  </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium truncate text-[var(--foreground)]">{playlist.title}</p>
-                  <p className="text-xs text-[var(--text-secondary)] truncate">{playlist.channel_name}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+        {q ? (
+          /* 결과 모드 */
+          <SearchResults query={q} />
+        ) : value.trim() ? (
+          /* 입력 중 — 드롭다운 프리뷰 */
+          <SearchDropdown
+            query={value}
+            onSelect={() => applySearch(value)}
+            onViewAll={(qq) => applySearch(qq)}
+          />
         ) : (
+          /* 최근 검색어 */
           <div className="px-4 pt-4">
             {recent.length > 0 ? (
               <>
@@ -172,7 +113,7 @@ export default function SearchPage() {
                       <svg className="w-3.5 h-3.5 text-[var(--subtle)] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" strokeLinecap="round" />
                       </svg>
-                      <button className="flex-1 text-left text-sm text-[var(--foreground)]" onClick={() => { setValue(term); applySearch(term); }}>
+                      <button className="flex-1 text-left text-sm text-[var(--foreground)]" onClick={() => applySearch(term)}>
                         {term}
                       </button>
                       <button
