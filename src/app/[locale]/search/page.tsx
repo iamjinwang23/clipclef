@@ -74,7 +74,7 @@ export default function SearchPage() {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') applySearch(value); }}
-            placeholder="검색"
+            placeholder="노래 제목, 아티스트명으로 검색"
             className="w-full pl-9 pr-8 py-1.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
           />
           {value && (
