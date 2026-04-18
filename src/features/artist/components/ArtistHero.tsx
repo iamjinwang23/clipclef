@@ -31,7 +31,7 @@ export default function ArtistHero({ name, imageUrl }: ArtistHeroProps) {
       {/* 그라디언트 오버레이 + 텍스트 */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 pb-5 pt-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight">{name}</h1>
+        <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">{name}</h1>
         </div>
     </div>
   );
