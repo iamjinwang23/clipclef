@@ -103,11 +103,15 @@ export default async function PlaylistDetailPage({
               />
             )}
           </div>
-          <div className="flex items-center gap-2 ml-0.5">
-            <ChannelAvatar channelId={p.channel_id} channelName={p.channel_name} size={18} />
-            <p className="text-sm text-[var(--text-secondary)]">
-              {p.channel_name} · {Math.max(1, p.track_count)}개 트랙
-            </p>
+          <div className="flex items-center gap-2 ml-0.5 text-sm text-[var(--text-secondary)]">
+            <Link
+              href={`/${locale}/channel/${encodeURIComponent(p.channel_id)}`}
+              className="flex items-center gap-2 hover:text-[var(--foreground)] transition-colors"
+            >
+              <ChannelAvatar channelId={p.channel_id} channelName={p.channel_name} size={18} />
+              <span>{p.channel_name}</span>
+            </Link>
+            <span>· {Math.max(1, p.track_count)}개 트랙</span>
           </div>
         </div>
 
