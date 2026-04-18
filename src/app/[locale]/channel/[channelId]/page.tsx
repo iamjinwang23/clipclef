@@ -40,7 +40,7 @@ export default async function ChannelPage({
         <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
           {channelName}
         </h1>
-        <p className="text-sm text-[var(--text-secondary)]">플리 {playlists.length}개</p>
+        <p className="text-sm text-[var(--text-secondary)]">플레이리스트 {playlists.length}개</p>
       </section>
 
       {/* 플레이리스트 그리드 */}

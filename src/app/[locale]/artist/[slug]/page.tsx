@@ -45,11 +45,11 @@ export default async function ArtistPage({
         </section>
       )}
 
-      {/* 출연 플레이리스트 */}
+      {/* 플레이리스트 */}
       {playlists.length > 0 && (
         <section className="mt-8">
           <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-            출연 플레이리스트
+            플레이리스트 {playlists.length}개
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {playlists.map((playlist) => (

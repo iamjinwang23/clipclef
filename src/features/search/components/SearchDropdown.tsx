@@ -134,7 +134,7 @@ export default function SearchDropdown({
               <ChannelAvatar channelId={c.channel_id} channelName={c.channel_name} size={32} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--foreground)] truncate">{c.channel_name}</p>
-                <p className="text-xs text-[var(--text-secondary)]">플리 {c.count}개</p>
+                <p className="text-xs text-[var(--text-secondary)]">플레이리스트 {c.count}개</p>
               </div>
             </Link>
           ))}
