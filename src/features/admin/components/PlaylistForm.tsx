@@ -149,8 +149,8 @@ function TrackEditor({ tracks, onChange }: { tracks: TrackRow[]; onChange: (t: T
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-medium text-[var(--text-secondary)]">트랙리스트 ({tracks.length}개)</p>
-        <button type="button" onClick={addTrack} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)] underline">
+        <p className="text-xs font-medium text-[var(--text-secondary)]">트랙리스트</p>
+        <button type="button" onClick={addTrack} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)]">
           + 트랙 추가
         </button>
       </div>
@@ -164,7 +164,6 @@ function TrackEditor({ tracks, onChange }: { tracks: TrackRow[]; onChange: (t: T
                 <th className="py-1.5 px-2 text-left text-[var(--text-secondary)] w-8">#</th>
                 <th className="py-1.5 px-2 text-left text-[var(--text-secondary)] w-20">
                   시작
-                  <span className="ml-1 font-normal text-[var(--subtle)]">(m:ss)</span>
                 </th>
                 <th className="py-1.5 px-2 text-left text-[var(--text-secondary)]">제목</th>
                 <th className="py-1.5 px-2 text-left text-[var(--text-secondary)]">아티스트</th>
@@ -388,7 +387,7 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
           {/* 에디터 노트 */}
           <div>
             <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">
-              에디터 노트 <span className="text-[var(--subtle)] font-normal">(선택 — 상세 페이지에 큐레이터 코멘트로 표시)</span>
+              에디터 노트
             </label>
             <textarea
               value={editorNote}
