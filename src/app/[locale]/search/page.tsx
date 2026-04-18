@@ -59,30 +59,35 @@ export default function SearchPage() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-3.5rem)]">
-      {/* 검색 입력 */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]">
-        <svg className="w-4 h-4 text-[var(--text-secondary)] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-        </svg>
-        <input
-          ref={inputRef}
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') applySearch(value); }}
-          placeholder="플레이리스트, 아티스트, 사용자 검색"
-          className="flex-1 bg-transparent text-[var(--foreground)] text-sm focus:outline-none placeholder:text-[var(--subtle)]"
-        />
-        {value && (
-          <button
-            type="button"
-            onClick={clearQuery}
-            className="text-[var(--text-secondary)] hover:text-[var(--foreground)] text-lg leading-none"
-            aria-label="검색어 지우기"
+      {/* 검색 입력 — 모바일 전용 (데스크톱은 Header에 이미 검색창이 있음) */}
+      <div className="sm:hidden px-4 py-3 border-b border-[var(--border)]">
+        <div className="relative">
+          <svg
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)] pointer-events-none"
+            fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
           >
-            ×
-          </button>
-        )}
+            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            ref={inputRef}
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') applySearch(value); }}
+            placeholder="검색"
+            className="w-full pl-9 pr-8 py-1.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
+          />
+          {value && (
+            <button
+              type="button"
+              onClick={clearQuery}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--foreground)]"
+              aria-label="검색어 지우기"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
