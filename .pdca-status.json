@@ -189,5 +189,16 @@
     "startedAt": "2026-04-19T04:39:18.300Z",
     "updatedAt": "2026-04-19T04:39:18.301Z",
     "description": "Curation banner label — unify label text"
+  },
+  "home-redesign": {
+    "phase": "do",
+    "matchRate": 0,
+    "iterationCount": 0,
+    "startedAt": "2026-04-19T05:06:21.241Z",
+    "updatedAt": "2026-04-19T05:18:07.889Z",
+    "description": "Home redesign — 5 section layout with 자세히 보기 + dedicated listing pages + new genre domain",
+    "modules": {
+      "module-1": "done"
+    }
   }
 }

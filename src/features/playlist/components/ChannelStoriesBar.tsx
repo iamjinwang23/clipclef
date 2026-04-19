@@ -49,31 +49,33 @@ function ChannelItem({
   );
 }
 
-export default function ChannelStoriesBar() {
+interface ChannelStoriesBarProps {
+  /** 최대 노출 개수 (기본 20 — /channels 전체 페이지 대비, 홈에서는 10을 전달) */
+  limit?: number;
+}
+
+export default function ChannelStoriesBar({ limit }: ChannelStoriesBarProps = {}) {
   const locale = useLocale();
   const { data: allPlaylists } = useAllPlaylists();
-  const channels = useChannelStories(allPlaylists);
+  const channels = useChannelStories(allPlaylists, limit);
 
   if (!channels.length) return null;
 
+  // 레일만 렌더 — 바깥 max-width/padding/레이블은 소비자(HomeSection 등)가 제공
   return (
-    <div className="bg-[var(--background)]">
-      <div className="max-w-6xl mx-auto py-4 px-4">
-        <div
-          className="flex gap-4 overflow-x-auto scrollbar-hide"
-          style={{ scrollSnapType: 'x proximity' }}
-        >
-          {channels.map((ch) => (
-            <ChannelItem
-              key={ch.channelId}
-              channelId={ch.channelId}
-              channelName={ch.channelName}
-              thumbnailUrl={ch.thumbnailUrl}
-              locale={locale}
-            />
-          ))}
-        </div>
-      </div>
+    <div
+      className="flex gap-4 overflow-x-auto scrollbar-hide"
+      style={{ scrollSnapType: 'x proximity' }}
+    >
+      {channels.map((ch) => (
+        <ChannelItem
+          key={ch.channelId}
+          channelId={ch.channelId}
+          channelName={ch.channelName}
+          thumbnailUrl={ch.thumbnailUrl}
+          locale={locale}
+        />
+      ))}
     </div>
   );
 }

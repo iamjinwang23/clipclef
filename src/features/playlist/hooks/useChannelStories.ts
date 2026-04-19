@@ -13,7 +13,7 @@ export interface ChannelStory {
 }
 
 const DAY_30_MS = 30 * 24 * 60 * 60 * 1000;
-const TOP_N = 20;
+const DEFAULT_TOP_N = 20;
 
 // 가중치 — 로그 적용 후 3개 지표 스케일이 비슷해짐. 댓글은 희소해서 더 높게.
 const W_LIKE = 1.0;
@@ -21,7 +21,7 @@ const W_VIEW = 0.8;
 const W_COMMENT = 2.0;
 const W_NEW = 1.5;
 
-function deriveChannels(playlists: Playlist[]): ChannelStory[] {
+function deriveChannels(playlists: Playlist[], limit: number): ChannelStory[] {
   const now = Date.now();
 
   // 채널별 그룹화 + 집계
@@ -68,11 +68,18 @@ function deriveChannels(playlists: Playlist[]): ChannelStory[] {
       } as ChannelStory;
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, TOP_N);
+    .slice(0, limit);
 }
 
-export function useChannelStories(playlists: Playlist[] | undefined) {
-  const channels = playlists ? deriveChannels(playlists) : [];
+/**
+ * 채널 인기 점수 Top N.
+ * @param limit 최대 노출 개수 (기본 20). 홈 레일에선 10, /channels 전체 페이지에선 Infinity.
+ */
+export function useChannelStories(
+  playlists: Playlist[] | undefined,
+  limit: number = DEFAULT_TOP_N
+) {
+  const channels = playlists ? deriveChannels(playlists, limit) : [];
   const channelIds = channels.map((c) => c.channelId).join(',');
 
   const { data: thumbnails } = useQuery<Record<string, string>>({
