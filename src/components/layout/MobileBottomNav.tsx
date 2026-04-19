@@ -85,31 +85,34 @@ export default function MobileBottomNav() {
 
           {/* 홈 */}
           <Link href={`/${locale}`} className={item(isHome)} aria-label="홈">
-            <svg className="w-7 h-7" fill={isHome ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h12a1 1 0 001-1V10" />
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={isHome ? '/icons/bottom-nav/Home.svg' : '/icons/bottom-nav/Home_Line.svg'}
+              alt=""
+              className="w-7 h-7"
+            />
           </Link>
 
           {/* 검색 */}
           <button onClick={() => router.push(`/${locale}/search`)} className={item(isSearch)} aria-label="검색">
-            <svg className="w-7 h-7" fill={isSearch ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <path strokeLinecap="round" d="m21 21-4.35-4.35" />
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={isSearch ? '/icons/bottom-nav/Search.svg' : '/icons/bottom-nav/Search_Line.svg'}
+              alt=""
+              className="w-7 h-7"
+            />
           </button>
 
           {/* 만들기 */}
           {user ? (
             <Link href={`/${locale}/upload`} className={item(isUpload)} aria-label="만들기">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-              </svg>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7" />
             </Link>
           ) : (
             <button onClick={handleLogin} className={item(false)} aria-label="만들기">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-              </svg>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7" />
             </button>
           )}
 
