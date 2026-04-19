@@ -1,4 +1,4 @@
-// 채널 랜딩 페이지 — Spotify-style 헤더 + 플레이리스트 그리드
+// 채널 랜딩 페이지 — Spotify-style 헤더(풀 폭) + 플레이리스트 그리드
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { Playlist } from '@/types';
@@ -27,7 +27,8 @@ export default async function ChannelPage({
   const channelName = playlists[0].channel_name;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-10">
+    <div className="pb-10">
+      {/* 헤더는 full-width (본문 max-w 래퍼 밖에 배치) */}
       <ChannelHeader
         channelId={channelId}
         channelName={channelName}
@@ -35,7 +36,7 @@ export default async function ChannelPage({
       />
 
       {/* 플레이리스트 그리드 */}
-      <section className="mt-6">
+      <section className="max-w-4xl mx-auto px-4 mt-6">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {playlists.map((p) => (
             <PlaylistCard key={p.id} playlist={p} />

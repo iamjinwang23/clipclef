@@ -74,7 +74,8 @@ export default function ChannelHeader({ channelId, channelName, playlistCount }:
     : 'linear-gradient(180deg, var(--card) 0%, transparent 100%)';
 
   return (
-    <section className="relative -mx-4 px-4 overflow-hidden">
+    // 페이지 최상단 full-bleed: 부모가 max-w 래퍼 밖에 있어야 좌우 끝까지 채워짐
+    <section className="relative w-full overflow-hidden">
       {/* 그라데이션: 이 헤더 높이까지만, 내려가며 투명 */}
       <div
         className="absolute inset-0 pointer-events-none transition-[background] duration-500"
@@ -82,23 +83,26 @@ export default function ChannelHeader({ channelId, channelName, playlistCount }:
         aria-hidden
       />
 
-      {/* 콘텐츠 — 좌측 아바타 + 우측 이름/카운트 */}
-      <div className="relative flex items-end gap-5 sm:gap-6 pt-10 pb-8 sm:pt-16 sm:pb-10">
-        <div className="flex-shrink-0">
-          <div className="sm:hidden">
-            <ChannelAvatar channelId={channelId} channelName={channelName} size={96} />
+      {/* 콘텐츠 컨테이너 — 본문 max-width와 동일하게 바운드 */}
+      <div className="relative max-w-4xl mx-auto px-4 pt-10 pb-8 sm:pt-16 sm:pb-10">
+        {/* 모바일: 아바타 가운데 위 → 이름 좌측 정렬 아래.  데스크톱: 좌 아바타 + 우 이름 */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:gap-6">
+          {/* 모바일 아바타 — 가운데 정렬, 크게 */}
+          <div className="sm:hidden mx-auto mb-6">
+            <ChannelAvatar channelId={channelId} channelName={channelName} size={176} />
           </div>
-          <div className="hidden sm:block">
+          {/* 데스크톱 아바타 — 좌측 */}
+          <div className="hidden sm:block flex-shrink-0">
             <ChannelAvatar channelId={channelId} channelName={channelName} size={144} />
           </div>
-        </div>
-        <div className="min-w-0 flex-1 pb-1">
-          <h1 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tight break-keep">
-            {channelName}
-          </h1>
-          <p className="mt-2 sm:mt-3 text-sm text-white/80">
-            플레이리스트 {playlistCount}개
-          </p>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tight break-keep">
+              {channelName}
+            </h1>
+            <p className="mt-2 sm:mt-3 text-sm text-white/80">
+              플레이리스트 {playlistCount}개
+            </p>
+          </div>
         </div>
       </div>
     </section>
