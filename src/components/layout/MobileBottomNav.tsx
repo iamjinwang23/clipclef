@@ -89,7 +89,7 @@ export default function MobileBottomNav() {
             <img
               src={isHome ? '/icons/bottom-nav/Home.svg' : '/icons/bottom-nav/Home_Line.svg'}
               alt=""
-              className="w-7 h-7"
+              className={`w-7 h-7 invert ${isHome ? '' : 'opacity-60'}`}
             />
           </Link>
 
@@ -99,7 +99,7 @@ export default function MobileBottomNav() {
             <img
               src={isSearch ? '/icons/bottom-nav/Search.svg' : '/icons/bottom-nav/Search_Line.svg'}
               alt=""
-              className="w-7 h-7"
+              className={`w-7 h-7 invert ${isSearch ? '' : 'opacity-60'}`}
             />
           </button>
 
@@ -107,12 +107,12 @@ export default function MobileBottomNav() {
           {user ? (
             <Link href={`/${locale}/upload`} className={item(isUpload)} aria-label="만들기">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7" />
+              <img src="/icons/bottom-nav/Plus.svg" alt="" className={`w-7 h-7 invert ${isUpload ? '' : 'opacity-60'}`} />
             </Link>
           ) : (
             <button onClick={handleLogin} className={item(false)} aria-label="만들기">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7" />
+              <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7 invert opacity-60" />
             </button>
           )}
 
@@ -120,9 +120,12 @@ export default function MobileBottomNav() {
           {user ? (
             <Link href={`/${locale}/me/notifications`} className={item(isNotif)} aria-label="알림">
               <span className="relative">
-                <svg className="w-7 h-7" fill={isNotif ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={isNotif ? 0 : 1.8} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={isNotif ? '/icons/bottom-nav/Bell.svg' : '/icons/bottom-nav/Bell-Line.svg'}
+                  alt=""
+                  className={`w-7 h-7 invert ${isNotif ? '' : 'opacity-60'}`}
+                />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full" />
                 )}
@@ -130,9 +133,8 @@ export default function MobileBottomNav() {
             </Link>
           ) : (
             <button onClick={handleLogin} className={item(false)} aria-label="알림">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icons/bottom-nav/Bell-Line.svg" alt="" className="w-7 h-7 invert opacity-60" />
             </button>
           )}
 
