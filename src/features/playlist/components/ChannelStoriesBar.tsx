@@ -31,7 +31,7 @@ function ChannelItem({
       style={{ width: size }}
     >
       <div
-        className="relative rounded-full overflow-hidden bg-[var(--muted)]"
+        className="relative rounded-full overflow-hidden bg-[var(--muted)] ring-[0.5px] ring-white/20"
         style={{ width: size, height: size }}
       >
         {thumbnailUrl ? (

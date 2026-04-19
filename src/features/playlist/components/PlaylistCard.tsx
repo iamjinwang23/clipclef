@@ -19,7 +19,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
     <div className="group relative">
       <Link href={`/${locale}/playlist/${playlist.id}`}>
         {/* 썸네일 */}
-        <div className="relative w-full aspect-video rounded-md sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-2">
+        <div className="relative w-full aspect-video rounded-md sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-2 ring-[0.5px] ring-white/20">
           <Image
             src={playlist.thumbnail_url}
             alt={playlist.title}

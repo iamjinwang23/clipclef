@@ -14,7 +14,7 @@ export default function UserAvatar({ src, name, size = 32, className = '' }: Use
 
   return (
     <div
-      className={`rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0 flex items-center justify-center ${className}`}
+      className={`rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0 flex items-center justify-center ring-[0.5px] ring-white/20 ${className}`}
       style={{ width: size, height: size }}
     >
       {src && !failed ? (

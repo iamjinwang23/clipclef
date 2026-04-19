@@ -22,7 +22,7 @@ export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: 
     >
       {/* 원형 썸네일 */}
       <div
-        className="relative rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0"
+        className="relative rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0 ring-[0.5px] ring-white/20"
         style={{ width: size, height: size }}
       >
         {imageUrl ? (
