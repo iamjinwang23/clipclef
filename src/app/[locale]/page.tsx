@@ -1,14 +1,20 @@
 // Design Ref: home-redesign.design.md §5.2 — 홈 오케스트레이터
-// M1: 큐레이션(배너) + 채널 섹션(HomeSection 래핑). 아티스트·장르·플리 섹션은 후속 모듈에서 추가.
-// FilterBar + PlaylistGrid 는 M2에서 /playlists 로 이전 예정 (현재는 임시 유지).
+// M2 기준: 큐레이션(배너) + 채널 섹션 + 플레이리스트 섹션.
+// 필터/소팅/무한스크롤은 /playlists 로 이전 완료.
+// 아티스트·장르 섹션은 M4·M5에서 추가.
 
-import FilterBar from '@/features/filter/components/FilterBar';
 import ChannelStoriesBar from '@/features/playlist/components/ChannelStoriesBar';
-import PlaylistGrid from '@/features/playlist/components/PlaylistGrid';
 import CuratedCollectionSection from '@/features/playlist/components/CuratedCollectionSection';
 import HomeSection from '@/components/layout/HomeSection';
+import PlaylistHomeSection from '@/features/home/components/PlaylistHomeSection';
 
-export default function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
   return (
     <div>
       {/* 큐레이션 배너 — 섹션 레이블 없이 그대로 (배너 자체가 큐레이션 표현) */}
@@ -19,11 +25,10 @@ export default function HomePage() {
         <ChannelStoriesBar limit={10} />
       </HomeSection>
 
-      {/* 플레이리스트 — 현재는 FilterBar + PlaylistGrid 임시 유지 (M2에서 /playlists로 이전) */}
-      <FilterBar />
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <PlaylistGrid />
-      </div>
+      {/* 플레이리스트 섹션 (홈: Top 12 인기순) — /playlists 에 필터·소팅·무한스크롤 */}
+      <HomeSection label="플레이리스트" href={`/${locale}/playlists`}>
+        <PlaylistHomeSection limit={12} />
+      </HomeSection>
     </div>
   );
 }
