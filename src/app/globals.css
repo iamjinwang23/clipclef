@@ -33,3 +33,14 @@ body {
 
 /* select 다크 */
 select option { background: #181818; color: #F0F0F0; }
+
+/* 모바일 전용 press 피드백 — 버튼/링크 active 상태에 짧은 opacity dim.
+   데스크톱(sm 이상)에는 적용하지 않음 (hover 상태로 이미 피드백 제공됨). */
+@media (max-width: 639px) {
+  button:active:not(:disabled),
+  a:active,
+  [role="button"]:active {
+    opacity: 0.7;
+    transition: opacity 80ms ease-out;
+  }
+}

@@ -69,8 +69,9 @@ export default function MobileBottomNav() {
   const isNotif = pathname.includes('/me/notifications');
   const isProfile = pathname.includes('/me/') && !isNotif;
 
+  // 하단 탭 전용 press 피드백 — opacity(전역)에 더해 scale 추가 (모바일 전용 nav)
   const item = (active: boolean) =>
-    `flex items-center justify-center flex-1 h-full transition-colors ${
+    `flex items-center justify-center flex-1 h-full transition-[color,transform] duration-100 ease-out active:scale-95 ${
       active ? 'text-[var(--foreground)]' : 'text-[var(--text-secondary)]'
     }`;
 
