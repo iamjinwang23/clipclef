@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import ArtistCard from './ArtistCard';
 import { searchMbid } from '@/lib/artist-apis';
 import type { ArtistRow } from '@/features/artist/lib/artist.server';
+import ScrollRail from '@/components/ui/ScrollRail';
 
 interface ArtistStripProps {
   artists: { name: string; slug: string }[];
@@ -83,11 +84,11 @@ export default function ArtistStrip({ artists, locale }: ArtistStripProps) {
       <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
         아티스트
       </h2>
-      <div className="flex gap-4 overflow-x-auto py-1 scrollbar-hide">
+      <ScrollRail>
         {artists.map(({ name, slug }) => (
           <ArtistStripItem key={slug} name={name} slug={slug} locale={locale} />
         ))}
-      </div>
+      </ScrollRail>
     </div>
   );
 }
