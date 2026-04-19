@@ -64,7 +64,7 @@ export default function ChannelStoriesBar({ limit }: ChannelStoriesBarProps = {}
   // 레일만 렌더 — 바깥 max-width/padding/레이블은 소비자(HomeSection 등)가 제공
   return (
     <div
-      className="flex gap-4 overflow-x-auto scrollbar-hide"
+      className="flex gap-4 overflow-x-auto scrollbar-hide py-1"
       style={{ scrollSnapType: 'x proximity' }}
     >
       {channels.map((ch) => (

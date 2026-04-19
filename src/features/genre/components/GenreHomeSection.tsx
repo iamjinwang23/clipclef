@@ -32,7 +32,7 @@ export default function GenreHomeSection({ limit = 8 }: GenreHomeSectionProps) {
   if (genres.length === 0) return null;
 
   return (
-    <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+    <div className="flex gap-4 overflow-x-auto scrollbar-hide py-1">
       {genres.map((g) => (
         <GenreCard
           key={g.id}

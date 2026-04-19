@@ -33,7 +33,7 @@ export default function ArtistHomeSection({ limit = 8 }: ArtistHomeSectionProps)
   if (artists.length === 0) return null;
 
   return (
-    <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+    <div className="flex gap-4 overflow-x-auto scrollbar-hide py-1">
       {artists.map((a) => (
         <ArtistCard
           key={a.slug}
