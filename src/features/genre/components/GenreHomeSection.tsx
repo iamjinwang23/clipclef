@@ -13,7 +13,7 @@ interface GenreHomeSectionProps {
 
 function Skeletons({ count, size }: { count: number; size: number }) {
   return (
-    <div className="flex gap-[14px] overflow-hidden">
+    <div className="flex gap-4 overflow-hidden">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex flex-col gap-2 flex-shrink-0 animate-pulse" style={{ width: size }}>
           <div className="rounded-md bg-[var(--muted)]" style={{ width: size, height: size }} />
@@ -33,7 +33,7 @@ export default function GenreHomeSection({ limit = 8, size = 162 }: GenreHomeSec
   if (genres.length === 0) return null;
 
   return (
-    <div className="flex gap-[14px] overflow-x-auto scrollbar-hide py-1">
+    <div className="flex gap-4 overflow-x-auto scrollbar-hide py-1">
       {genres.map((g) => (
         <GenreCard
           key={g.id}

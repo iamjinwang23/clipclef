@@ -73,7 +73,7 @@ export default function ChannelStoriesBar({ limit, size = 80 }: ChannelStoriesBa
 
   return (
     <div
-      className="flex gap-[14px] overflow-x-auto scrollbar-hide py-1"
+      className="flex gap-4 overflow-x-auto scrollbar-hide py-1"
       style={{ scrollSnapType: 'x proximity' }}
     >
       {channels.map((ch) => (

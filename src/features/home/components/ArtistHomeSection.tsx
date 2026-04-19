@@ -13,7 +13,7 @@ interface ArtistHomeSectionProps {
 
 function Skeletons({ count, size }: { count: number; size: number }) {
   return (
-    <div className="flex gap-[14px] overflow-hidden">
+    <div className="flex gap-4 overflow-hidden">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex flex-col items-center gap-2 flex-shrink-0 animate-pulse" style={{ width: size }}>
           <div className="rounded-full bg-[var(--muted)]" style={{ width: size, height: size }} />
@@ -34,7 +34,7 @@ export default function ArtistHomeSection({ limit = 8, size = 162 }: ArtistHomeS
   if (artists.length === 0) return null;
 
   return (
-    <div className="flex gap-[14px] overflow-x-auto scrollbar-hide py-1">
+    <div className="flex gap-4 overflow-x-auto scrollbar-hide py-1">
       {artists.map((a) => (
         <ArtistCard
           key={a.slug}
