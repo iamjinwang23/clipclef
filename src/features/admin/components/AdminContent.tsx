@@ -6,6 +6,7 @@ import { useAdminPlaylists } from '../hooks/useAdminPlaylists';
 import PlaylistForm from './PlaylistForm';
 import PlaylistTable from './PlaylistTable';
 import CollectionManager from './CollectionManager';
+import GenreManager from './GenreManager';
 import AdminMembers from './AdminMembers';
 import type { Playlist } from '@/types';
 
@@ -23,14 +24,14 @@ interface EditTarget {
   tracks: TrackRow[];
 }
 
-type Tab = 'playlists' | 'collections' | 'members' | 'reports' | 'filters' | 'dashboard';
+type Tab = 'playlists' | 'collections' | 'genres' | 'members' | 'reports' | 'dashboard';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'playlists',   label: '플레이리스트 관리' },
   { id: 'collections', label: '큐레이션 관리' },
+  { id: 'genres',      label: '장르 관리' },
   { id: 'members',     label: '회원 관리' },
   { id: 'reports',     label: '신고 관리' },
-  { id: 'filters',     label: '필터 관리' },
   { id: 'dashboard',   label: '방문자 대시보드' },
 ];
 
@@ -113,14 +114,18 @@ export default function AdminContent({ uploadedBy }: { uploadedBy?: string }) {
         </section>
       )}
 
+      {activeTab === 'genres' && (
+        <section>
+          <div className="border border-[var(--border)] rounded-xl p-6 bg-[var(--card)]">
+            <GenreManager />
+          </div>
+        </section>
+      )}
+
       {activeTab === 'members' && <AdminMembers />}
 
       {activeTab === 'reports' && (
         <Placeholder title="신고 관리" desc="신고 내역 관리 기능은 준비 중입니다." />
-      )}
-
-      {activeTab === 'filters' && (
-        <Placeholder title="필터 관리" desc="장르·분위기·장소·시대 옵션 관리 기능은 준비 중입니다." />
       )}
 
       {activeTab === 'dashboard' && (

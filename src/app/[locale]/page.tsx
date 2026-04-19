@@ -32,8 +32,8 @@ export default async function HomePage({
         <ArtistHomeSection limit={8} />
       </HomeSection>
 
-      {/* 장르 섹션 (홈: Top 8, 앨범 레이어드) — /genres 전체 페이지는 5b에서 신설 */}
-      <HomeSection label="장르">
+      {/* 장르 섹션 (홈: Top 8, 앨범 레이어드) — 전체는 /genres, 상세는 /genres/{name} */}
+      <HomeSection label="장르" href={`/${locale}/genres`}>
         <GenreHomeSection limit={8} />
       </HomeSection>
 
