@@ -65,10 +65,10 @@ export default async function MyProfilePage({
         <ProfileSettingsMenu locale={locale} />
       </div>
 
-      {/* 내가 올린 플레이리스트 */}
+      {/* 플레이리스트 */}
       <section className="mb-10">
         <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-          내가 올린 플레이리스트 ({playlists.length})
+          플레이리스트 {playlists.length}개
         </h2>
         {playlists.length === 0 ? (
           <div className="py-10 text-center text-sm text-[var(--text-secondary)] border border-dashed border-[var(--border)] rounded-xl">
@@ -97,11 +97,11 @@ export default async function MyProfilePage({
         )}
       </section>
 
-      {/* 공개 플레이리스트 */}
+      {/* 큐레이션 */}
       {pubLists.length > 0 && (
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-            공개 플레이리스트 ({pubLists.length})
+            큐레이션 {pubLists.length}개
           </h2>
           <div className="space-y-2">
             {pubLists.map((up) => (
