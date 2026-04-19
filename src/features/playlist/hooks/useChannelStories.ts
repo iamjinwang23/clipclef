@@ -1,5 +1,6 @@
 'use client';
-// 플레이리스트 목록에서 유니크 채널 추출 + 24h 신규 여부 + 썸네일 조회
+// Design Ref: home-channel-rail.plan.md §1.1 — compute log-normalized popularity score
+// 채널별 집계(좋아요/조회수/댓글/30일 신규) → 로그 정규화 합산 → Top 20
 
 import { useQuery } from '@tanstack/react-query';
 import type { Playlist } from '@/types';
@@ -8,45 +9,66 @@ export interface ChannelStory {
   channelId: string;
   channelName: string;
   thumbnailUrl: string | null;
-  isNew: boolean; // 최근 24h 이내 플레이리스트 업로드 여부
-  latestCreatedAt: string;
+  score: number;
 }
+
+const DAY_30_MS = 30 * 24 * 60 * 60 * 1000;
+const TOP_N = 20;
+
+// 가중치 — 로그 적용 후 3개 지표 스케일이 비슷해짐. 댓글은 희소해서 더 높게.
+const W_LIKE = 1.0;
+const W_VIEW = 0.8;
+const W_COMMENT = 2.0;
+const W_NEW = 1.5;
 
 function deriveChannels(playlists: Playlist[]): ChannelStory[] {
   const now = Date.now();
-  const h24 = 24 * 60 * 60 * 1000;
 
-  const map = new Map<string, { channelName: string; latestAt: string; isNew: boolean }>();
+  // 채널별 그룹화 + 집계
+  const byChannel = new Map<string, {
+    channelName: string;
+    likes: number;
+    views: number;
+    comments: number;
+    new30: number;
+  }>();
 
   for (const pl of playlists) {
-    const existing = map.get(pl.channel_id);
-    const createdAt = pl.created_at;
-    const isNew = now - new Date(createdAt).getTime() < h24;
-
-    if (!existing || createdAt > existing.latestAt) {
-      map.set(pl.channel_id, {
+    const isNew = now - new Date(pl.created_at).getTime() < DAY_30_MS;
+    const existing = byChannel.get(pl.channel_id);
+    if (existing) {
+      existing.likes += pl.like_count;
+      existing.views += pl.view_count;
+      existing.comments += pl.comment_count;
+      if (isNew) existing.new30 += 1;
+    } else {
+      byChannel.set(pl.channel_id, {
         channelName: pl.channel_name,
-        latestAt: createdAt,
-        isNew: isNew || (existing?.isNew ?? false),
+        likes: pl.like_count,
+        views: pl.view_count,
+        comments: pl.comment_count,
+        new30: isNew ? 1 : 0,
       });
-    } else if (isNew) {
-      existing.isNew = true;
     }
   }
 
-  return Array.from(map.entries())
-    .map(([channelId, v]) => ({
-      channelId,
-      channelName: v.channelName,
-      thumbnailUrl: null,
-      isNew: v.isNew,
-      latestCreatedAt: v.latestAt,
-    }))
-    .sort((a, b) => {
-      // 신규 채널 우선, 그다음 최신순
-      if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
-      return b.latestCreatedAt.localeCompare(a.latestCreatedAt);
-    });
+  // 로그 정규화 점수
+  return [...byChannel.entries()]
+    .map(([channelId, v]) => {
+      const score =
+        Math.log(1 + v.likes) * W_LIKE
+        + Math.log(1 + v.views / 1000) * W_VIEW
+        + Math.log(1 + v.comments) * W_COMMENT
+        + v.new30 * W_NEW;
+      return {
+        channelId,
+        channelName: v.channelName,
+        thumbnailUrl: null,
+        score,
+      } as ChannelStory;
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, TOP_N);
 }
 
 export function useChannelStories(playlists: Playlist[] | undefined) {

@@ -173,5 +173,13 @@
     "updatedAt": "2026-04-18T15:26:52.946Z",
     "description": "Terminology cleanup — unify 플리→플레이리스트, 컬렉션→큐레이션, 에디터 노트→노트 입력, 내 목록에 담기→담기",
     "completedAt": "2026-04-18T15:26:52.947Z"
+  },
+  "home-channel-rail": {
+    "phase": "do",
+    "matchRate": 0,
+    "iterationCount": 0,
+    "startedAt": "2026-04-19T04:22:46.637Z",
+    "updatedAt": "2026-04-19T04:25:16.414Z",
+    "description": "Home channel rail — switch from filter to navigation, sort by popularity score (log-normalized), Top 20, ArtistStrip-style size"
   }
 }
