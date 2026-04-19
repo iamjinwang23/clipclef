@@ -7,6 +7,7 @@ import ChannelStoriesBar from '@/features/playlist/components/ChannelStoriesBar'
 import CuratedCollectionSection from '@/features/playlist/components/CuratedCollectionSection';
 import HomeSection from '@/components/layout/HomeSection';
 import ArtistHomeSection from '@/features/home/components/ArtistHomeSection';
+import GenreHomeSection from '@/features/genre/components/GenreHomeSection';
 import PlaylistHomeSection from '@/features/home/components/PlaylistHomeSection';
 
 export default async function HomePage({
@@ -29,6 +30,11 @@ export default async function HomePage({
       {/* 아티스트 섹션 (홈: Top 8, 96px) — 전체는 /artists */}
       <HomeSection label="아티스트" href={`/${locale}/artists`}>
         <ArtistHomeSection limit={8} />
+      </HomeSection>
+
+      {/* 장르 섹션 (홈: Top 8, 앨범 레이어드) — /genres 전체 페이지는 5b에서 신설 */}
+      <HomeSection label="장르">
+        <GenreHomeSection limit={8} />
       </HomeSection>
 
       {/* 플레이리스트 섹션 (홈: Top 12 인기순) — /playlists 에 필터·소팅·무한스크롤 */}

@@ -64,6 +64,16 @@ export interface Profile {
   created_at: string;
 }
 
+/** genres 테이블 한 행 — 관리자가 썸네일·position 관리 */
+export interface GenreRow {
+  id: string;
+  name: string;
+  thumbnail_url: string | null;
+  position: number;
+  is_active: boolean;
+  created_at: string;
+}
+
 export interface UserPlaylist {
   id: string;
   user_id: string;
