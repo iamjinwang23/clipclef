@@ -10,6 +10,7 @@ export interface ChannelStory {
   channelName: string;
   thumbnailUrl: string | null;
   score: number;
+  playlistCount: number;
 }
 
 const DAY_30_MS = 30 * 24 * 60 * 60 * 1000;
@@ -31,6 +32,7 @@ function deriveChannels(playlists: Playlist[], limit: number): ChannelStory[] {
     views: number;
     comments: number;
     new30: number;
+    playlistCount: number;
   }>();
 
   for (const pl of playlists) {
@@ -40,6 +42,7 @@ function deriveChannels(playlists: Playlist[], limit: number): ChannelStory[] {
       existing.likes += pl.like_count;
       existing.views += pl.view_count;
       existing.comments += pl.comment_count;
+      existing.playlistCount += 1;
       if (isNew) existing.new30 += 1;
     } else {
       byChannel.set(pl.channel_id, {
@@ -48,6 +51,7 @@ function deriveChannels(playlists: Playlist[], limit: number): ChannelStory[] {
         views: pl.view_count,
         comments: pl.comment_count,
         new30: isNew ? 1 : 0,
+        playlistCount: 1,
       });
     }
   }
@@ -65,6 +69,7 @@ function deriveChannels(playlists: Playlist[], limit: number): ChannelStory[] {
         channelName: v.channelName,
         thumbnailUrl: null,
         score,
+        playlistCount: v.playlistCount,
       } as ChannelStory;
     })
     .sort((a, b) => b.score - a.score)

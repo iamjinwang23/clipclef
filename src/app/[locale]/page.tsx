@@ -20,8 +20,8 @@ export default async function HomePage({
       {/* 큐레이션 배너 — 섹션 레이블 없이 그대로 (배너 자체가 큐레이션 표현) */}
       <CuratedCollectionSection />
 
-      {/* 채널 섹션 (홈: Top 10) — /channels 전체 페이지는 M3에서 신설 */}
-      <HomeSection label="채널">
+      {/* 채널 섹션 (홈: Top 10) — 전체는 /channels */}
+      <HomeSection label="채널" href={`/${locale}/channels`}>
         <ChannelStoriesBar limit={10} />
       </HomeSection>
 
