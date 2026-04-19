@@ -41,7 +41,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Header />
-            <main className="flex-1 pb-14 sm:pb-0">{children}</main>
+            <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-0">{children}</main>
             <MobileBottomNav />
             <AuthErrorToast />
             <footer className="hidden sm:block pt-20 pb-10 text-sm text-[var(--subtle)]">
