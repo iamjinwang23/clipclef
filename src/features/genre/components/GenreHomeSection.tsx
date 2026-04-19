@@ -5,6 +5,7 @@
 import { useLocale } from 'next-intl';
 import { useGenres } from '../hooks/useGenres';
 import GenreCard from './GenreCard';
+import ScrollRail from '@/components/ui/ScrollRail';
 
 interface GenreHomeSectionProps {
   limit?: number;
@@ -33,7 +34,7 @@ export default function GenreHomeSection({ limit = 8, size = 162 }: GenreHomeSec
   if (genres.length === 0) return null;
 
   return (
-    <div className="flex gap-4 overflow-x-auto scrollbar-hide py-1">
+    <ScrollRail>
       {genres.map((g) => (
         <GenreCard
           key={g.id}
@@ -44,6 +45,6 @@ export default function GenreHomeSection({ limit = 8, size = 162 }: GenreHomeSec
           size={size}
         />
       ))}
-    </div>
+    </ScrollRail>
   );
 }

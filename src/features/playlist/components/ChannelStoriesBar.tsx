@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { useChannelStories } from '../hooks/useChannelStories';
 import { useAllPlaylists } from '../hooks/useAllPlaylists';
+import ScrollRail from '@/components/ui/ScrollRail';
 
 function ChannelItem({
   channelId,
@@ -72,10 +73,7 @@ export default function ChannelStoriesBar({ limit, size = 80 }: ChannelStoriesBa
   if (!channels.length) return null;
 
   return (
-    <div
-      className="flex gap-4 overflow-x-auto scrollbar-hide py-1"
-      style={{ scrollSnapType: 'x proximity' }}
-    >
+    <ScrollRail snap>
       {channels.map((ch) => (
         <ChannelItem
           key={ch.channelId}
@@ -86,6 +84,6 @@ export default function ChannelStoriesBar({ limit, size = 80 }: ChannelStoriesBa
           size={size}
         />
       ))}
-    </div>
+    </ScrollRail>
   );
 }

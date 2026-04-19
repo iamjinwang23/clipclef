@@ -5,6 +5,7 @@
 import { useLocale } from 'next-intl';
 import { usePopularArtists } from '@/features/artist/hooks/usePopularArtists';
 import ArtistCard from '@/features/artist/components/ArtistCard';
+import ScrollRail from '@/components/ui/ScrollRail';
 
 interface ArtistHomeSectionProps {
   limit?: number;
@@ -34,7 +35,7 @@ export default function ArtistHomeSection({ limit = 8, size = 162 }: ArtistHomeS
   if (artists.length === 0) return null;
 
   return (
-    <div className="flex gap-4 overflow-x-auto scrollbar-hide py-1">
+    <ScrollRail>
       {artists.map((a) => (
         <ArtistCard
           key={a.slug}
@@ -45,6 +46,6 @@ export default function ArtistHomeSection({ limit = 8, size = 162 }: ArtistHomeS
           size={size}
         />
       ))}
-    </div>
+    </ScrollRail>
   );
 }
