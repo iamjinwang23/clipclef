@@ -1,5 +1,5 @@
 // Design Ref: home-redesign.design.md §5.8 — 장르 상세 페이지
-// 아티스트 상세와 동일한 레이아웃 (max-w-4xl + aspect-video 배너 + 3열 그리드)
+// 채널 상세와 동일 구조: Hero(full-bleed 그라데이션) 바깥, 본문은 max-w-4xl 그리드
 
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
@@ -38,14 +38,15 @@ export default async function GenreDetailPage({
   if (!genre) notFound();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-10">
+    <div className="pb-10">
+      {/* Hero는 full-width (본문 max-w 래퍼 밖) — 채널 상세와 동일 */}
       <GenreHero
         name={genre.name}
         thumbnailUrl={genre.thumbnail_url}
         playlistCount={playlists.length}
       />
 
-      <section className="mt-8">
+      <section className="max-w-4xl mx-auto px-4 mt-6">
         {playlists.length === 0 ? (
           <p className="py-16 text-center text-sm text-[var(--subtle)]">
             이 장르의 플레이리스트가 아직 없어요
