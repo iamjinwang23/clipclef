@@ -54,14 +54,14 @@ function ArtistStripItem({
   // 로딩 중: 스켈레톤
   if (mbidPending || artistPending) {
     return (
-      <div className="flex flex-col items-center gap-2 flex-shrink-0 w-20">
-        <div className="w-20 h-20 rounded-full bg-[var(--muted)] animate-pulse" />
+      <div className="flex flex-col items-center gap-2 flex-shrink-0" style={{ width: 126 }}>
+        <div className="rounded-full bg-[var(--muted)] animate-pulse" style={{ width: 126, height: 126 }} />
         <div className="w-12 h-3 rounded bg-[var(--muted)] animate-pulse" />
       </div>
     );
   }
 
-  // not_found 또는 에러 → 미표시 (ArtistRow는 'id' 필드 보유, not_found 응답은 미보유)
+  // not_found 또는 에러 → 미표시
   if (!artist || !('id' in artist)) return null;
 
   return (
@@ -70,6 +70,7 @@ function ArtistStripItem({
       slug={artist.slug}
       imageUrl={artist.image_url}
       locale={locale}
+      size={126}
     />
   );
 }
