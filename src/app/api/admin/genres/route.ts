@@ -78,6 +78,9 @@ export async function PATCH(req: NextRequest) {
   if (body?.thumbnail_url === null || typeof body?.thumbnail_url === 'string') {
     patch.thumbnail_url = body.thumbnail_url;
   }
+  if (body?.dominant_color === null || typeof body?.dominant_color === 'string') {
+    patch.dominant_color = body.dominant_color;
+  }
   if (typeof body?.position === 'number') patch.position = body.position;
   if (typeof body?.is_active === 'boolean') patch.is_active = body.is_active;
   if (Object.keys(patch).length === 0) {

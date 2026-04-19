@@ -69,6 +69,7 @@ export interface GenreRow {
   id: string;
   name: string;
   thumbnail_url: string | null;
+  dominant_color: string | null;
   position: number;
   is_active: boolean;
   created_at: string;

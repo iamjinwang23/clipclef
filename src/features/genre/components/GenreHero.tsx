@@ -2,6 +2,7 @@
 // Design Ref: home-redesign.design.md §5.8 — 장르 상세 헤더
 // 채널 상세(ChannelHeader)와 동일한 패턴: full-bleed + 색 추출 그라데이션.
 // 단, 썸네일만 원형이 아닌 정방형(rounded-md)으로 교체.
+// 색: DB 저장값(dominantColor) 우선, 없으면 런타임 canvas 추출 폴백.
 
 import NextImage from 'next/image';
 import { useEffect, useState } from 'react';
@@ -10,9 +11,10 @@ interface GenreHeroProps {
   name: string;
   thumbnailUrl: string | null;
   playlistCount: number;
+  /** 업로드 시 저장된 dominant RGB (예: "rgb(120, 80, 200)"). 있으면 runtime 추출 생략. */
+  dominantColor?: string | null;
 }
 
-/** 이미지에서 채도 높은 픽셀만 골라 평균 RGB를 반환. CORS 실패 시 null. */
 async function extractVibrantColor(url: string): Promise<string | null> {
   return new Promise((resolve) => {
     const img = new window.Image();
@@ -76,24 +78,25 @@ function Thumbnail({
   );
 }
 
-export default function GenreHero({ name, thumbnailUrl, playlistCount }: GenreHeroProps) {
-  const [color, setColor] = useState<string | null>(null);
+export default function GenreHero({ name, thumbnailUrl, playlistCount, dominantColor }: GenreHeroProps) {
+  // 저장된 색이 있으면 그대로. 없을 때만 canvas 추출 결과로 폴백.
+  const [extracted, setExtracted] = useState<string | null>(null);
+  const color = dominantColor ?? extracted;
 
   useEffect(() => {
-    if (!thumbnailUrl) return;
+    if (dominantColor || !thumbnailUrl) return;
     let cancelled = false;
     extractVibrantColor(thumbnailUrl).then((c) => {
-      if (!cancelled) setColor(c);
+      if (!cancelled) setExtracted(c);
     });
     return () => { cancelled = true; };
-  }, [thumbnailUrl]);
+  }, [thumbnailUrl, dominantColor]);
 
   const gradient = color
     ? `linear-gradient(180deg, ${color} 0%, transparent 100%)`
     : 'linear-gradient(180deg, var(--card) 0%, transparent 100%)';
 
   return (
-    // full-bleed: 부모가 max-w 래퍼 밖에 있어야 좌우 끝까지 채워짐
     <section className="relative w-full overflow-hidden">
       <div
         className="absolute inset-0 pointer-events-none transition-[background] duration-500"
@@ -102,13 +105,10 @@ export default function GenreHero({ name, thumbnailUrl, playlistCount }: GenreHe
       />
 
       <div className="relative max-w-4xl mx-auto px-4 pt-10 pb-8 sm:pt-16 sm:pb-10">
-        {/* 모바일: 썸네일 가운데 위 → 이름 좌측 아래.  데스크톱: 좌 썸네일 + 우 이름 */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:gap-6">
-          {/* 모바일 */}
           <div className="sm:hidden mx-auto mb-6">
             <Thumbnail name={name} url={thumbnailUrl} size={176} />
           </div>
-          {/* 데스크톱 */}
           <div className="hidden sm:block">
             <Thumbnail name={name} url={thumbnailUrl} size={144} />
           </div>

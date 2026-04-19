@@ -10,6 +10,45 @@ import type { GenreRow } from '@/types';
 
 const BUCKET = 'collection-banners';
 
+/** 업로드된 썸네일에서 채도 높은 대표색을 추출. GenreHero extractVibrantColor 와 동일 로직. */
+async function computeDominantColor(url: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const SIZE = 24;
+        const canvas = document.createElement('canvas');
+        canvas.width = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(null);
+        ctx.drawImage(img, 0, 0, SIZE, SIZE);
+        const data = ctx.getImageData(0, 0, SIZE, SIZE).data;
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          const rr = data[i], gg = data[i + 1], bb = data[i + 2];
+          const max = Math.max(rr, gg, bb);
+          const min = Math.min(rr, gg, bb);
+          const sat = max === 0 ? 0 : (max - min) / max;
+          if (sat < 0.25) continue;
+          if (max < 40 || min > 220) continue;
+          r += rr; g += gg; b += bb; n++;
+        }
+        if (n < 10) {
+          r = g = b = n = 0;
+          for (let i = 0; i < data.length; i += 4) {
+            r += data[i]; g += data[i + 1]; b += data[i + 2]; n++;
+          }
+        }
+        resolve(`rgb(${Math.round(r / n)}, ${Math.round(g / n)}, ${Math.round(b / n)})`);
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 interface RowProps {
   genre: GenreRow;
   onChange: (next: GenreRow) => void;
@@ -35,10 +74,13 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
       const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
       const url = urlData?.publicUrl ?? null;
 
+      // 업로드 시 dominant color 미리 계산해 저장 → 상세 페이지 runtime canvas 생략
+      const dominant = url ? await computeDominantColor(url) : null;
+
       const res = await fetch(`/api/admin/genres?id=${genre.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ thumbnail_url: url }),
+        body: JSON.stringify({ thumbnail_url: url, dominant_color: dominant }),
       });
       if (!res.ok) { alert('저장 실패'); return; }
       const updated = await res.json();
@@ -50,7 +92,7 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
     const res = await fetch(`/api/admin/genres?id=${genre.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ thumbnail_url: null }),
+      body: JSON.stringify({ thumbnail_url: null, dominant_color: null }),
     });
     if (!res.ok) { alert('저장 실패'); return; }
     onChange(await res.json());

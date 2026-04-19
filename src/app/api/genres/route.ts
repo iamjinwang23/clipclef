@@ -8,7 +8,7 @@ export async function GET() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('genres')
-    .select('id, name, thumbnail_url, position')
+    .select('id, name, thumbnail_url, dominant_color, position')
     .eq('is_active', true)
     .order('position', { ascending: true });
 

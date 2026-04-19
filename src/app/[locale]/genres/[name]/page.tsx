@@ -20,7 +20,7 @@ export default async function GenreDetailPage({
   const [genreRes, playlistsRes] = await Promise.all([
     supabase
       .from('genres')
-      .select('name, thumbnail_url')
+      .select('name, thumbnail_url, dominant_color')
       .eq('name', name)
       .eq('is_active', true)
       .maybeSingle(),
@@ -43,6 +43,7 @@ export default async function GenreDetailPage({
       <GenreHero
         name={genre.name}
         thumbnailUrl={genre.thumbnail_url}
+        dominantColor={genre.dominant_color}
         playlistCount={playlists.length}
       />
 
