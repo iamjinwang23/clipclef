@@ -1,8 +1,8 @@
 'use client';
 // Design Ref: home-redesign.design.md §5.3.4 — 홈 플리 섹션
-// 인기순 Top N 그리드. 필터/소팅 없음 (전용 조작은 /playlists 로)
+// useHomeFeed 의 playlists 슬라이스만 사용. 같은 RPC 결과를 다른 섹션들과 공유.
 
-import { usePopularPlaylists } from '@/features/playlist/hooks/usePopularPlaylists';
+import { useHomeFeed } from '@/features/home/hooks/useHomeFeed';
 import PlaylistCard from '@/features/playlist/components/PlaylistCard';
 
 interface PlaylistHomeSectionProps {
@@ -26,7 +26,7 @@ function SkeletonCards({ count }: { count: number }) {
 }
 
 export default function PlaylistHomeSection({ limit = 12 }: PlaylistHomeSectionProps) {
-  const { data, isLoading } = usePopularPlaylists(limit);
+  const { data, isLoading } = useHomeFeed({ playlists: limit });
 
   if (isLoading) {
     return (
@@ -36,11 +36,8 @@ export default function PlaylistHomeSection({ limit = 12 }: PlaylistHomeSectionP
     );
   }
 
-  const playlists = data ?? [];
-  if (playlists.length === 0) {
-    // 빈 섹션 숨김 — 부모에서 length 체크도 가능하지만 방어적으로 null 반환
-    return null;
-  }
+  const playlists = data?.playlists ?? [];
+  if (playlists.length === 0) return null;
 
   return (
     <div className={GRID_CLASS}>

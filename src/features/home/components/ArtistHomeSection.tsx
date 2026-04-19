@@ -1,9 +1,9 @@
 'use client';
 // Design Ref: home-redesign.design.md §5.3.2 — 홈 아티스트 섹션
-// 96px 원형 카드 수평 스크롤, Top N
+// useHomeFeed 의 artists 슬라이스만 사용. 더 이상 tracks 테이블을 클라이언트에서 스캔하지 않음.
 
 import { useLocale } from 'next-intl';
-import { usePopularArtists } from '@/features/artist/hooks/usePopularArtists';
+import { useHomeFeed } from '@/features/home/hooks/useHomeFeed';
 import ArtistCard from '@/features/artist/components/ArtistCard';
 import ScrollRail from '@/components/ui/ScrollRail';
 
@@ -27,11 +27,11 @@ function Skeletons({ count, size }: { count: number; size: number }) {
 
 export default function ArtistHomeSection({ limit = 8, size = 162 }: ArtistHomeSectionProps) {
   const locale = useLocale();
-  const { data, isLoading } = usePopularArtists(limit);
+  const { data, isLoading } = useHomeFeed({ artists: limit });
 
   if (isLoading) return <Skeletons count={limit} size={size} />;
 
-  const artists = data ?? [];
+  const artists = data?.artists ?? [];
   if (artists.length === 0) return null;
 
   return (

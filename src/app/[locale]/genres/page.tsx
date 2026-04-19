@@ -25,7 +25,6 @@ export default function GenresPage() {
               <GenreCard
                 name={g.name}
                 thumbnailUrl={g.thumbnail_url}
-                count={g.playlistCount}
                 locale={locale}
                 size={144}
               />

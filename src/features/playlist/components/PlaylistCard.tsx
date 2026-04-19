@@ -8,8 +8,22 @@ import { useLocale } from 'next-intl';
 import type { Playlist } from '@/types';
 import ChannelAvatar from './ChannelAvatar';
 
+// 카드가 실제로 렌더에 쓰는 필드만 타입으로 노출 → over-fetch 방지
+export type PlaylistCardData = Pick<
+  Playlist,
+  | 'id'
+  | 'title'
+  | 'thumbnail_url'
+  | 'channel_id'
+  | 'channel_name'
+  | 'editor_note'
+  | 'is_ai'
+  | 'like_count'
+  | 'comment_count'
+>;
+
 interface PlaylistCardProps {
-  playlist: Playlist;
+  playlist: PlaylistCardData;
 }
 
 export default function PlaylistCard({ playlist }: PlaylistCardProps) {
@@ -56,7 +70,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
         </div>
         {playlist.editor_note && (
           <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2 italic leading-relaxed">
-            "{playlist.editor_note}"
+            &ldquo;{playlist.editor_note}&rdquo;
           </p>
         )}
         <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] mt-1">

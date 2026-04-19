@@ -1,12 +1,11 @@
 'use client';
-// Home channel rail — 인기 채널 Top N (useChannelStories)
-// 각 아이템은 /channel/{id} 전용 페이지로 이동
+// Home channel rail — useHomeFeed 로 집계 결과를 받고, 썸네일만 useChannelThumbnails 로 비동기 보강.
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
-import { useChannelStories } from '../hooks/useChannelStories';
-import { useAllPlaylists } from '../hooks/useAllPlaylists';
+import { useHomeFeed } from '@/features/home/hooks/useHomeFeed';
+import { useChannelThumbnails } from '@/features/playlist/hooks/useChannelThumbnails';
 import ScrollRail from '@/components/ui/ScrollRail';
 
 function ChannelItem({
@@ -65,10 +64,11 @@ interface ChannelStoriesBarProps {
   size?: number;
 }
 
-export default function ChannelStoriesBar({ limit, size = 80 }: ChannelStoriesBarProps = {}) {
+export default function ChannelStoriesBar({ limit = 10, size = 80 }: ChannelStoriesBarProps = {}) {
   const locale = useLocale();
-  const { data: allPlaylists } = useAllPlaylists();
-  const channels = useChannelStories(allPlaylists, limit);
+  const { data } = useHomeFeed({ channels: limit });
+  const channels = data?.channels ?? [];
+  const { data: thumbnails } = useChannelThumbnails(channels.map((c) => c.channel_id));
 
   if (!channels.length) return null;
 
@@ -76,10 +76,10 @@ export default function ChannelStoriesBar({ limit, size = 80 }: ChannelStoriesBa
     <ScrollRail snap>
       {channels.map((ch) => (
         <ChannelItem
-          key={ch.channelId}
-          channelId={ch.channelId}
-          channelName={ch.channelName}
-          thumbnailUrl={ch.thumbnailUrl}
+          key={ch.channel_id}
+          channelId={ch.channel_id}
+          channelName={ch.channel_name}
+          thumbnailUrl={thumbnails?.[ch.channel_id] ?? null}
           locale={locale}
           size={size}
         />
