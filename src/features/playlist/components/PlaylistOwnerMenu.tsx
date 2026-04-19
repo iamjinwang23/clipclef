@@ -4,7 +4,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Track } from '@/types';
-import { GENRE_OPTIONS, MOOD_OPTIONS, PLACE_OPTIONS, ERA_OPTIONS } from '@/types';
+import { MOOD_OPTIONS, PLACE_OPTIONS, ERA_OPTIONS } from '@/types';
+import { useActiveGenres } from '@/features/genre/hooks/useActiveGenres';
 
 interface PlaylistOwnerMenuProps {
   playlistId: string;
@@ -138,6 +139,8 @@ export default function PlaylistOwnerMenu({
   tracks: initialTracks,
 }: PlaylistOwnerMenuProps) {
   const router = useRouter();
+  // DB `genres` 테이블이 장르 태그의 단일 소스
+  const { data: genreOptions = [] } = useActiveGenres();
 
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -312,7 +315,7 @@ export default function PlaylistOwnerMenu({
               {/* 태그 */}
               <div>
                 <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">태그</p>
-                <TagSelect label="장르" options={GENRE_OPTIONS} selected={genre} onChange={setGenre} />
+                <TagSelect label="장르" options={genreOptions} selected={genre} onChange={setGenre} />
                 <TagSelect label="분위기" options={MOOD_OPTIONS} selected={mood} onChange={setMood} />
                 <TagSelect label="장소" options={PLACE_OPTIONS} selected={place} onChange={setPlace} />
                 <TagSelect label="시대" options={ERA_OPTIONS} selected={era} onChange={setEra} />

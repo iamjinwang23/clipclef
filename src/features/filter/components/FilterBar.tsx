@@ -7,8 +7,9 @@ import { useTranslations } from 'next-intl';
 import { useFilterStore } from '../store';
 import FilterChip from './FilterChip';
 import EraFilter from './EraFilter';
-import { GENRE_OPTIONS, MOOD_OPTIONS, PLACE_OPTIONS } from '@/types';
+import { MOOD_OPTIONS, PLACE_OPTIONS } from '@/types';
 import type { SortOption } from '@/types';
+import { useActiveGenres } from '@/features/genre/hooks/useActiveGenres';
 
 function SortIconButton() {
   const t = useTranslations('filter.sort');
@@ -89,6 +90,8 @@ export default function FilterBar() {
   const t = useTranslations('filter');
   const { genre, mood, place, era, toggleGenre, toggleMood, togglePlace, toggleEra, reset } =
     useFilterStore();
+  // DB `genres` 테이블을 단일 소스로 사용 (admin이 toggle한 is_active 반영)
+  const { data: genreOptions = [] } = useActiveGenres();
 
   const activeFilters: { value: string; onRemove: () => void }[] = [
     ...genre.map((v) => ({ value: v, onRemove: () => toggleGenre(v) })),
@@ -107,7 +110,7 @@ export default function FilterBar() {
             <div
               className="flex items-center gap-2 overflow-x-auto scrollbar-hide"
             >
-              <FilterChip label={t('genre')} options={GENRE_OPTIONS} selected={genre} onToggle={toggleGenre} />
+              <FilterChip label={t('genre')} options={genreOptions} selected={genre} onToggle={toggleGenre} />
               <FilterChip label={t('mood')} options={MOOD_OPTIONS} selected={mood} onToggle={toggleMood} />
               <FilterChip label={t('place')} options={PLACE_OPTIONS} selected={place} onToggle={togglePlace} />
               <EraFilter />

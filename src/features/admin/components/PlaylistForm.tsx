@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAdminPlaylists } from '../hooks/useAdminPlaylists';
-import { GENRE_OPTIONS, MOOD_OPTIONS, PLACE_OPTIONS, ERA_OPTIONS } from '@/types';
+import { MOOD_OPTIONS, PLACE_OPTIONS, ERA_OPTIONS } from '@/types';
 import type { Playlist } from '@/types';
+import { useActiveGenres } from '@/features/genre/hooks/useActiveGenres';
 
 interface TrackRow {
   position: number;
@@ -218,6 +219,8 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
   const router = useRouter();
   const { createPlaylist, updatePlaylist } = useAdminPlaylists();
   const isEditMode = !!editTarget;
+  // DB `genres` 테이블이 장르 태그의 단일 소스
+  const { data: genreOptions = [] } = useActiveGenres();
 
   const [url, setUrl] = useState('');
   const [isParsing, setIsParsing] = useState(false);
@@ -406,7 +409,7 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
           {/* 태그 */}
           <div>
             <p className="text-sm font-medium mb-3">{t('tagsLabel')}</p>
-            <TagSelect label="장르" options={GENRE_OPTIONS} selected={genre} onChange={setGenre} />
+            <TagSelect label="장르" options={genreOptions} selected={genre} onChange={setGenre} />
             <TagSelect label="분위기" options={MOOD_OPTIONS} selected={mood} onChange={setMood} />
             <TagSelect label="장소" options={PLACE_OPTIONS} selected={place} onChange={setPlace} />
             <TagSelect label="시대" options={ERA_OPTIONS} selected={era} onChange={setEra} />
