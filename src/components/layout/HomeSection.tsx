@@ -13,7 +13,7 @@ interface HomeSectionProps {
 
 export default function HomeSection({ label, href, children }: HomeSectionProps) {
   return (
-    <section className="max-w-6xl mx-auto px-4 mt-10 first:mt-6">
+    <section className="max-w-6xl mx-auto px-4 mt-[35px] first:mt-[19px]">
       <div className="flex items-baseline justify-between mb-4">
         <h2 className="text-xl font-bold leading-snug text-[var(--foreground)]">
           {label}
