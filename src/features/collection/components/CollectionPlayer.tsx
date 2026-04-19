@@ -4,13 +4,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import type { Playlist, Track } from '@/types';
-
-declare global {
-  interface Window {
-    YT: any;
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
+import type { YTPlayer, YTPlayerEvent } from '@/types/youtube';
 
 interface CollectionPlayerProps {
   playlists: Playlist[];
@@ -25,7 +19,7 @@ interface CollectionPlayerProps {
   onNext: () => void;
   onToggleTracklist: () => void;
   onSeek: (sec: number, trackIndex: number) => void;
-  registerPlayer: (player: any) => void;
+  registerPlayer: (player: YTPlayer | null) => void;
 }
 
 function formatDuration(sec: number | null) {
@@ -51,7 +45,7 @@ export default function CollectionPlayer({
   registerPlayer,
 }: CollectionPlayerProps) {
   const iframeContainerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
 
   const current = currentIndex !== null ? playlists[currentIndex] : null;
 
@@ -75,15 +69,16 @@ export default function CollectionPlayer({
         playerRef.current.loadVideoById(videoId);
         return;
       }
+      if (!window.YT) return;
       playerRef.current = new window.YT.Player(iframeContainerRef.current, {
         videoId,
         playerVars: { autoplay: 1, rel: 0 },
         events: {
-          onReady: (e: any) => {
-            e.target.playVideo();
+          onReady: (e: YTPlayerEvent) => {
+            e.target.playVideo?.();
             registerPlayer(playerRef.current);
           },
-          onStateChange: (e: any) => {
+          onStateChange: (e: YTPlayerEvent) => {
             if (e.data === 0) onNext(); // ENDED → 다음
           },
         },
@@ -108,7 +103,8 @@ export default function CollectionPlayer({
   // play/pause 토글
   useEffect(() => {
     if (!playerRef.current) return;
-    isPlaying ? playerRef.current.playVideo?.() : playerRef.current.pauseVideo?.();
+    if (isPlaying) playerRef.current.playVideo?.();
+    else playerRef.current.pauseVideo?.();
   }, [isPlaying]);
 
   // 트랙리스트 열릴 때 배경 스크롤 잠금
@@ -245,6 +241,7 @@ export default function CollectionPlayer({
                 className={`p-1.5 transition-opacity ${isFirst ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
                 aria-label="이전 플레이리스트"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/backward.svg" alt="" aria-hidden="true" className="w-6 h-6 max-sm:w-10 max-sm:h-10 invert" />
               </button>
 
@@ -253,6 +250,7 @@ export default function CollectionPlayer({
                 className="p-1.5 hover:opacity-70 transition-opacity"
                 aria-label={isPlaying ? '일시정지' : '재생'}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={isPlaying ? '/Pause.svg' : '/Play.svg'}
                   alt=""
@@ -267,6 +265,7 @@ export default function CollectionPlayer({
                 className={`p-1.5 transition-opacity ${isLast ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
                 aria-label="다음 플레이리스트"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/Forward.svg" alt="" aria-hidden="true" className="w-6 h-6 max-sm:w-10 max-sm:h-10 invert" />
               </button>
             </div>
@@ -278,6 +277,7 @@ export default function CollectionPlayer({
                 className={`p-2 transition-opacity hover:opacity-70 ${isTracklistOpen ? 'opacity-100' : 'opacity-60'}`}
                 aria-label="트랙리스트"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/tracklist.svg" alt="" aria-hidden="true" className="w-5 h-5 invert" />
               </button>
             </div>

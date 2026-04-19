@@ -10,20 +10,20 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 export default function AuthErrorToast() {
   const searchParams = useSearchParams();
-  const [message, setMessage] = useState<string | null>(null);
+  const rawErr = searchParams.get('auth_error');
+  const decoded = rawErr ? decodeURIComponent(rawErr) : null;
+  const [dismissed, setDismissed] = useState(false);
+  const message = !decoded || dismissed
+    ? null
+    : (ERROR_MESSAGES[decoded] ?? `로그인 오류: ${decoded}`);
 
+  // URL에서 auth_error 제거 — 파라미터가 있었을 때만 side-effect 실행
   useEffect(() => {
-    const err = searchParams.get('auth_error');
-    if (!err) return;
-
-    const decoded = decodeURIComponent(err);
-    setMessage(ERROR_MESSAGES[decoded] ?? `로그인 오류: ${decoded}`);
-
-    // URL에서 auth_error 제거
+    if (!decoded) return;
     const url = new URL(window.location.href);
     url.searchParams.delete('auth_error');
     window.history.replaceState({}, '', url.toString());
-  }, [searchParams]);
+  }, [decoded]);
 
   if (!message) return null;
 
@@ -35,7 +35,7 @@ export default function AuthErrorToast() {
         </svg>
         <span className="flex-1">{message}</span>
         <button
-          onClick={() => setMessage(null)}
+          onClick={() => setDismissed(true)}
           className="text-red-400 hover:text-red-200 transition-colors leading-none"
         >
           ×

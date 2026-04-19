@@ -36,7 +36,9 @@ export async function GET() {
 
       return {
         ...col,
-        items: (items ?? []).map((r: any) => r.playlists).filter(Boolean),
+        items: (items ?? [])
+          .map((r: { playlists: unknown }) => r.playlists)
+          .filter(Boolean),
       };
     })
   );

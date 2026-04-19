@@ -25,22 +25,26 @@ export default function MobileBottomNav() {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase.auth]);
 
+  // user 가 null 로 바뀌면 avatar/unread 값은 렌더에서 자연히 가려지므로 sync 리셋 불필요.
   useEffect(() => {
-    if (!user) { setAvatarUrl(undefined); return; }
+    if (!user) return;
+    let cancelled = false;
     supabase.from('profiles').select('avatar_url').eq('id', user.id).single()
-      .then(({ data }) => setAvatarUrl(data?.avatar_url ?? undefined));
-  }, [user]);
+      .then(({ data }) => { if (!cancelled) setAvatarUrl(data?.avatar_url ?? undefined); });
+    return () => { cancelled = true; };
+  }, [user, supabase]);
 
   useEffect(() => {
-    if (!user) { setUnreadCount(0); return; }
+    if (!user) return;
+    let cancelled = false;
     supabase
       .from('notifications')
       .select('id', { count: 'exact', head: true })
       .eq('recipient_id', user.id)
       .eq('is_read', false)
-      .then(({ count }) => setUnreadCount(count ?? 0));
+      .then(({ count }) => { if (!cancelled) setUnreadCount(count ?? 0); });
 
     const channel = supabase
       .channel(`mob-nav-notif:${user.id}`)
@@ -49,8 +53,11 @@ export default function MobileBottomNav() {
         filter: `recipient_id=eq.${user.id}`,
       }, () => setUnreadCount((c) => c + 1))
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [user]);
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, [user, supabase]);
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {

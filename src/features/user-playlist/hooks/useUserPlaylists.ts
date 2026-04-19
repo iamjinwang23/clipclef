@@ -18,7 +18,7 @@ export function useUserPlaylists() {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     setPlaylists((data ?? []) as UserPlaylist[]);
-  }, []);
+  }, [supabase]);
 
   useEffect(() => { fetch(); }, [fetch]);
 
@@ -81,7 +81,7 @@ export function useUserPlaylists() {
       .from('user_playlist_items')
       .select('playlist_id')
       .eq('user_playlist_id', userPlaylistId);
-    return (data ?? []).map((r: any) => r.playlist_id);
+    return (data ?? []).map((r: { playlist_id: string }) => r.playlist_id);
   };
 
   return { playlists, loading, fetch, create, remove, togglePublic, addItem, removeItem, getItemIds };

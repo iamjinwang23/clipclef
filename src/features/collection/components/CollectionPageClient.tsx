@@ -5,6 +5,7 @@ import { useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { createBrowserClient } from '@supabase/ssr';
 import type { Playlist, Track } from '@/types';
+import type { YTPlayer } from '@/types/youtube';
 import CollectionGrid from './CollectionGrid';
 import CollectionPlayer from './CollectionPlayer';
 
@@ -31,7 +32,7 @@ export default function CollectionPageClient({
   const [tracks, setTracks] = useState<Track[]>([]);
   const [tracksLoading, setTracksLoading] = useState(false);
   const [activeTrackIndex, setActiveTrackIndex] = useState<number | null>(null);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
 
   const fetchTracks = useCallback(async (playlistId: string) => {
     setTracksLoading(true);
@@ -101,7 +102,7 @@ export default function CollectionPageClient({
     setActiveTrackIndex(trackIndex);
   }, []);
 
-  const registerPlayer = useCallback((player: any) => {
+  const registerPlayer = useCallback((player: YTPlayer | null) => {
     playerRef.current = player;
   }, []);
 

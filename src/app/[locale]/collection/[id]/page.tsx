@@ -26,7 +26,10 @@ async function getCollection(id: string) {
     .eq('collection_id', id)
     .order('position');
 
-  const playlists = (items ?? []).map((r: any) => r.playlists).filter(Boolean) as Playlist[];
+  // Supabase FK 조인: 런타임은 단일 객체지만 타입은 배열로 표기 → 좁히기 캐스트.
+  const playlists = ((items ?? []) as unknown as { playlists: Playlist | null }[])
+    .map((r) => r.playlists)
+    .filter(Boolean) as Playlist[];
 
   return { ...col, items: playlists };
 }

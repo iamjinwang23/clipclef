@@ -35,7 +35,9 @@ export default async function ProfilePage({
         .eq('user_playlist_id', up.id)
         .order('position')
         .limit(4);
-      const items = (data ?? []).map((r: any) => r.playlists).filter(Boolean) as Playlist[];
+      const items = ((data ?? []) as unknown as { playlists: Playlist | null }[])
+        .map((r) => r.playlists)
+        .filter(Boolean) as Playlist[];
       return { ...up, items };
     })
   );

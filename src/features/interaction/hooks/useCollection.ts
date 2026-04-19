@@ -54,7 +54,7 @@ export function useCollection(playlistId: string) {
 
       setSaved(!!data);
     })();
-  }, [playlistId]);
+  }, [playlistId, supabase]);
 
   const toggle = async () => {
     const { data: { user } } = await supabase.auth.getUser();

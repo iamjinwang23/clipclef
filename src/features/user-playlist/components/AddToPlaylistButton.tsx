@@ -35,6 +35,7 @@ export default function AddToPlaylistButton({ playlistId, isLoggedIn, iconOnly =
   // 팝오버 열릴 때 각 목록에 담겨 있는지 확인
   useEffect(() => {
     if (!open || playlists.length === 0) return;
+    let cancelled = false;
     (async () => {
       const results = await Promise.all(
         playlists.map(async (p) => {
@@ -42,9 +43,10 @@ export default function AddToPlaylistButton({ playlistId, isLoggedIn, iconOnly =
           return [p.id, ids.includes(playlistId)] as [string, boolean];
         })
       );
-      setAddedIds(Object.fromEntries(results));
+      if (!cancelled) setAddedIds(Object.fromEntries(results));
     })();
-  }, [open, playlists.length]);
+    return () => { cancelled = true; };
+  }, [open, playlists, playlistId, getItemIds]);
 
   const handleOpen = async () => {
     if (!isLoggedIn) {

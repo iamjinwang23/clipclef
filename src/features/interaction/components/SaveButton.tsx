@@ -25,6 +25,7 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
 
   // 마운트 시 기본 목록에 저장됐는지 확인 → 버튼 초기 상태
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -41,13 +42,15 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
         .eq('user_playlist_id', defaultList.id)
         .eq('playlist_id', playlistId)
         .maybeSingle();
-      setSavedAnywhere(!!data);
+      if (!cancelled) setSavedAnywhere(!!data);
     })();
-  }, [playlistId]);
+    return () => { cancelled = true; };
+  }, [playlistId, supabase]);
 
   // 드롭다운 열릴 때 각 목록의 저장 여부 확인
   useEffect(() => {
     if (!open || playlists.length === 0) return;
+    let cancelled = false;
     (async () => {
       const results = await Promise.all(
         playlists.map(async (p) => {
@@ -55,11 +58,13 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
           return [p.id, ids.includes(playlistId)] as [string, boolean];
         })
       );
+      if (cancelled) return;
       const map = Object.fromEntries(results);
       setAddedIds(map);
       setSavedAnywhere(Object.values(map).some(Boolean));
     })();
-  }, [open, playlists.length]);
+    return () => { cancelled = true; };
+  }, [open, playlists, playlistId, getItemIds]);
 
   // 외부 클릭 닫기
   useEffect(() => {

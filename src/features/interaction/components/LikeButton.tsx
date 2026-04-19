@@ -3,7 +3,6 @@
 // Plan SC: 좋아요 토글 동작
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { useLike } from '../hooks/useLike';
 import LoginModal from './LoginModal';
 
@@ -13,7 +12,6 @@ interface LikeButtonProps {
 }
 
 export default function LikeButton({ playlistId, initialCount }: LikeButtonProps) {
-  const t = useTranslations('playlist');
   const { liked, count, loading, toggle } = useLike(playlistId, initialCount);
   const [showLogin, setShowLogin] = useState(false);
 

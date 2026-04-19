@@ -111,8 +111,8 @@ export async function POST(req: NextRequest) {
     .eq('user_playlist_id', userPlaylistId)
     .order('position');
 
-  const youtubeIds = (rawItems ?? [])
-    .map((r: any) => r.playlists?.youtube_id)
+  const youtubeIds = ((rawItems ?? []) as unknown as { playlists: { youtube_id: string } | null }[])
+    .map((r) => r.playlists?.youtube_id)
     .filter(Boolean) as string[];
 
   if (youtubeIds.length === 0) {
@@ -125,10 +125,11 @@ export async function POST(req: NextRequest) {
       await addVideoToPlaylist(token, ytPlaylistId, videoId);
     }
     return NextResponse.json({ url: `https://www.youtube.com/playlist?list=${ytPlaylistId}` });
-  } catch (err: any) {
-    if (err.message === 'youtube_not_connected') {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (message === 'youtube_not_connected') {
       return NextResponse.json({ error: 'youtube_not_connected' }, { status: 401 });
     }
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

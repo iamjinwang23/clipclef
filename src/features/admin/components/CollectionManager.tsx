@@ -6,7 +6,6 @@ import type { CuratedCollection, Playlist } from '@/types';
 
 // ── 컬렉션 항목 플레이리스트 선택 팝업 ────────────────────────────────────────────
 function PlaylistPicker({
-  collectionId,
   currentIds,
   onAdd,
   onClose,
@@ -22,7 +21,7 @@ function PlaylistPicker({
   useEffect(() => {
     supabase.from('playlists').select('*').eq('is_active', true).order('created_at', { ascending: false })
       .then(({ data }) => setAll((data ?? []) as Playlist[]));
-  }, []);
+  }, [supabase]);
 
   const available = all.filter((p) => !currentIds.includes(p.id));
 
@@ -328,16 +327,17 @@ export default function CollectionManager() {
   const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
-    const res = await fetch('/api/admin/collections');
-    if (res.ok) {
-      const data = await res.json();
-      setCollections(data);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/admin/collections')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        if (data) setCollections(data);
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const handleCreate = async () => {
     if (!newTitle.trim()) return;

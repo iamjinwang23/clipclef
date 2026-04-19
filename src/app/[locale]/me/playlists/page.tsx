@@ -145,7 +145,7 @@ export default function MyPlaylistsPage() {
       if (!user) { router.push(`/${locale}`); return; }
       setUserId(user.id);
     });
-  }, []);
+  }, [locale, router, supabase.auth]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -164,7 +164,9 @@ export default function MyPlaylistsPage() {
       .select('playlist_id, playlists(*)')
       .eq('user_playlist_id', userPlaylistId)
       .order('position');
-    const loaded = (data ?? []).map((r: any) => r.playlists).filter(Boolean) as Playlist[];
+    const loaded = ((data ?? []) as unknown as { playlists: Playlist | null }[])
+      .map((r) => r.playlists)
+      .filter(Boolean) as Playlist[];
     setItems((prev) => ({ ...prev, [userPlaylistId]: loaded }));
   };
 

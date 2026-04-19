@@ -31,13 +31,12 @@ function DesktopSearchBar() {
   const router = useRouter();
   const [value, setValue] = useState('');
   const [focused, setFocused] = useState(false);
-  const [recent, setRecent] = useState<string[]>([]);
+  // lazy init — 마운트 시 1회만 localStorage 를 읽고, 이후에는 로컬 상태만 갱신.
+  // removeRecent/applySearch/clearAll 이 saveRecent 로 동기화하므로 같은 탭 내부 일관성은 유지됨.
+  const [recent, setRecent] = useState<string[]>(() =>
+    typeof window === 'undefined' ? [] : loadRecent()
+  );
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // 포커스 시 최근 검색어 로드
-  useEffect(() => {
-    if (focused) setRecent(loadRecent());
-  }, [focused]);
 
   // 외부 클릭 시 닫기
   useEffect(() => {
@@ -177,18 +176,23 @@ export default function Header() {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase.auth]);
 
   // Design Ref: §5.4 — profiles.avatar_url 우선, fallback은 OAuth 메타데이터
+  // user 가 null 이면 아바타를 쓰는 UI 자체가 렌더되지 않으므로 sync reset 은 불필요.
   useEffect(() => {
-    if (!user) { setProfileAvatarUrl(undefined); return; }
+    if (!user) return;
+    let cancelled = false;
     supabase
       .from('profiles')
       .select('avatar_url')
       .eq('id', user.id)
       .single()
-      .then(({ data }) => setProfileAvatarUrl(data?.avatar_url ?? undefined));
-  }, [user]);
+      .then(({ data }) => {
+        if (!cancelled) setProfileAvatarUrl(data?.avatar_url ?? undefined);
+      });
+    return () => { cancelled = true; };
+  }, [user, supabase]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {

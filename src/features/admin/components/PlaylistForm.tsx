@@ -275,8 +275,8 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
       if (!res.ok) throw new Error(data.error ?? 'Parse failed');
       setParsed(data);
       setTracks(data.tracks);
-    } catch (e: any) {
-      setParseError(e.message);
+    } catch (e) {
+      setParseError(e instanceof Error ? e.message : String(e));
     } finally {
       setIsParsing(false);
     }
@@ -322,8 +322,8 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
           handleReset();
         }
       }
-    } catch (e: any) {
-      alert(e.message);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : String(e));
     }
   };
 

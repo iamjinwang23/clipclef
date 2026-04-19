@@ -23,7 +23,7 @@ export function useLike(playlistId: string, initialCount: number) {
         .maybeSingle()
         .then(({ data }) => setLiked(!!data));
     });
-  }, [playlistId]);
+  }, [playlistId, supabase]);
 
   const toggle = async () => {
     const { data: { user } } = await supabase.auth.getUser();

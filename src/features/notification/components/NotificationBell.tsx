@@ -30,7 +30,7 @@ export default function NotificationBell({ userId, locale }: NotificationBellPro
       .eq('recipient_id', userId)
       .eq('is_read', false)
       .then(({ count }) => setUnreadCount(count ?? 0));
-  }, [userId]);
+  }, [userId, supabase]);
 
   // Realtime 구독 — 새 알림 INSERT 감지
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function NotificationBell({ userId, locale }: NotificationBellPro
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [userId]);
+  }, [userId, supabase]);
 
   // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {

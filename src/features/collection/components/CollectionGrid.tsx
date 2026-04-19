@@ -100,7 +100,7 @@ export default function CollectionGrid({ playlists, currentIndex, locale, onPlay
               </div>
               {playlist.editor_note && (
                 <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2 italic leading-relaxed">
-                  "{playlist.editor_note}"
+                  &ldquo;{playlist.editor_note}&rdquo;
                 </p>
               )}
             </Link>

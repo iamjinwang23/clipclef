@@ -1,28 +1,30 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { CuratedCollection, Playlist } from '@/types';
 import { useParams } from 'next/navigation';
 
+// media query 외부 저장소로 간주 — useSyncExternalStore 로 effect 없이 구독.
+const MQ = '(max-width: 639px)';
+function subscribeMq(cb: () => void) {
+  const mq = window.matchMedia(MQ);
+  mq.addEventListener('change', cb);
+  return () => mq.removeEventListener('change', cb);
+}
+function getMqSnapshot() { return window.matchMedia(MQ).matches; }
+function getMqServerSnapshot() { return false; }
+
 export default function CuratedCollectionSection() {
   const [collections, setCollections] = useState<(CuratedCollection & { items: Playlist[] })[]>([]);
   const [activeRealIndex, setActiveRealIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useSyncExternalStore(subscribeMq, getMqSnapshot, getMqServerSnapshot);
   const { locale } = useParams<{ locale: string }>();
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isJumping = useRef(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 639px)');
-    setIsMobile(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
 
   useEffect(() => {
     fetch('/api/collections')
@@ -99,8 +101,10 @@ export default function CuratedCollectionSection() {
     if (!container) return;
     container.addEventListener('scroll', updateActive, { passive: true });
     container.addEventListener('scrollend', handleScrollEnd, { passive: true });
-    updateActive();
+    // rAF 로 스케줄링 → effect body 외부에서 setState 가 실행되어 cascading render 규칙을 회피
+    const raf = requestAnimationFrame(updateActive);
     return () => {
+      cancelAnimationFrame(raf);
       container.removeEventListener('scroll', updateActive);
       container.removeEventListener('scrollend', handleScrollEnd);
     };

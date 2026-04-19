@@ -20,7 +20,9 @@ export default async function MyLikesPage({
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  const playlists = (data ?? []).map((r: any) => r.playlists).filter(Boolean) as Playlist[];
+  const playlists = ((data ?? []) as unknown as { playlists: Playlist | null }[])
+    .map((r) => r.playlists)
+    .filter(Boolean) as Playlist[];
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

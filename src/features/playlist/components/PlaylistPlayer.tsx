@@ -4,13 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { Track } from '@/types';
-
-declare global {
-  interface Window {
-    YT: any;
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
+import type { YTPlayer } from '@/types/youtube';
 
 interface PlaylistPlayerProps {
   youtubeId: string;
@@ -27,7 +21,7 @@ function formatDuration(sec: number | null) {
 
 export default function PlaylistPlayer({ youtubeId, tracks, children }: PlaylistPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -47,7 +41,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
     let destroyed = false;
 
     const initPlayer = () => {
-      if (destroyed || !containerRef.current) return;
+      if (destroyed || !containerRef.current || !window.YT) return;
       playerRef.current = new window.YT.Player(containerRef.current, {
         videoId: youtubeId,
         playerVars: { autoplay: 0, rel: 0 },
@@ -76,7 +70,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
 
     return () => {
       destroyed = true;
-      playerRef.current?.destroy();
+      playerRef.current?.destroy?.();
       playerRef.current = null;
       setIsReady(false);
       setActiveIndex(null);
@@ -87,7 +81,7 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
     const track = tracksWithStart[index];
     if (!track || !playerRef.current || !isReady) return;
     playerRef.current.seekTo(track.startSec, true);
-    playerRef.current.playVideo();
+    playerRef.current.playVideo?.();
     setActiveIndex(index);
   };
 
