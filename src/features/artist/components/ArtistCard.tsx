@@ -30,7 +30,7 @@ export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: 
             src={imageUrl}
             alt={name}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
             sizes={`${size}px`}
           />
         ) : (
