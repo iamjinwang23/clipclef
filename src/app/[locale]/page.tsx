@@ -27,7 +27,7 @@ export default async function HomePage({
 
       {/* 채널 */}
       <HomeSection label="채널" href={`/${locale}/channels`}>
-        <ChannelStoriesBar limit={10} size={162} />
+        <ChannelStoriesBar limit={10} size={126} />
       </HomeSection>
 
       {/* 플레이리스트 */}
@@ -37,7 +37,7 @@ export default async function HomePage({
 
       {/* 아티스트 */}
       <HomeSection label="아티스트" href={`/${locale}/artists`}>
-        <ArtistHomeSection limit={8} />
+        <ArtistHomeSection limit={8} size={126} />
       </HomeSection>
     </div>
   );
