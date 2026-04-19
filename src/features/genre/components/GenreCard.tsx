@@ -67,7 +67,7 @@ export default function GenreCard({ name, thumbnailUrl, count, locale, size = 12
         </div>
       </div>
 
-      <p className="text-sm font-medium text-[var(--foreground)] leading-snug group-hover:text-[var(--accent)] transition-colors truncate">
+      <p className="text-sm font-medium line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors">
         {name}
       </p>
     </Link>

@@ -44,7 +44,7 @@ export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: 
       </div>
 
       {/* 이름 */}
-      <p className="text-xs font-medium text-center text-[var(--foreground)] line-clamp-2 leading-tight group-hover:text-[var(--accent)] transition-colors">
+      <p className="text-sm font-medium text-center line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors">
         {name}
       </p>
     </Link>

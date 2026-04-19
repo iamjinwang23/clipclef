@@ -50,7 +50,7 @@ function ChannelItem({
           </div>
         )}
       </div>
-      <p className="text-xs font-medium text-center text-[var(--foreground)] line-clamp-2 leading-tight group-hover:text-[var(--accent)] transition-colors">
+      <p className="text-sm font-medium text-center line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors">
         {channelName}
       </p>
     </Link>
