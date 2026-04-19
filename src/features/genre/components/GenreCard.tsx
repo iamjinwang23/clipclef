@@ -22,7 +22,7 @@ export default function GenreCard({ name, thumbnailUrl, count, locale, size = 12
       style={{ width: size }}
     >
       <div
-        className="relative rounded-md overflow-hidden bg-[var(--subtle)]"
+        className="relative rounded-md sm:rounded-xl overflow-hidden bg-[var(--subtle)]"
         style={{ width: size, height: size }}
       >
         {thumbnailUrl ? (
