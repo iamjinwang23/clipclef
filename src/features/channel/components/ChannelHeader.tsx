@@ -89,7 +89,7 @@ export default function ChannelHeader({ channelId, channelName, playlistCount }:
         <div className="flex flex-col sm:flex-row sm:items-end sm:gap-6">
           {/* 모바일 아바타 — 가운데 정렬, 크게 */}
           <div className="sm:hidden mx-auto mb-6">
-            <ChannelAvatar channelId={channelId} channelName={channelName} size={176} />
+            <ChannelAvatar channelId={channelId} channelName={channelName} size={168} />
           </div>
           {/* 데스크톱 아바타 — 좌측 */}
           <div className="hidden sm:block flex-shrink-0">
