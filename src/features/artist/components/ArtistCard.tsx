@@ -18,7 +18,7 @@ export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: 
     <Link
       href={`/${locale}/artist/${slug}`}
       className="flex flex-col items-center gap-2 group flex-shrink-0"
-      style={{ width: size + 8 }}
+      style={{ width: size }}
     >
       {/* 원형 썸네일 */}
       <div
