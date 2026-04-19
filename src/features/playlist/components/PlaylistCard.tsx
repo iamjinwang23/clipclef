@@ -24,7 +24,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
             src={playlist.thumbnail_url}
             alt={playlist.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
 

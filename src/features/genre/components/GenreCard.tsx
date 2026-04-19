@@ -21,50 +21,26 @@ export default function GenreCard({ name, thumbnailUrl, count, locale, size = 12
       className="flex flex-col gap-2 group flex-shrink-0"
       style={{ width: size }}
     >
-      <div className="relative" style={{ width: size, height: size }}>
-        {/* 뒤 레이어 — 위로 offset, 좌우로 inset (앨범 겹침 효과) */}
-        <div
-          className="absolute rounded-md overflow-hidden opacity-80"
-          style={{
-            left: Math.round(size * 0.06),
-            right: Math.round(size * 0.06),
-            top: -Math.round(size * 0.05),
-            height: Math.round(size * 0.2),
-          }}
-          aria-hidden
-        >
-          {thumbnailUrl ? (
-            <Image
-              src={thumbnailUrl}
-              alt=""
-              fill
-              className="object-cover object-top"
-              sizes={`${size}px`}
-            />
-          ) : (
-            <div className="w-full h-full bg-[var(--subtle)]" />
-          )}
-        </div>
-
-        {/* 앞 레이어 — 실제 이미지 */}
-        <div className="absolute inset-0 rounded-md overflow-hidden shadow-lg ring-1 ring-white/5 group-hover:ring-[var(--accent)] transition-all duration-200 bg-[var(--subtle)]">
-          {thumbnailUrl ? (
-            <Image
-              src={thumbnailUrl}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes={`${size}px`}
-            />
-          ) : (
-            <div
-              className="w-full h-full flex items-center justify-center font-bold text-[var(--text-secondary)]"
-              style={{ fontSize: Math.round(size * 0.35) }}
-            >
-              {initial}
-            </div>
-          )}
-        </div>
+      <div
+        className="relative rounded-md overflow-hidden bg-[var(--subtle)]"
+        style={{ width: size, height: size }}
+      >
+        {thumbnailUrl ? (
+          <Image
+            src={thumbnailUrl}
+            alt={name}
+            fill
+            className="object-cover"
+            sizes={`${size}px`}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center font-bold text-[var(--text-secondary)]"
+            style={{ fontSize: Math.round(size * 0.35) }}
+          >
+            {initial}
+          </div>
+        )}
       </div>
 
       <p className="text-sm font-medium line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors">
