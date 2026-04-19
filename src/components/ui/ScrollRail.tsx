@@ -1,8 +1,9 @@
 'use client';
 // 수평 스크롤 레일 공용 — 좌/우 가장자리에 그라데이션 fade.
 // 시작 위치에서는 왼쪽 그라데이션 숨김, 스크롤 시작하면 슥 fade-in (Suno 장르 탭 연출).
+// 스크롤 핸들러는 rAF 로 coalesce 하여 setState 빈도를 프레임당 최대 1회로 제한.
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ScrollRailProps {
   children: React.ReactNode;
@@ -21,22 +22,32 @@ export default function ScrollRail({
   fadeWidth = 48,
 }: ScrollRailProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const rafId = useRef<number | null>(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
 
-  const updateEdges = () => {
+  const measure = useCallback(() => {
+    rafId.current = null;
     const el = ref.current;
     if (!el) return;
     // 4px 버퍼로 경계 떨림 방지
     setShowLeft(el.scrollLeft > 4);
     setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
-  };
+  }, []);
+
+  const scheduleMeasure = useCallback(() => {
+    if (rafId.current != null) return;
+    rafId.current = requestAnimationFrame(measure);
+  }, [measure]);
 
   useEffect(() => {
-    updateEdges();
-    window.addEventListener('resize', updateEdges);
-    return () => window.removeEventListener('resize', updateEdges);
-  }, []);
+    measure();
+    window.addEventListener('resize', scheduleMeasure);
+    return () => {
+      window.removeEventListener('resize', scheduleMeasure);
+      if (rafId.current != null) cancelAnimationFrame(rafId.current);
+    };
+  }, [measure, scheduleMeasure]);
 
   return (
     <div className="relative">
@@ -55,7 +66,7 @@ export default function ScrollRail({
 
       <div
         ref={ref}
-        onScroll={updateEdges}
+        onScroll={scheduleMeasure}
         className={`flex gap-4 overflow-x-auto scrollbar-hide py-1 ${className}`}
         style={snap ? { scrollSnapType: 'x proximity' } : undefined}
       >
