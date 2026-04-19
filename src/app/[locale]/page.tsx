@@ -27,7 +27,7 @@ export default async function HomePage({
 
       {/* 채널 */}
       <HomeSection label="채널" href={`/${locale}/channels`}>
-        <ChannelStoriesBar limit={10} />
+        <ChannelStoriesBar limit={10} size={162} />
       </HomeSection>
 
       {/* 플레이리스트 */}
