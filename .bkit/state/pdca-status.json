@@ -46,6 +46,14 @@
   ],
   "primaryFeature": "youchoose",
   "features": {
+    "tracklist-title-artist-swap": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "startedAt": "2026-04-21T00:00:00Z",
+      "archivedAt": "2026-04-21T13:30:00Z",
+      "archivedTo": "docs/archive/2026-04/tracklist-title-artist-swap/"
+    },
     "public-profile-parity": {
       "phase": "archived",
       "matchRate": 100,
