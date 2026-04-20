@@ -102,5 +102,21 @@
     "feature": null,
     "phase": null,
     "progress": null
+  },
+  {
+    "sessionId": "8de7c93a-6e7f-4538-b103-9297526c674a",
+    "reason": "logout",
+    "endedAt": "2026-04-17T16:30:08.702Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
+  },
+  {
+    "sessionId": "7ec01fa2-2f48-4f70-845f-51d7371f32e2",
+    "reason": "other",
+    "endedAt": "2026-04-19T14:40:06.769Z",
+    "feature": null,
+    "phase": null,
+    "progress": null
   }
 ]
