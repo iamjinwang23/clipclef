@@ -147,13 +147,47 @@ function TrackEditor({ tracks, onChange }: { tracks: TrackRow[]; onChange: (t: T
     onChange([...tracks, { position: tracks.length + 1, title: '', artist: '', start_sec: null, duration_sec: null, youtube_video_id: null }]);
   };
 
+  // Design Ref: §4.1 — title/artist swap on all tracks with null → '' normalization
+  // Plan SC-2, SC-3, SC-4, SC-5: 전 행 동시 스왑, 다른 필드 불변, self-inverse, null 안전
+  const [swapFlash, setSwapFlash] = useState(false);
+  const swapTitleArtist = () => {
+    onChange(
+      tracks.map((t) => ({
+        ...t,
+        title: t.artist ?? '',
+        artist: t.title ?? '',
+      }))
+    );
+    // Design Ref: §4.2 — 200ms flash feedback
+    // Plan SC-7
+    setSwapFlash(true);
+    setTimeout(() => setSwapFlash(false), 200);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-medium text-[var(--text-secondary)]">트랙리스트</p>
-        <button type="button" onClick={addTrack} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)]">
-          + 트랙 추가
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Design Ref: §5.1 — 조건부 렌더(Plan SC-6). Self-inverse라 확인 다이얼로그 無 */}
+          {tracks.length > 0 && (
+            <button
+              type="button"
+              onClick={swapTitleArtist}
+              aria-label="제목과 아티스트 값 서로 바꾸기"
+              className={`inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded transition-colors duration-200 hover:text-[var(--foreground)] ${
+                swapFlash
+                  ? 'bg-[var(--muted)] text-[var(--foreground)]'
+                  : 'text-[var(--text-secondary)]'
+              }`}
+            >
+              제목 <span aria-hidden="true">⇄</span> 아티스트
+            </button>
+          )}
+          <button type="button" onClick={addTrack} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)]">
+            + 트랙 추가
+          </button>
+        </div>
       </div>
       <div className="border border-[var(--border)] rounded-lg overflow-hidden">
         {tracks.length === 0 ? (
