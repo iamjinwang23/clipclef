@@ -28,6 +28,7 @@ export default function ArtistsPage() {
                 imageUrl={a.image_url}
                 locale={locale}
                 size={126}
+                sizeMobile={108}
               />
             </div>
           ))}

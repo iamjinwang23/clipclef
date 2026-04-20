@@ -8,26 +8,39 @@ interface ArtistCardProps {
   slug: string;
   imageUrl: string | null;
   locale: string;
-  /** 썸네일 지름(px). 기본 80. 홈 아티스트 섹션은 96 권장. */
+  /** 썸네일 지름(px). sm(≥640px)에서 사용. 기본 80. 홈 아티스트 섹션은 96 권장. */
   size?: number;
+  /** 모바일(<640px)에서 사용할 썸네일 지름(px). 미지정 시 size와 동일. */
+  sizeMobile?: number;
 }
 
-export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: ArtistCardProps) {
+export default function ArtistCard({
+  name,
+  slug,
+  imageUrl,
+  locale,
+  size = 80,
+  sizeMobile,
+}: ArtistCardProps) {
   const initial = name.charAt(0).toUpperCase();
   // 기존 DB에 저장된 http:// URL을 https://로 정규화 (remotePatterns는 https만 허용)
   const safeImageUrl = toHttpsUrl(imageUrl);
 
+  const sizeMb = sizeMobile ?? size;
+  // sm 이상에서만 CSS var를 덮어쓰는 방식으로 반응형 크기 지원 (Tailwind arbitrary value + CSS custom property)
+  const sizeStyle = {
+    '--ac-size': `${sizeMb}px`,
+    '--ac-size-sm': `${size}px`,
+  } as React.CSSProperties;
+
   return (
     <Link
       href={`/${locale}/artist/${slug}`}
-      className="flex flex-col items-center gap-2 group flex-shrink-0"
-      style={{ width: size }}
+      className="flex flex-col items-center gap-2 group flex-shrink-0 w-[var(--ac-size)] sm:w-[var(--ac-size-sm)]"
+      style={sizeStyle}
     >
       {/* 원형 썸네일 */}
-      <div
-        className="relative rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0 ring-[0.5px] ring-white/20"
-        style={{ width: size, height: size }}
-      >
+      <div className="relative rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0 ring-[0.5px] ring-white/20 w-[var(--ac-size)] h-[var(--ac-size)] sm:w-[var(--ac-size-sm)] sm:h-[var(--ac-size-sm)]">
         {safeImageUrl ? (
           <Image
             src={safeImageUrl}
