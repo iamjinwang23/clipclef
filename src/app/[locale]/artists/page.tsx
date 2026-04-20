@@ -27,7 +27,7 @@ export default function ArtistsPage() {
                 slug={a.slug}
                 imageUrl={a.image_url}
                 locale={locale}
-                size={96}
+                size={126}
               />
             </div>
           ))}
