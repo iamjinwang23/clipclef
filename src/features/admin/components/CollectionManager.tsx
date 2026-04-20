@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { resizeImage } from '@/lib/image-resize';
 import type { CuratedCollection, Playlist } from '@/types';
 
 // ── 컬렉션 항목 플레이리스트 선택 팝업 ────────────────────────────────────────────
@@ -109,11 +110,13 @@ function CollectionCard({
       if (removeBanner) {
         bannerUrl = null;
       } else if (pendingFile) {
-        const ext = pendingFile.name.split('.').pop();
+        // 업로드 전 리사이즈(≤1200px, JPEG 82%) — 대역폭·쿼터 절감, 원본이 작으면 그대로
+        const compressed = await resizeImage(pendingFile);
+        const ext = compressed.name.split('.').pop();
         const path = `${collection.id}-${Date.now()}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from('collection-banners')
-          .upload(path, pendingFile, { upsert: true });
+          .upload(path, compressed, { upsert: true });
         if (upErr) { alert('이미지 업로드 실패: ' + upErr.message); return; }
         const { data: urlData } = supabase.storage
           .from('collection-banners')

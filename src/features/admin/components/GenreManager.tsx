@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import { resizeImage } from '@/lib/image-resize';
 import type { GenreRow } from '@/types';
 
 const BUCKET = 'collection-banners';
@@ -67,9 +68,11 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
     if (!file) return;
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop() || 'jpg';
+      // 업로드 전 리사이즈(≤1200px, JPEG 82%) — 대역폭·쿼터 절감, 원본이 작으면 그대로
+      const compressed = await resizeImage(file);
+      const ext = compressed.name.split('.').pop() || 'jpg';
       const path = `genre-${genre.id}-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: true });
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, compressed, { upsert: true });
       if (upErr) { alert('업로드 실패: ' + upErr.message); return; }
       const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
       const url = urlData?.publicUrl ?? null;
