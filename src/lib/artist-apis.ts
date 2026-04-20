@@ -194,6 +194,15 @@ function trimBio(text: string, maxLen = 500): string {
 // Design Ref: §3.5 — 이미지·바이오 폴백 체인
 
 /**
+ * TheAudioDB는 http:// URL을 반환해 next/image remotePatterns(https) 로딩 실패.
+ * r2.theaudiodb.com / www.theaudiodb.com 모두 https를 지원하므로 단순 치환으로 안전.
+ */
+export function toHttpsUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.replace(/^http:\/\//i, 'https://');
+}
+
+/**
  * 이미지 폴백 체인:
  * Fanart.tv background → Fanart.tv thumb → TheAudioDB thumb → TheAudioDB fanart → null
  */
@@ -201,12 +210,12 @@ export function resolveImage(
   fanart: FanartImages | null,
   audiodb: TheAudioDBData | null
 ): string | null {
-  return (
+  return toHttpsUrl(
     fanart?.artistbackground ??
-    fanart?.artistthumb ??
-    audiodb?.strArtistThumb ??
-    audiodb?.strArtistFanart ??
-    null
+      fanart?.artistthumb ??
+      audiodb?.strArtistThumb ??
+      audiodb?.strArtistFanart ??
+      null
   );
 }
 

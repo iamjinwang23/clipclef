@@ -1,6 +1,7 @@
 // Design Ref: §5.1 — ArtistCard: 원형 썸네일 + 이름 + 이동 링크
 import Image from 'next/image';
 import Link from 'next/link';
+import { toHttpsUrl } from '@/lib/artist-apis';
 
 interface ArtistCardProps {
   name: string;
@@ -13,6 +14,8 @@ interface ArtistCardProps {
 
 export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: ArtistCardProps) {
   const initial = name.charAt(0).toUpperCase();
+  // 기존 DB에 저장된 http:// URL을 https://로 정규화 (remotePatterns는 https만 허용)
+  const safeImageUrl = toHttpsUrl(imageUrl);
 
   return (
     <Link
@@ -25,9 +28,9 @@ export default function ArtistCard({ name, slug, imageUrl, locale, size = 80 }: 
         className="relative rounded-full overflow-hidden bg-[var(--muted)] flex-shrink-0 ring-[0.5px] ring-white/20"
         style={{ width: size, height: size }}
       >
-        {imageUrl ? (
+        {safeImageUrl ? (
           <Image
-            src={imageUrl}
+            src={safeImageUrl}
             alt={name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"

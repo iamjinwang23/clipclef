@@ -1,5 +1,6 @@
 // Design Ref: §5.3 — ArtistHero: 대형 이미지 + 이름 + 리스너 수
 import Image from 'next/image';
+import { toHttpsUrl } from '@/lib/artist-apis';
 
 interface ArtistHeroProps {
   name: string;
@@ -8,12 +9,14 @@ interface ArtistHeroProps {
 
 export default function ArtistHero({ name, imageUrl }: ArtistHeroProps) {
   const initial = name.charAt(0).toUpperCase();
+  // 기존 DB에 저장된 http:// URL을 https://로 정규화
+  const safeImageUrl = toHttpsUrl(imageUrl);
 
   return (
     <div className="relative w-[calc(100%+2rem)] sm:w-full -mx-4 sm:mx-0 aspect-video rounded-none sm:rounded-xl overflow-hidden bg-[var(--muted)]">
-      {imageUrl ? (
+      {safeImageUrl ? (
         <Image
-          src={imageUrl}
+          src={safeImageUrl}
           alt={name}
           fill
           className="object-cover"
