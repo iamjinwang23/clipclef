@@ -1,4 +1,25 @@
 {
+  "clipclef-v2": {
+    "phase": "do",
+    "matchRate": 0,
+    "iterationCount": 0,
+    "startedAt": "2026-04-22T13:45:54.369Z",
+    "updatedAt": "2026-04-22T14:30:00.000Z",
+    "description": "ClipClef v2 pivot — 감상 공간 (Global Persistent Player + Scrobble + Letterboxd 스타일 저장→묶기→발행)",
+    "architecture": "Option C — Pragmatic Balance",
+    "prdPath": "docs/00-pm/clipclef-v2.prd.md",
+    "planPath": "docs/01-plan/features/clipclef-v2.plan.md",
+    "designPath": "docs/02-design/features/clipclef-v2.design.md",
+    "modules": {
+      "module-1-db": "done",
+      "module-2-player": "done (full — including iframe expanded positioning via M4 refactor)",
+      "module-3-scrobble": "done",
+      "module-4-library": "done",
+      "module-5-curation": "done",
+      "module-6-home": "pending",
+      "module-7-tests": "pending"
+    }
+  },
   "clipclef": {
     "phase": "check",
     "matchRate": 92,
