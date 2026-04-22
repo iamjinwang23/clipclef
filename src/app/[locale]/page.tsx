@@ -31,8 +31,9 @@ export default async function HomePage({
       <CuratedCollectionSection />
 
       {/* § 1 이어듣기 — 로그인 + listens 있을 때만 자체 렌더 */}
+      {/* "더 보기" 없음: listens는 저장이 아닌 최근 재생 큐라 별도 페이지 없음 */}
       {isLoggedIn && (
-        <HomeSection label="이어듣기" href={`/${locale}/me/library`}>
+        <HomeSection label="이어듣기">
           <HomeContinueRail />
         </HomeSection>
       )}
