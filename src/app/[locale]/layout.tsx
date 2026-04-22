@@ -9,6 +9,8 @@ import QueryProvider from './QueryProvider';
 import Header from '@/components/layout/Header';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import AuthErrorToast from '@/components/layout/AuthErrorToast';
+import PersistentPlayer from '@/features/player/components/PersistentPlayer';
+import MiniBar from '@/features/player/components/MiniBar';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -44,6 +46,9 @@ export default async function LocaleLayout({
             <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-0">{children}</main>
             <MobileBottomNav />
             <AuthErrorToast />
+            {/* Design Ref: §1.2 — Persistent Player 단일 마운트 지점. 세션 내 재생성 금지 */}
+            <PersistentPlayer />
+            <MiniBar />
             <footer className="hidden sm:block pt-20 pb-10 text-sm text-[var(--subtle)]">
               <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
                 <div className="flex items-center gap-5">
