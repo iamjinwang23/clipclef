@@ -1,13 +1,16 @@
 'use client';
-// 상세 페이지 YouTube 플레이어 + 트랙리스트
-// 트랙 클릭 시 해당 타임스탬프로 seek
 
-import { useEffect, useRef, useState } from 'react';
-import type { Track } from '@/types';
-import type { YTPlayer } from '@/types/youtube';
+// Design Ref: §5.1 — 플리 상세의 플레이어 슬롯 + 트랙리스트
+// v2 리팩터: 자체 iframe 제거, PersistentPlayer (layout mount)로 위임.
+// Plan SC: R1 — iframe은 세션 1회만 마운트. 페이지 이동 시 재생 지속.
+
+import { useEffect } from 'react';
+import type { Playlist, Track } from '@/types';
+import { usePlayerStore } from '@/features/player/store';
+import ExpandedView from '@/features/player/components/ExpandedView';
 
 interface PlaylistPlayerProps {
-  youtubeId: string;
+  playlist: Playlist;
   tracks: Track[];
   children?: React.ReactNode;
 }
@@ -19,78 +22,38 @@ function formatDuration(sec: number | null) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-export default function PlaylistPlayer({ youtubeId, tracks, children }: PlaylistPlayerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<YTPlayer | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [isReady, setIsReady] = useState(false);
+// v1 로직 재현: start_sec 우선, 없으면 duration_sec 누적합
+function resolveStartSec(tracks: Track[], index: number): number {
+  if (index < 0 || index >= tracks.length) return 0;
+  let acc = 0;
+  for (let i = 0; i < index; i++) {
+    const t = tracks[i];
+    if (t.start_sec != null) acc = t.start_sec + (t.duration_sec ?? 0);
+    else acc += t.duration_sec ?? 0;
+  }
+  const target = tracks[index];
+  return target.start_sec ?? acc;
+}
 
-  // start_sec 우선 사용, 없으면 duration_sec 누적합으로 폴백
-  const tracksWithStart = tracks.reduce<(Track & { startSec: number })[]>((acc, track, i) => {
-    let startSec: number;
-    if (track.start_sec !== null && track.start_sec !== undefined) {
-      startSec = track.start_sec;
-    } else {
-      const prev = acc[i - 1];
-      startSec = prev ? prev.startSec + (prev.duration_sec ?? 0) : 0;
-    }
-    return [...acc, { ...track, startSec }];
-  }, []);
+export default function PlaylistPlayer({ playlist, tracks, children }: PlaylistPlayerProps) {
+  const playlistId = usePlayerStore((s) => s.playlistId);
+  const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
+  const load = usePlayerStore((s) => s.load);
+  const seekToTrack = usePlayerStore((s) => s.seekToTrack);
 
+  // 마운트 시 해당 플리 로드 (이미 같은 플리 재생 중이면 skip — 재생 지속)
   useEffect(() => {
-    let destroyed = false;
-
-    const initPlayer = () => {
-      if (destroyed || !containerRef.current || !window.YT) return;
-      playerRef.current = new window.YT.Player(containerRef.current, {
-        videoId: youtubeId,
-        playerVars: { autoplay: 0, rel: 0 },
-        events: {
-          onReady: () => {
-            if (!destroyed) setIsReady(true);
-          },
-        },
-      });
-    };
-
-    if (window.YT?.Player) {
-      initPlayer();
-    } else {
-      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
-      }
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        prev?.();
-        initPlayer();
-      };
+    if (playlistId !== playlist.id) {
+      load(playlist, tracks);
     }
-
-    return () => {
-      destroyed = true;
-      playerRef.current?.destroy?.();
-      playerRef.current = null;
-      setIsReady(false);
-      setActiveIndex(null);
-    };
-  }, [youtubeId]);
-
-  const seekToTrack = (index: number) => {
-    const track = tracksWithStart[index];
-    if (!track || !playerRef.current || !isReady) return;
-    playerRef.current.seekTo(track.startSec, true);
-    playerRef.current.playVideo?.();
-    setActiveIndex(index);
-  };
+    // 의도적으로 tracks/load는 의존에서 제외 — playlist.id만으로 재로드 판단
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playlist.id]);
 
   return (
     <div>
-      {/* YouTube 플레이어 */}
-      <div className="relative w-[calc(100%+2rem)] sm:w-full aspect-video rounded-none sm:rounded-lg overflow-hidden bg-black -mx-4 sm:mx-0">
-        <div ref={containerRef} className="w-full h-full" />
-      </div>
+      {/* 플레이어 슬롯 (aspect-video 공간 예약) — iframe은 PersistentPlayer가 fixed top에 렌더 */}
+      <ExpandedView />
 
       {children}
 
@@ -109,12 +72,22 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
                 <col className="w-14" />
               </colgroup>
               <tbody>
-                {tracksWithStart.map((track, index) => {
-                  const isActive = activeIndex === index;
+                {tracks.map((track, index) => {
+                  const isActive =
+                    playlistId === playlist.id && currentTrackIndex === index;
                   return (
                     <tr
                       key={track.id}
-                      onClick={() => seekToTrack(index)}
+                      onClick={() => {
+                        // 같은 플리면 단순 seek, 다른 플리면 load 먼저
+                        if (playlistId !== playlist.id) {
+                          load(playlist, tracks);
+                          // load 직후 _player는 아직 loadVideoById 중 — 다음 tick에 seek
+                          setTimeout(() => seekToTrack(index), 100);
+                        } else {
+                          seekToTrack(index);
+                        }
+                      }}
                       className={`border-b border-[var(--border)] last:border-0 cursor-pointer transition-colors ${
                         isActive ? 'bg-[var(--muted)]' : 'hover:bg-[var(--muted)]'
                       }`}
@@ -149,3 +122,6 @@ export default function PlaylistPlayer({ youtubeId, tracks, children }: Playlist
     </div>
   );
 }
+
+// resolveStartSec는 추후 UI에서 사용 가능하도록 export (현재는 store 내부 로직과 동일)
+export { resolveStartSec };

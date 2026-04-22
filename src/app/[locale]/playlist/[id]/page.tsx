@@ -76,7 +76,7 @@ export default async function PlaylistDetailPage({
       )}
 
       {/* 플레이어 (영상 아래에 제목/채널/태그/액션 삽입 후 트랙리스트) */}
-      <PlaylistPlayer youtubeId={p.youtube_id} tracks={t}>
+      <PlaylistPlayer playlist={p} tracks={t}>
         {/* 제목 + 채널 */}
         <div className="mt-4 mb-3">
           <div className="flex items-start justify-between gap-2 mb-1">
