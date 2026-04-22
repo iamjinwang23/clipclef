@@ -82,6 +82,32 @@ export interface UserPlaylist {
   is_public: boolean;
   is_default: boolean;
   created_at: string;
+  // v2: 발행 (Design Ref: §3.1 — published_at IS NOT NULL = 발행상태)
+  published_at: string | null;
+  cover_url: string | null;
+  caption: string | null;
+}
+
+// v2: Scrobble 기록 (Design Ref: §3.1 — F2 listens)
+export interface Listen {
+  id: string;
+  user_id: string;
+  track_id: string;
+  playlist_id: string;
+  played_at: string;
+  duration_ms: number;
+  created_at: string;
+}
+
+// v2: 혼합 선반 항목 (Design Ref: §4.2 — RPC mixed_shelf 응답 row)
+export interface MixedShelfItem {
+  source: 'curated' | 'user';
+  id: string;
+  title: string;
+  cover_url: string | null;
+  caption: string | null;
+  creator_id: string | null;
+  published_at: string;
 }
 
 export type SortOption = 'latest' | 'likes' | 'views';
