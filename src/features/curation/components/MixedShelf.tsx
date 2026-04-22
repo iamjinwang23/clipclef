@@ -23,7 +23,7 @@ export default function MixedShelf({ limit = 12 }: MixedShelfProps) {
     return (
       <ScrollRail>
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="w-[240px] sm:w-[280px] flex-shrink-0 animate-pulse">
+          <div key={i} className="w-[220px] flex-shrink-0 animate-pulse">
             <div className="aspect-video rounded-lg bg-[var(--muted)] mb-2" />
             <div className="h-3.5 bg-[var(--muted)] rounded w-4/5 mb-1.5" />
             <div className="h-3 bg-[var(--muted)] rounded w-3/5" />
@@ -63,7 +63,7 @@ function MixedShelfCard({ item }: { item: MixedShelfItem }) {
   return (
     <Link
       href={href}
-      className="group w-[240px] sm:w-[280px] flex-shrink-0"
+      className="group w-[220px] flex-shrink-0"
     >
       {/* 커버 */}
       <div className="relative aspect-video rounded-lg overflow-hidden bg-[var(--muted)] mb-2 ring-[0.5px] ring-white/20">
@@ -72,7 +72,7 @@ function MixedShelfCard({ item }: { item: MixedShelfItem }) {
             src={item.cover_url}
             alt={item.title}
             fill
-            sizes="(max-width: 640px) 240px, 280px"
+            sizes="220px"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             unoptimized
           />
