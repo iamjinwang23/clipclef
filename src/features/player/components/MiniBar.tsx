@@ -21,7 +21,6 @@ export default function MiniBar() {
   const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const play = usePlayerStore((s) => s.play);
   const pause = usePlayerStore((s) => s.pause);
-  const setView = usePlayerStore((s) => s.setView);
 
   // hidden 상태거나 플리 미로드 시 렌더 안 함
   // expanded 시에는 MiniBar 숨김 (ExpandedView가 대형 컨트롤 제공)
@@ -40,7 +39,6 @@ export default function MiniBar() {
           isLoading={status === 'loading'}
           onPlay={play}
           onPause={pause}
-          onExpand={() => setView('expanded')}
         />
       )}
     </>
@@ -57,7 +55,6 @@ interface InnerProps {
   isLoading: boolean;
   onPlay: () => void;
   onPause: () => void;
-  onExpand: () => void;
 }
 
 function MiniBarInner({
@@ -70,7 +67,6 @@ function MiniBarInner({
   isLoading,
   onPlay,
   onPause,
-  onExpand,
 }: InnerProps) {
   const { saved, loading: saveLoading, toggle } = useCollection(playlistId);
   const [showLogin, setShowLogin] = useState(false);
@@ -172,24 +168,6 @@ function MiniBarInner({
               )}
             </button>
 
-            {/* 확장 버튼 — 플리 상세로 이동 + view 전환 */}
-            <Link
-              href={`/${locale}/playlist/${playlistId}`}
-              aria-label="전체 화면"
-              className="
-                hidden sm:flex w-10 h-10 rounded-full items-center justify-center
-                text-[var(--text-secondary)]
-                hover:bg-[var(--muted)] transition-colors
-              "
-              onClick={onExpand}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <polyline points="15 3 21 3 21 9" />
-                <polyline points="9 21 3 21 3 15" />
-                <line x1="21" y1="3" x2="14" y2="10" />
-                <line x1="3" y1="21" x2="10" y2="14" />
-              </svg>
-            </Link>
           </div>
         </div>
       </div>
