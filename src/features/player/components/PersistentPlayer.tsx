@@ -88,27 +88,36 @@ export default function PersistentPlayer() {
     };
   }, []);
 
-  // view별 위치·크기는 CSS만으로 제어 (iframe DOM 이동 절대 금지)
+  // view별 위치·크기: iframe DOM 이동 절대 금지, CSS만 제어
   // hidden / mini: 1×1 invisible (audio only)
-  // expanded: 헤더 아래 고정, sm:max-w-4xl + px-4 (playlist 페이지 레이아웃 매치)
-  const isExpanded = view === 'expanded';
+  // expanded: ExpandedView 슬롯의 viewport-relative 좌표에 iframe 배치
+  //   (스크롤·리사이즈 시 슬롯이 실시간 rect 업데이트 → 여기가 따라감)
+  const expandedRect = usePlayerStore((s) => s.expandedRect);
+  const isExpanded = view === 'expanded' && expandedRect !== null;
+
+  const expandedStyle: React.CSSProperties | undefined =
+    isExpanded && expandedRect
+      ? {
+          position: 'fixed',
+          top: expandedRect.top,
+          left: expandedRect.left,
+          width: expandedRect.width,
+          height: expandedRect.height,
+          zIndex: 30,
+        }
+      : undefined;
 
   return (
     <div
       aria-hidden={!isExpanded}
       className={
         isExpanded
-          ? 'fixed top-14 left-1/2 -translate-x-1/2 z-30 w-full sm:max-w-4xl sm:px-4'
+          ? 'sm:rounded-lg overflow-hidden'
           : 'fixed bottom-0 right-0 w-px h-px opacity-0 pointer-events-none overflow-hidden z-40'
       }
+      style={expandedStyle}
     >
-      <div
-        className={
-          isExpanded
-            ? 'relative w-full aspect-video bg-black sm:rounded-lg overflow-hidden'
-            : 'w-full h-full'
-        }
-      >
+      <div className={isExpanded ? 'w-full h-full bg-black' : 'w-full h-full'}>
         <div ref={containerRef} className="w-full h-full" />
       </div>
     </div>

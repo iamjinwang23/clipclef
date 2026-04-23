@@ -1,14 +1,15 @@
 'use client';
 
 // Design Ref: §5.1 — 플리 상세 페이지의 대형 플레이어 슬롯
-// M2 part 2: aspect-video 플레이스홀더 + view 전환만. iframe 실제 위치 동기화는 M4에서 연결.
-// Plan SC: R1 — 이 컴포넌트 언마운트 시 iframe 파괴 금지 (PersistentPlayer가 소유)
+// v2 fix: iframe이 이 슬롯의 viewport-relative 좌표를 따라다님.
+// 슬롯이 뷰포트를 벗어나면 view='mini'로 전환되어 MiniBar + 오디오만.
+// Plan SC: R1 — iframe은 PersistentPlayer가 소유. 이 컴포넌트는 위치만 보고.
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePlayerStore, type PlayerView } from '../store';
 
 interface ExpandedViewProps {
-  /** 상세 페이지 진입 시 자동으로 expanded 전환 여부 (기본 true) */
+  /** 마운트 시 expanded로 전환할지 (기본 true) */
   autoExpand?: boolean;
   /** 언마운트 시 복귀할 view (기본 mini) */
   exitView?: PlayerView;
@@ -18,30 +19,82 @@ export default function ExpandedView({
   autoExpand = true,
   exitView = 'mini',
 }: ExpandedViewProps) {
-  const view = usePlayerStore((s) => s.view);
+  const ref = useRef<HTMLDivElement>(null);
   const playlistId = usePlayerStore((s) => s.playlistId);
-  const setView = usePlayerStore((s) => s.setView);
 
-  // playlistId 변화 감지 — 플리 로드되면 expanded, 언로드되면 복귀
-  // 페이지 마운트 타이밍과 PlaylistPlayer의 load() 타이밍이 엇갈려도 deps로 정상 동기화
   useEffect(() => {
-    if (!autoExpand) return;
-    if (playlistId) setView('expanded');
+    const el = ref.current;
+    if (!el || !autoExpand) return;
+
+    let raf: number | null = null;
+
+    const measure = () => {
+      const r = el.getBoundingClientRect();
+      usePlayerStore.getState().setExpandedRect({
+        top: r.top,
+        left: r.left,
+        width: r.width,
+        height: r.height,
+      });
+    };
+
+    const scheduleMeasure = () => {
+      if (raf != null) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        measure();
+      });
+    };
+
+    // 뷰포트 교차 감지 — 슬롯 보이면 expanded, 벗어나면 mini
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const current = usePlayerStore.getState().view;
+        if (current === 'hidden') return; // 플리 미로드 시 hidden 유지
+        if (entry.isIntersecting) {
+          usePlayerStore.getState().setView('expanded');
+          measure();
+        } else {
+          usePlayerStore.getState().setView('mini');
+        }
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(el);
+
+    // 크기 변화 (창 리사이즈, 레이아웃 shift)
+    const ro = new ResizeObserver(scheduleMeasure);
+    ro.observe(el);
+
+    // 스크롤/리사이즈 — rAF 스로틀
+    window.addEventListener('scroll', scheduleMeasure, { passive: true });
+    window.addEventListener('resize', scheduleMeasure);
+
+    // 초기 측정
+    scheduleMeasure();
 
     return () => {
-      const currentView = usePlayerStore.getState().view;
-      if (currentView !== 'hidden') setView(exitView);
-    };
-  }, [autoExpand, exitView, setView, playlistId]);
+      io.disconnect();
+      ro.disconnect();
+      window.removeEventListener('scroll', scheduleMeasure);
+      window.removeEventListener('resize', scheduleMeasure);
+      if (raf != null) cancelAnimationFrame(raf);
 
-  // 슬롯은 항상 aspect-video로 공간 예약 — 페이지 레이아웃 점프 방지.
-  // iframe은 PersistentPlayer가 fixed top 위치에 렌더. ExpandedView는 스크롤되지만
-  // iframe은 고정 (YouTube Music mobile 패턴). 스크롤 이탈 시 iframe만 top에 남음.
+      // 페이지 이탈 — mini 또는 지정 view로 복귀 (hidden은 건드리지 않음)
+      const state = usePlayerStore.getState();
+      if (state.view !== 'hidden') state.setView(exitView);
+      state.setExpandedRect(null);
+    };
+    // playlistId 변화 시 재측정 — 같은 컴포넌트지만 다른 플리 로드됐을 때
+  }, [autoExpand, exitView, playlistId]);
+
+  // 슬롯은 항상 aspect-video 공간 예약. 배경 투명 — iframe이 이 위치에 와서 덮음.
+  // 뷰 벗어날 땐 슬롯도 함께 스크롤 아웃되므로 비주얼 이슈 없음.
   return (
     <div
-      className="relative w-[calc(100%+2rem)] sm:w-full aspect-video bg-black rounded-none sm:rounded-lg overflow-hidden -mx-4 sm:mx-0"
+      ref={ref}
+      className="relative w-[calc(100%+2rem)] sm:w-full aspect-video rounded-none sm:rounded-lg overflow-hidden -mx-4 sm:mx-0"
       data-player-slot={playlistId ?? ''}
-      data-view={view}
       aria-hidden="true"
     />
   );

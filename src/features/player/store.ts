@@ -35,12 +35,16 @@ interface PlayerState {
   currentTime: number;
   duration: number;
 
+  /** ExpandedView 슬롯의 viewport-relative 좌표 (expanded 시 iframe 위치 결정) */
+  expandedRect: { top: number; left: number; width: number; height: number } | null;
+
   // ── actions: internal (called by PersistentPlayer / useScrobble) ────────
   setPlayer: (player: YTPlayer | null) => void;
   setStatus: (status: PlayerStatus) => void;
   setCurrentTime: (sec: number) => void;
   setDuration: (sec: number) => void;
   setCurrentTrackIndex: (index: number) => void;
+  setExpandedRect: (rect: PlayerState['expandedRect']) => void;
 
   // ── actions: UI-facing ─────────────────────────────────────────────────
   /** 플리 로드 + 자동 재생 시도. 에러는 setStatus('error')로 전파 */
@@ -65,12 +69,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   currentTrackIndex: 0,
   currentTime: 0,
   duration: 0,
+  expandedRect: null,
 
   setPlayer: (player) => set({ _player: player }),
   setStatus: (status) => set({ status }),
   setCurrentTime: (currentTime) => set({ currentTime }),
   setDuration: (duration) => set({ duration }),
   setCurrentTrackIndex: (currentTrackIndex) => set({ currentTrackIndex }),
+  setExpandedRect: (expandedRect) => set({ expandedRect }),
 
   load: (playlist, tracks) => {
     const { _player } = get();
