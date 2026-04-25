@@ -1,5 +1,6 @@
 'use client';
 // Design Ref: §3.2 — 상태 소유자. CollectionGrid + CollectionPlayer 조율
+// curation-route-unify: user 소스 큐레이션은 상단에 올린이 헤더(Avatar + name + Follow chip)
 
 import { useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
@@ -8,6 +9,16 @@ import type { Playlist, Track } from '@/types';
 import type { YTPlayer } from '@/types/youtube';
 import CollectionGrid from './CollectionGrid';
 import CollectionPlayer from './CollectionPlayer';
+import UserAvatar from '@/components/ui/UserAvatar';
+import VerifiedBadge from '@/components/ui/VerifiedBadge';
+import UserFollowChip from '@/features/search/components/UserFollowChip';
+
+interface Creator {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  is_verified: boolean;
+}
 
 interface CollectionPageClientProps {
   playlists: Playlist[];
@@ -16,6 +27,9 @@ interface CollectionPageClientProps {
   collectionDescription: string | null;
   itemCount: number;
   bannerImageUrl: string | null;
+  creator?: Creator | null;
+  currentUserId?: string | null;
+  initialFollowing?: boolean;
 }
 
 export default function CollectionPageClient({
@@ -25,6 +39,9 @@ export default function CollectionPageClient({
   collectionDescription,
   itemCount,
   bannerImageUrl,
+  creator = null,
+  currentUserId = null,
+  initialFollowing = false,
 }: CollectionPageClientProps) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -119,6 +136,27 @@ export default function CollectionPageClient({
 
   return (
     <div className={currentIndex !== null ? 'pb-20' : ''}>
+      {/* 올린이 헤더 — user 소스 큐레이션 전용 */}
+      {creator && (
+        <div className="flex items-center gap-3 mb-4 mt-2">
+          <UserAvatar src={creator.avatar_url} name={creator.display_name} size={36} />
+          <div className="flex-1 min-w-0">
+            <a
+              href={`/${locale}/profile/${creator.id}`}
+              className="text-sm font-semibold inline-flex items-center gap-1 hover:underline"
+            >
+              <span className="truncate">{creator.display_name ?? '익명'}</span>
+              {creator.is_verified && <VerifiedBadge size={14} />}
+            </a>
+          </div>
+          <UserFollowChip
+            userId={creator.id}
+            initialFollowing={initialFollowing}
+            currentUserId={currentUserId}
+          />
+        </div>
+      )}
+
       {/* 히어로: 배너 이미지 + 그라디언트 + 타이틀 오버레이 */}
       <div className="relative -mx-4 w-[calc(100%+2rem)] sm:mx-0 sm:w-full aspect-square sm:aspect-[16/6] sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-6">
         {bannerImageUrl && (

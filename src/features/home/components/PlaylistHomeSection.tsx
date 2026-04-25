@@ -1,5 +1,5 @@
 'use client';
-// Design Ref: §5.1 — 홈 § 4 전체 피드
+// Design Ref: §5.1 — 홈 § 4 전체 플레이리스트
 // v2 통일: 220px ScrollRail (다른 홈 섹션과 동일 시각 리듬)
 // 홈은 Top 12 샘플, /playlists 더보기는 grid + 필터/무한스크롤
 

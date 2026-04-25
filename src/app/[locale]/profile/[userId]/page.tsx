@@ -1,7 +1,7 @@
 // Design Ref: §1,§4 — public profile parity with /me/profile
 //  - header (avatar + name + follower/following counts + follow chip)
 //  - uploaded playlists grid (playlists.uploaded_by=userId AND is_active=true)
-//  - curations grid (user_playlists, preview 4 items per list)
+//  - curations grid (curation-route-unify: 1 큐레이션 = 1 카드 → /collection/[id])
 // Plan SC-1..SC-8
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -39,12 +39,13 @@ export default async function ProfilePage({
       .eq('uploaded_by', userId)
       .eq('is_active', true)
       .order('created_at', { ascending: false }),
+    // curation-route-unify: published_at 기준 (Migration 021), cover_url 포함
     supabase
       .from('user_playlists')
-      .select('id, name, created_at')
+      .select('id, name, cover_url, published_at')
       .eq('user_id', userId)
-      .eq('is_public', true)
-      .order('created_at', { ascending: false }),
+      .not('published_at', 'is', null)
+      .order('published_at', { ascending: false }),
     supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', userId),
     supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', userId),
     // Design Ref: §4.1 — server-side single-row follow check (no flicker, no N+1)
@@ -61,19 +62,25 @@ export default async function ProfilePage({
 
   if (!profile) notFound();
 
-  // 큐레이션 미리보기 — 기존 패턴 유지
-  const playlistsWithItems = await Promise.all(
+  // curation-route-unify: 카드 1개에 필요한 정보만 — 첫 아이템 썸네일(cover fallback) + 총 트랙 수
+  const curationCards = await Promise.all(
     (userPlaylists ?? []).map(async (up) => {
-      const { data } = await supabase
+      const { data, count } = await supabase
         .from('user_playlist_items')
-        .select('playlists(id, title, thumbnail_url, channel_name)')
+        .select('playlists(thumbnail_url)', { count: 'exact' })
         .eq('user_playlist_id', up.id)
         .order('position')
-        .limit(4);
-      const items = ((data ?? []) as unknown as { playlists: Playlist | null }[])
-        .map((r) => r.playlists)
-        .filter(Boolean) as Playlist[];
-      return { ...up, items };
+        .limit(1);
+      const firstThumb = ((data ?? []) as unknown as { playlists: { thumbnail_url: string } | null }[])
+        .map((r) => r.playlists?.thumbnail_url)
+        .find(Boolean) ?? null;
+      return {
+        id: up.id,
+        name: up.name,
+        cover_url: up.cover_url as string | null,
+        firstThumb,
+        itemCount: count ?? 0,
+      };
     })
   );
 
@@ -141,40 +148,38 @@ export default async function ProfilePage({
         )}
       </section>
 
-      {/* Design Ref: §6.3 — curation preview grid (label only changed: 플레이리스트 → 큐레이션) */}
-      {playlistsWithItems.length > 0 && (
+      {/* curation-route-unify: 큐레이션 1건 = 카드 1개 → /collection/[id] */}
+      {curationCards.length > 0 && (
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-            큐레이션 {playlistsWithItems.length}개
+            큐레이션 {curationCards.length}개
           </h2>
-          <div className="space-y-6">
-            {playlistsWithItems.map((up) => (
-              <div key={up.id}>
-                <h3 className="font-semibold text-base mb-3">{up.name}</h3>
-                {up.items.length === 0 ? (
-                  <p className="text-xs text-[var(--text-secondary)]">담긴 플레이리스트가 없어요</p>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {up.items.map((p) => (
-                      // Plan SC-6 — curation item → /[locale]/playlist/[id] (unchanged)
-                      <Link key={p.id} href={`/${locale}/playlist/${p.id}`} className="group block">
-                        <div className="relative aspect-video rounded-lg overflow-hidden bg-[var(--muted)] mb-1.5">
-                          <Image
-                            src={p.thumbnail_url}
-                            alt={p.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="(max-width: 640px) 50vw, 25vw"
-                          />
-                        </div>
-                        <p className="text-xs font-medium line-clamp-2 leading-snug">{p.title}</p>
-                        <p className="text-[11px] text-[var(--text-secondary)] mt-0.5 truncate">{p.channel_name}</p>
-                      </Link>
-                    ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {curationCards.map((c) => {
+              const cover = c.cover_url ?? c.firstThumb;
+              return (
+                <Link key={c.id} href={`/${locale}/collection/${c.id}`} className="group block">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-[var(--muted)] mb-1.5">
+                    {cover ? (
+                      <Image
+                        src={cover}
+                        alt={c.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 50vw, 33vw"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-[var(--subtle)] to-[var(--muted)] flex items-center justify-center">
+                        <span className="text-[var(--text-secondary)] text-xs">큐레이션</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                  <p className="text-sm font-semibold line-clamp-2 leading-snug">{c.name}</p>
+                  <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{c.itemCount}개 플레이리스트</p>
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}

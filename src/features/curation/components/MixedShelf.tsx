@@ -58,12 +58,8 @@ export default function MixedShelf({ limit = 12 }: MixedShelfProps) {
 
 function MixedShelfCard({ item }: { item: MixedShelfItem }) {
   const locale = useLocale();
-  const href =
-    item.source === 'curated'
-      ? `/${locale}/collection/${item.id}`
-      : item.creator
-      ? `/${locale}/profile/${item.creator.id}`
-      : `/${locale}/me/library`;
+  // 큐레이션 라우팅 통일 (curation-route-unify): admin/user 둘 다 큐레이션 상세 페이지로
+  const href = `/${locale}/collection/${item.id}`;
 
   return (
     <Link href={href} className="group w-[220px] flex-shrink-0 block">

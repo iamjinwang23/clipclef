@@ -1,5 +1,5 @@
 // Design Ref: §5.1 — v2 홈 5섹션 재구성
-// 순서: (hero 유지) → § 1 이어듣기 → § 2 큐레이션 → § 3 팔로우 큐레이터 → § 4 전체 피드 → § 5 장르·아티스트 탐색
+// 순서: (hero 유지) → § 1 이어듣기 → § 2 큐레이션 → § 3 팔로우 큐레이터 → § 4 전체 플레이리스트 → § 5 장르·아티스트 탐색
 // § 1, § 3는 조건부 렌더 (로그인 + 데이터 있을 때만 — 컴포넌트 내부에서 null 반환)
 
 import { createClient } from '@/lib/supabase/server';
@@ -50,8 +50,8 @@ export default async function HomePage({
         </HomeSection>
       )}
 
-      {/* § 4 전체 피드 */}
-      <HomeSection label="전체 피드" href={`/${locale}/playlists`}>
+      {/* § 4 전체 플레이리스트 */}
+      <HomeSection label="전체 플레이리스트" href={`/${locale}/playlists`}>
         <PlaylistHomeSection limit={12} />
       </HomeSection>
 
