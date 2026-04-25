@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { resizeImage } from '@/lib/image-resize';
 import type { CuratedCollection, Playlist } from '@/types';
+import { toast } from '@/lib/toast';
 
 // ── 큐레이션 항목 플레이리스트 선택 팝업 ────────────────────────────────────────────
 function PlaylistPicker({
@@ -117,7 +118,7 @@ function CollectionCard({
         const { error: upErr } = await supabase.storage
           .from('collection-banners')
           .upload(path, compressed, { upsert: true });
-        if (upErr) { alert('이미지 업로드 실패: ' + upErr.message); return; }
+        if (upErr) { toast.error('이미지 업로드 실패: ' + upErr.message); return; }
         const { data: urlData } = supabase.storage
           .from('collection-banners')
           .getPublicUrl(path);
@@ -138,7 +139,7 @@ function CollectionCard({
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        alert('저장 실패: ' + (err.error ?? res.status));
+        toast.error('저장 실패: ' + (err.error ?? res.status));
         return;
       }
 

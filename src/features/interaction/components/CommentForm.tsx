@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useComments } from '../hooks/useComments';
 import LoginModal from './LoginModal';
+import { toast } from '@/lib/toast';
 
 interface CommentFormProps {
   playlistId: string;
@@ -24,7 +25,10 @@ export default function CommentForm({ playlistId, isLoggedIn }: CommentFormProps
     try {
       await addComment.mutateAsync(content.trim());
       setContent('');
-    } catch {}
+      toast.success('댓글을 남겼어요');
+    } catch {
+      toast.error('댓글 작성에 실패했어요. 다시 시도해 주세요.');
+    }
   };
 
   return (

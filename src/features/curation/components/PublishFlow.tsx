@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Modal from '@/components/ui/Modal';
 import { usePublish } from '../hooks/usePublish';
 import type { Playlist } from '@/types';
+import { toast } from '@/lib/toast';
 
 interface PublishFlowProps {
   open: boolean;
@@ -67,6 +68,7 @@ export default function PublishFlow({ open, onClose, savedPlaylists }: PublishFl
         cover_url: coverUrl,
         playlist_ids: selectedIds,
       });
+      toast.success('큐레이션이 발행되었어요');
       reset();
       onClose();
     } catch (e) {

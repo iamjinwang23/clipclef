@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { resizeImage } from '@/lib/image-resize';
 import type { GenreRow } from '@/types';
+import { toast } from '@/lib/toast';
 
 const BUCKET = 'collection-banners';
 
@@ -73,7 +74,7 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
       const ext = compressed.name.split('.').pop() || 'jpg';
       const path = `genre-${genre.id}-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, compressed, { upsert: true });
-      if (upErr) { alert('업로드 실패: ' + upErr.message); return; }
+      if (upErr) { toast.error('업로드 실패: ' + upErr.message); return; }
       const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
       const url = urlData?.publicUrl ?? null;
 
@@ -85,7 +86,7 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ thumbnail_url: url, dominant_color: dominant }),
       });
-      if (!res.ok) { alert('저장 실패'); return; }
+      if (!res.ok) { toast.error('저장 실패'); return; }
       const updated = await res.json();
       onChange(updated);
     } finally { setUploading(false); }
@@ -97,7 +98,7 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ thumbnail_url: null, dominant_color: null }),
     });
-    if (!res.ok) { alert('저장 실패'); return; }
+    if (!res.ok) { toast.error('저장 실패'); return; }
     onChange(await res.json());
   };
 
@@ -125,7 +126,7 @@ function GenreRowItem({ genre, onChange, onDelete }: RowProps) {
   const handleDelete = async () => {
     if (!confirm(`"${genre.name}" 장르를 삭제할까요?`)) return;
     const res = await fetch(`/api/admin/genres?id=${genre.id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('삭제 실패'); return; }
+    if (!res.ok) { toast.error('삭제 실패'); return; }
     onDelete();
   };
 
@@ -227,7 +228,7 @@ export default function GenreManager() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
-      if (!res.ok) { alert('생성 실패'); return; }
+      if (!res.ok) { toast.error('생성 실패'); return; }
       const created: GenreRow = await res.json();
       setList((prev) => [...(prev ?? []), created].sort((a, b) => a.position - b.position));
       setNewName('');

@@ -8,6 +8,7 @@ import { useAdminPlaylists } from '../hooks/useAdminPlaylists';
 import { MOOD_OPTIONS, PLACE_OPTIONS, ERA_OPTIONS } from '@/types';
 import type { Playlist } from '@/types';
 import { useActiveGenres } from '@/features/genre/hooks/useActiveGenres';
+import { toast } from '@/lib/toast';
 
 interface TrackRow {
   position: number;
@@ -354,7 +355,7 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
         }
       }
     } catch (e) {
-      alert(e instanceof Error ? e.message : String(e));
+      toast.error(e instanceof Error ? e.message : String(e));
     }
   };
 

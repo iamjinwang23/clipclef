@@ -1,11 +1,12 @@
 'use client';
 
 // Design Ref: §3 — 소유자 전용 수정/삭제 버튼 + 모달 + 삭제 확인 다이얼로그
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Track } from '@/types';
 import { MOOD_OPTIONS, PLACE_OPTIONS, ERA_OPTIONS } from '@/types';
 import { useActiveGenres } from '@/features/genre/hooks/useActiveGenres';
+import { toast } from '@/lib/toast';
 
 interface PlaylistOwnerMenuProps {
   playlistId: string;
@@ -102,35 +103,6 @@ function calcDurations(tracks: Track[]): Track[] {
   });
 }
 
-// ─── 스낵바 ────────────────────────────────────────────────────────────────────
-type SnackbarType = 'success' | 'error';
-interface Snackbar { message: string; type: SnackbarType }
-
-function SnackbarToast({ snackbar }: { snackbar: Snackbar }) {
-  return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] pointer-events-none">
-      <div
-        className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium border ${
-          snackbar.type === 'success'
-            ? 'bg-[#1a2a1a] border-green-700 text-green-300'
-            : 'bg-red-950 border-red-800 text-red-200'
-        }`}
-      >
-        {snackbar.type === 'success' ? (
-          <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        ) : (
-          <svg className="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-          </svg>
-        )}
-        {snackbar.message}
-      </div>
-    </div>
-  );
-}
-
 // ─── 메인 컴포넌트 ─────────────────────────────────────────────────────────────
 export default function PlaylistOwnerMenu({
   playlistId,
@@ -146,7 +118,6 @@ export default function PlaylistOwnerMenu({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [snackbar, setSnackbar] = useState<Snackbar | null>(null);
 
   const [editorNote, setEditorNote] = useState(initialData.editorNote ?? '');
   const [genre, setGenre] = useState<string[]>(initialData.genre);
@@ -158,11 +129,6 @@ export default function PlaylistOwnerMenu({
   const [timeInputs, setTimeInputs] = useState<string[]>(() =>
     initialTracks.map((t) => secondsToTimestamp(t.start_sec))
   );
-
-  const showSnackbar = useCallback((message: string, type: SnackbarType) => {
-    setSnackbar({ message, type });
-    setTimeout(() => setSnackbar(null), 3000);
-  }, []);
 
   // 트랙 수 변경 시 timeInputs 길이 동기화
   useEffect(() => {
@@ -208,9 +174,9 @@ export default function PlaylistOwnerMenu({
       if (!res.ok) throw new Error();
       setEditOpen(false);
       router.refresh();
-      showSnackbar('플레이리스트가 수정되었습니다.', 'success');
+      toast.success('플레이리스트가 수정되었습니다.');
     } catch {
-      showSnackbar('저장 중 오류가 발생했습니다. 다시 시도해 주세요.', 'error');
+      toast.error('저장 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
       setSaving(false);
     }
@@ -223,7 +189,7 @@ export default function PlaylistOwnerMenu({
       if (!res.ok) throw new Error();
       router.push(`/${locale}`);
     } catch {
-      showSnackbar('삭제 중 오류가 발생했습니다. 다시 시도해 주세요.', 'error');
+      toast.error('삭제 중 오류가 발생했습니다. 다시 시도해 주세요.');
       setDeleting(false);
     }
   };
@@ -250,9 +216,6 @@ export default function PlaylistOwnerMenu({
 
   return (
     <>
-      {/* 스낵바 */}
-      {snackbar && <SnackbarToast snackbar={snackbar} />}
-
       {/* 수정/삭제 버튼 */}
       <div className="flex items-center gap-1 flex-shrink-0">
         <button

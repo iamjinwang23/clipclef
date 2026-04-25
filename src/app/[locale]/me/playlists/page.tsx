@@ -13,6 +13,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { createClient } from '@/lib/supabase/client';
+import { toast } from '@/lib/toast';
 import { useUserPlaylists } from '@/features/user-playlist/hooks/useUserPlaylists';
 import type { Playlist } from '@/types';
 
@@ -248,7 +249,7 @@ export default function MyPlaylistsPage() {
         return;
       }
       if (!res.ok) {
-        alert(data.error ?? 'YouTube 내보내기에 실패했습니다');
+        toast.error(data.error ?? 'YouTube 내보내기에 실패했습니다');
         return;
       }
       setExportResult((prev) => ({ ...prev, [pl.id]: data.url }));

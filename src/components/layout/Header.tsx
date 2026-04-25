@@ -13,6 +13,7 @@ import UserAvatar from '@/components/ui/UserAvatar';
 import NotificationBell from '@/features/notification/components/NotificationBell';
 import { isInAppBrowser } from '@/lib/browser';
 import SearchDropdown from '@/features/search/components/SearchDropdown';
+import { toast } from '@/lib/toast';
 
 // ─── 최근 검색어 localStorage 유틸 ───────────────────────────────────────────
 const STORAGE_KEY = 'clipclef_recent_searches';
@@ -206,7 +207,7 @@ export default function Header() {
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {
-      alert('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다.\nSafari 또는 Chrome에서 접속해 주세요.');
+      toast.info('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다. Safari 또는 Chrome에서 접속해 주세요.');
       return;
     }
     await supabase.auth.signInWithOAuth({

@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { isInAppBrowser } from '@/lib/browser';
+import { toast } from '@/lib/toast';
 
 export default function MobileBottomNav() {
   const locale = useLocale();
@@ -61,7 +62,7 @@ export default function MobileBottomNav() {
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {
-      alert('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다.\nSafari 또는 Chrome에서 접속해 주세요.');
+      toast.info('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다. Safari 또는 Chrome에서 접속해 주세요.');
       return;
     }
     await supabase.auth.signInWithOAuth({

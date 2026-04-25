@@ -9,6 +9,7 @@ import QueryProvider from './QueryProvider';
 import Header from '@/components/layout/Header';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import AuthErrorToast from '@/components/layout/AuthErrorToast';
+import ToastContainer from '@/components/layout/ToastContainer';
 import PersistentPlayer from '@/features/player/components/PersistentPlayer';
 import MiniBar from '@/features/player/components/MiniBar';
 import '../globals.css';
@@ -46,6 +47,7 @@ export default async function LocaleLayout({
             <main className="flex-1 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-20">{children}</main>
             <MobileBottomNav />
             <AuthErrorToast />
+            <ToastContainer />
             {/* Design Ref: §1.2 — Persistent Player 단일 마운트 지점. 세션 내 재생성 금지 */}
             <PersistentPlayer />
             <MiniBar />

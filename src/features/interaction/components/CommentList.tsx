@@ -10,6 +10,7 @@ import VerifiedBadge from '@/components/ui/VerifiedBadge';
 import { formatRelativeTime } from '@/features/notification/lib/formatRelativeTime';
 import ReplyForm from './ReplyForm';
 import type { Comment } from '@/types';
+import { toast } from '@/lib/toast';
 
 interface CommentListProps {
   playlistId: string;
@@ -46,7 +47,12 @@ export default function CommentList({ playlistId, isLoggedIn }: CommentListProps
           <span className="text-xs text-[var(--text-secondary)]">{formatRelativeTime(comment.created_at)}</span>
           {currentUserId === comment.user_id && (
             <button
-              onClick={() => deleteComment.mutate(comment.id)}
+              onClick={() =>
+                deleteComment.mutate(comment.id, {
+                  onSuccess: () => toast.success('댓글을 삭제했어요'),
+                  onError: () => toast.error('댓글 삭제에 실패했어요.'),
+                })
+              }
               className="text-xs text-[var(--text-secondary)] hover:text-red-400 transition-colors ml-auto"
             >
               {t('delete')}
