@@ -4,6 +4,7 @@
 |---------|:--------:|:----------:|:----------:|:--------:|
 | [public-profile-parity](./public-profile-parity/) | 2026-04-20 | 100% | 0 | same-day |
 | [tracklist-title-artist-swap](./tracklist-title-artist-swap/) | 2026-04-21 | 100% | 0 | same-day |
+| [terminology-unify-curation](./terminology-unify-curation/) | 2026-04-25 | 100% | 0 | same-day |
 
 ## public-profile-parity
 
@@ -19,3 +20,12 @@
 확인 다이얼로그 無 — self-inverse 특성으로 실수 허용.
 
 **변경 파일**: `src/features/admin/components/PlaylistForm.tsx` (1개) · DB 변경 0 · 신규 파일 0 · 신규 의존성 0
+
+## terminology-unify-curation
+
+UI 카피·주석·i18n에서 혼용되던 "에디토리얼 / 컬렉션 / 큐레이션" 세 단어를 **"큐레이션"** 하나로 단일화.
+관리자/유저 카드 출처 식별은 단어 라벨 대신 아바타·이름으로 표현해 v2 PRD F6 "발행 평등" 메시지 보존.
+DB 테이블·컴포넌트·훅·API 경로 등 코드 식별자는 모두 그대로 유지.
+
+**변경 파일**: 15개 (UI 7 + 주석 7 + i18n 1) · DB 변경 0 · 신규 파일 0 · 신규 의존성 0
+**Commit**: `e97275b chore(copy): unify 에디토리얼·컬렉션 → 큐레이션`
