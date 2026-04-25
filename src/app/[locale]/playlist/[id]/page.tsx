@@ -12,6 +12,7 @@ import CommentList from '@/features/interaction/components/CommentList';
 import CommentForm from '@/features/interaction/components/CommentForm';
 import UploaderCard from '@/features/interaction/components/UploaderCard';
 import ArtistStrip from '@/features/artist/components/ArtistStrip';
+import UploadSuccessToast from '@/features/playlist/components/UploadSuccessToast';
 import { toArtistSlug, extractMainArtist } from '@/lib/artist-apis';
 
 export default async function PlaylistDetailPage({
@@ -63,6 +64,7 @@ export default async function PlaylistDetailPage({
 
   return (
     <div className="max-w-4xl mx-auto px-4 pb-6">
+      <UploadSuccessToast />
       {/* 업로더 프로필 — 최상단 */}
       {p.uploaded_by && (
         <div className="pt-4 pb-0">

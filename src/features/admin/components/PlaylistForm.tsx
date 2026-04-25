@@ -267,7 +267,6 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
   const [era, setEra] = useState<string[]>([]);
   const [isAi, setIsAi] = useState(false);
   const [editorNote, setEditorNote] = useState('');
-  const [toast, setToast] = useState(false);
 
   // 수정 모드 초기값 세팅
   useEffect(() => {
@@ -348,10 +347,8 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
           uploaded_by: uploadedBy ?? null,
         });
         if (locale && created?.id) {
-          setToast(true);
-          setTimeout(() => {
-            router.push(`/${locale}/playlist/${created.id}`);
-          }, 1500);
+          // 토스트는 상세 페이지에서 ?uploaded=1 감지로 노출 (UploadSuccessToast)
+          router.push(`/${locale}/playlist/${created.id}?uploaded=1`);
         } else {
           handleReset();
         }
@@ -365,12 +362,6 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
 
   return (
     <>
-    {/* 업로드 성공 스낵바 */}
-    {toast && (
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-sm font-medium shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
-        플레이리스트가 업로드 되었어요
-      </div>
-    )}
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* 등록 모드: URL 입력 */}
       {!isEditMode && (
