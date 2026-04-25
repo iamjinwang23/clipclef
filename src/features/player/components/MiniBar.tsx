@@ -85,7 +85,7 @@ function MiniBarInner({
         aria-label="현재 재생 중"
         className="
           fixed left-0 right-0 z-40
-          bottom-[calc(5rem+env(safe-area-inset-bottom))] sm:bottom-0
+          bottom-[calc(3.5rem+env(safe-area-inset-bottom))] sm:bottom-0
           bg-[var(--card)]/95 backdrop-blur-md
           border-t border-[var(--border)]
         "
