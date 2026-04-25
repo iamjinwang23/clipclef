@@ -1,5 +1,5 @@
 // Design Ref: §5.1 — v2 홈 5섹션 재구성
-// 순서: (hero 유지) → § 1 이어듣기 → § 2 에디토리얼·컬렉션 → § 3 팔로우 큐레이터 → § 4 전체 피드 → § 5 장르·아티스트 탐색
+// 순서: (hero 유지) → § 1 이어듣기 → § 2 큐레이션 → § 3 팔로우 큐레이터 → § 4 전체 피드 → § 5 장르·아티스트 탐색
 // § 1, § 3는 조건부 렌더 (로그인 + 데이터 있을 때만 — 컴포넌트 내부에서 null 반환)
 
 import { createClient } from '@/lib/supabase/server';
@@ -38,8 +38,8 @@ export default async function HomePage({
         </HomeSection>
       )}
 
-      {/* § 2 에디토리얼·컬렉션 (관리자 + 유저 발행 혼합) */}
-      <HomeSection label="에디토리얼·컬렉션">
+      {/* § 2 큐레이션 (관리자 + 유저 발행 혼합) */}
+      <HomeSection label="큐레이션">
         <MixedShelf limit={12} />
       </HomeSection>
 

@@ -79,7 +79,7 @@ export default function PublishFlow({ open, onClose, savedPlaylists }: PublishFl
       {/* 헤더: 스텝 인디케이터 */}
       <div className="px-5 pt-5 pb-3 border-b border-[var(--border)]">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-base font-semibold">컬렉션 발행</h2>
+          <h2 className="text-base font-semibold">큐레이션 발행</h2>
           <button
             type="button"
             onClick={handleClose}
@@ -291,7 +291,7 @@ function Step2Caption({
     <div className="space-y-4">
       <div>
         <label htmlFor="publish-title" className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">
-          컬렉션 이름
+          큐레이션 이름
           <span className="ml-1 text-[var(--subtle)]">({title.length}/100)</span>
         </label>
         <input
@@ -319,7 +319,7 @@ function Step2Caption({
           id="publish-caption"
           value={caption}
           onChange={(e) => onCaptionChange(e.target.value)}
-          placeholder="이 컬렉션을 한 줄로 설명해주세요"
+          placeholder="이 큐레이션을 한 줄로 설명해주세요"
           rows={3}
           className={`
             w-full px-3 py-2 text-sm rounded-md resize-none

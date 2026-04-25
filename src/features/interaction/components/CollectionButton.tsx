@@ -1,5 +1,5 @@
 'use client';
-// Design Ref: §5.4 — 컬렉션 저장/해제 버튼
+// Design Ref: §5.4 — 큐레이션 저장/해제 버튼
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';

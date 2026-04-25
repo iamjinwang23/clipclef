@@ -2,7 +2,7 @@
   "common": {
     "login": "로그인",
     "logout": "로그아웃",
-    "collection": "컬렉션",
+    "collection": "큐레이션",
     "save": "저장",
     "saved": "저장됨",
     "cancel": "취소",
@@ -44,7 +44,7 @@
     "replyLoginRequired": "로그인 후 답글을 작성할 수 있습니다"
   },
   "collection": {
-    "title": "내 컬렉션",
+    "title": "내 큐레이션",
     "empty": "저장한 플레이리스트가 없어요",
     "emptyHint": "마음에 드는 플레이리스트를 저장해보세요"
   },

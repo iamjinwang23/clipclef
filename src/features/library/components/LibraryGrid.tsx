@@ -1,7 +1,7 @@
 'use client';
 
 // Design Ref: §5.1 — /me/library 페이지 그리드
-// Plan FR-07: 저장한 플리 + 내가 만든 컬렉션 + 발행 필터 탭
+// Plan FR-07: 저장한 플리 + 내가 만든 큐레이션 + 발행 필터 탭
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -35,7 +35,7 @@ export default function LibraryGrid() {
   }
 
   const savedCount = data.savedPlaylists.length;
-  // 기본 저장함(is_default)은 "내가 만든 컬렉션"에서 제외 — 저장한 플리 탭이 그 역할
+  // 기본 저장함(is_default)은 "내가 만든 큐레이션"에서 제외 — 저장한 플리 탭이 그 역할
   const myCollections = data.userPlaylists.filter((up) => !up.is_default);
   const myCollectionsCount = myCollections.length;
   const publishedCount = data.publishedCount;
@@ -53,7 +53,7 @@ export default function LibraryGrid() {
           저장한 플리 <CountBadge>{savedCount}</CountBadge>
         </TabButton>
         <TabButton active={tab === 'my-collections'} onClick={() => setTab('my-collections')}>
-          내가 만든 컬렉션 <CountBadge>{myCollectionsCount}</CountBadge>
+          내가 만든 큐레이션 <CountBadge>{myCollectionsCount}</CountBadge>
         </TabButton>
         <TabButton active={tab === 'published'} onClick={() => setTab('published')}>
           발행한 것 <CountBadge>{publishedCount}</CountBadge>
@@ -65,7 +65,7 @@ export default function LibraryGrid() {
         <div className="mb-6 p-4 rounded-xl bg-[var(--muted)] border border-[var(--border)] flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold">
-              이 플리들을 묶어서 컬렉션으로 발행해보세요
+              이 플리들을 묶어서 큐레이션으로 발행해보세요
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               내 취향을 다른 사람들과 공유할 수 있어요
@@ -103,7 +103,7 @@ export default function LibraryGrid() {
       {tab === 'my-collections' && (
         <>
           {myCollectionsCount === 0 ? (
-            <EmptyState message="아직 만든 컬렉션이 없어요. 저장한 플리 3개 이상이 되면 묶어서 발행할 수 있어요." />
+            <EmptyState message="아직 만든 큐레이션이 없어요. 저장한 플리 3개 이상이 되면 묶어서 발행할 수 있어요." />
           ) : (
             <div className="space-y-3">
               {myCollections.map((up) => (
@@ -129,7 +129,7 @@ export default function LibraryGrid() {
       {tab === 'published' && (
         <>
           {publishedCount === 0 ? (
-            <EmptyState message="아직 발행한 컬렉션이 없어요." />
+            <EmptyState message="아직 발행한 큐레이션이 없어요." />
           ) : (
             <div className="space-y-3">
               {myCollections

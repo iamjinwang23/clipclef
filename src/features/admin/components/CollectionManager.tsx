@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { resizeImage } from '@/lib/image-resize';
 import type { CuratedCollection, Playlist } from '@/types';
 
-// ── 컬렉션 항목 플레이리스트 선택 팝업 ────────────────────────────────────────────
+// ── 큐레이션 항목 플레이리스트 선택 팝업 ────────────────────────────────────────────
 function PlaylistPicker({
   currentIds,
   onAdd,
@@ -58,7 +58,7 @@ function PlaylistPicker({
   );
 }
 
-// ── 단일 컬렉션 카드 ──────────────────────────────────────────────────────
+// ── 단일 큐레이션 카드 ──────────────────────────────────────────────────────
 function CollectionCard({
   collection,
   onDelete,
@@ -374,7 +374,7 @@ export default function CollectionManager() {
 
   return (
     <div>
-      {/* 새 컬렉션 만들기 */}
+      {/* 새 큐레이션 만들기 */}
       <div className="flex gap-2 mb-4">
         <input
           value={newTitle}

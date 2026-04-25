@@ -16,7 +16,7 @@ async function assertAdmin() {
   return user;
 }
 
-// GET — 컬렉션 목록 + 항목 조회
+// GET — 큐레이션 목록 + 항목 조회
 export async function GET() {
   const service = serviceClient();
   const { data: cols } = await service
@@ -46,7 +46,7 @@ export async function GET() {
   return NextResponse.json(result);
 }
 
-// PUT — 컬렉션 생성
+// PUT — 큐레이션 생성
 export async function PUT(req: NextRequest) {
   if (!await assertAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -63,7 +63,7 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-// POST — 컬렉션에 플레이리스트 추가
+// POST — 큐레이션에 플레이리스트 추가
 export async function POST(req: NextRequest) {
   if (!await assertAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
-// PATCH — 컬렉션 필드 업데이트 (is_active, banner_image_url 등)
+// PATCH — 큐레이션 필드 업데이트 (is_active, banner_image_url 등)
 export async function PATCH(req: NextRequest) {
   if (!await assertAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -99,7 +99,7 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
-// DELETE — 컬렉션 삭제 or 항목 제거
+// DELETE — 큐레이션 삭제 or 항목 제거
 export async function DELETE(req: NextRequest) {
   if (!await assertAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -117,7 +117,7 @@ export async function DELETE(req: NextRequest) {
       .eq('playlist_id', playlistId);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   } else {
-    // 컬렉션 전체 삭제 (CASCADE로 items도 삭제)
+    // 큐레이션 전체 삭제 (CASCADE로 items도 삭제)
     const { error } = await service
       .from('curated_collections')
       .delete()

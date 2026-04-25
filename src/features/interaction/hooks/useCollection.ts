@@ -1,5 +1,5 @@
 'use client';
-// 컬렉션 = 유저의 기본 저장함(is_default user_playlist)에 담기
+// 큐레이션 = 유저의 기본 저장함(is_default user_playlist)에 담기
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';

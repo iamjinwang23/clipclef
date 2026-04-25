@@ -1,5 +1,5 @@
 // Design Ref: §4.2 — POST /api/user-playlists/publish (F5 발행)
-// Plan SC: SC-3 publish rate — 저장한 플리 3+ 묶어서 컬렉션 발행
+// Plan SC: SC-3 publish rate — 저장한 플리 3+ 묶어서 큐레이션 발행
 // Letterboxd 방식: published_at=NOW(), 향후 수정·삭제 모두 가능
 
 import { NextRequest, NextResponse } from 'next/server';

@@ -134,7 +134,7 @@ export default function ProfileForm({ userId, email, initialDisplayName, avatarU
       {/* 탈퇴 */}
       <div className="pt-6 border-t border-[var(--border)]">
         <p className="text-sm font-medium text-[var(--foreground)] mb-2">계정 탈퇴</p>
-        <p className="text-xs text-[var(--text-secondary)] mb-3">탈퇴 시 모든 댓글, 좋아요, 컬렉션 데이터가 삭제됩니다.</p>
+        <p className="text-xs text-[var(--text-secondary)] mb-3">탈퇴 시 모든 댓글, 좋아요, 큐레이션 데이터가 삭제됩니다.</p>
         <button
           onClick={handleDelete}
           disabled={deleting}

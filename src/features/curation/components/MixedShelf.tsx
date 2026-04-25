@@ -1,6 +1,6 @@
 'use client';
 
-// Design Ref: §5.1 — 홈 § 2 에디토리얼·컬렉션 섹션 (F6 혼합 선반)
+// Design Ref: §5.1 — 홈 § 2 큐레이션 섹션 (F6 혼합 선반)
 // 관리자 curated + 유저 published user_playlists를 published_at DESC 혼합
 // 카드 구조: 올린이 헤더(상단) → 썸네일 → 제목/카피 — Instagram 스타일
 
@@ -42,7 +42,7 @@ export default function MixedShelf({ limit = 12 }: MixedShelfProps) {
   if (items.length === 0) {
     return (
       <div className="py-8 text-center text-sm text-[var(--text-secondary)]">
-        첫 에디토리얼을 기다리고 있어요
+        첫 큐레이션을 기다리고 있어요
       </div>
     );
   }
@@ -84,7 +84,7 @@ function MixedShelfCard({ item }: { item: MixedShelfItem }) {
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[var(--subtle)] to-[var(--muted)] flex items-center justify-center">
             <span className="text-[var(--text-secondary)] text-sm">
-              {item.source === 'curated' ? '에디토리얼' : '컬렉션'}
+              큐레이션
             </span>
           </div>
         )}
@@ -105,7 +105,7 @@ function MixedShelfCard({ item }: { item: MixedShelfItem }) {
 
 function CreatorHeader({ item }: { item: MixedShelfItem }) {
   if (item.source === 'curated') {
-    // 브랜드 표시 — clip/clef 에디토리얼
+    // 브랜드 표시 — clip/clef 큐레이션 (출처는 아바타+이름으로 식별)
     return (
       <div className="flex items-center gap-1.5 mb-2">
         <div
@@ -116,9 +116,6 @@ function CreatorHeader({ item }: { item: MixedShelfItem }) {
         </div>
         <span className="text-xs font-semibold text-[var(--foreground)] truncate">
           clip/clef
-        </span>
-        <span className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide ml-auto">
-          에디토리얼
         </span>
       </div>
     );

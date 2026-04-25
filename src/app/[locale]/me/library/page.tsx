@@ -1,5 +1,5 @@
 // Design Ref: §5.1 — /me/library 페이지 (F4)
-// Plan FR-07: 저장한 플리 + 내가 만든 컬렉션 통합 뷰
+// Plan FR-07: 저장한 플리 + 내가 만든 큐레이션 통합 뷰
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';

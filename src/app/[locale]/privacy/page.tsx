@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         </p>
         <ul>
           <li>회원 가입 및 본인 식별</li>
-          <li>좋아요·댓글·컬렉션 저장 등 서비스 기능 제공</li>
+          <li>좋아요·댓글·큐레이션 저장 등 서비스 기능 제공</li>
           <li>서비스 운영 및 관리</li>
         </ul>
       </Section>
