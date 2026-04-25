@@ -43,7 +43,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Header />
-            <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-0">{children}</main>
+            <main className="flex-1 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-20">{children}</main>
             <MobileBottomNav />
             <AuthErrorToast />
             {/* Design Ref: §1.2 — Persistent Player 단일 마운트 지점. 세션 내 재생성 금지 */}
