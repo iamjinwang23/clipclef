@@ -7,12 +7,14 @@ import { createClient } from '@/lib/supabase/client';
 async function getOrCreateDefaultPlaylist(userId: string): Promise<string> {
   const supabase = createClient();
 
+  // maybeSingle: 신규 유저는 디폴트 저장함이 없어 0행 → null. .single() 은 0행에서
+  // 406 을 던져 콘솔에 빨간 에러로 남음.
   const { data: existing } = await supabase
     .from('user_playlists')
     .select('id')
     .eq('user_id', userId)
     .eq('is_default', true)
-    .single();
+    .maybeSingle();
 
   if (existing) return existing.id;
 
@@ -41,7 +43,7 @@ export function useCollection(playlistId: string) {
         .select('id')
         .eq('user_id', user.id)
         .eq('is_default', true)
-        .single();
+        .maybeSingle();
 
       if (!defaultList) return;
 

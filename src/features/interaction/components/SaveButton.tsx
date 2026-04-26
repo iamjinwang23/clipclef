@@ -29,12 +29,14 @@ export default function SaveButton({ playlistId, isLoggedIn, responsive = false 
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      // maybeSingle: 디폴트 저장함이 아직 없는 신규 유저는 0행 → null. .single()
+      // 쓰면 PostgREST 가 406 Not Acceptable 을 던져 콘솔 노이즈가 됨.
       const { data: defaultList } = await supabase
         .from('user_playlists')
         .select('id')
         .eq('user_id', user.id)
         .eq('is_default', true)
-        .single();
+        .maybeSingle();
       if (!defaultList) return;
       const { data } = await supabase
         .from('user_playlist_items')
