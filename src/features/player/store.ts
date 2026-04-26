@@ -71,7 +71,20 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   duration: 0,
   expandedRect: null,
 
-  setPlayer: (player) => set({ _player: player }),
+  setPlayer: (player) => {
+    // 외부 직진입 race fix: load()가 _player null 시점에 호출돼 영상 주입이 스킵된 경우,
+    // player가 처음 준비되는 이 타이밍에 cue 해서 iframe에 영상을 채워넣음.
+    // 콜드 로드라 user gesture 가정 못하므로 cueVideoById 사용 (autoplay 정책 회피).
+    const { _player: prev, playlist } = get();
+    set({ _player: player });
+    if (player && !prev && playlist) {
+      if (player.cueVideoById) {
+        player.cueVideoById({ videoId: playlist.youtube_id, startSeconds: 0 });
+      } else {
+        player.loadVideoById({ videoId: playlist.youtube_id, startSeconds: 0 });
+      }
+    }
+  },
   setStatus: (status) => set({ status }),
   setCurrentTime: (currentTime) => set({ currentTime }),
   setDuration: (duration) => set({ duration }),
