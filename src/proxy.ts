@@ -52,6 +52,6 @@ export const config = {
   matcher: [
     // SEO 메타 파일(robots.txt, sitemap.xml)과 정적 자산은 i18n 리라이트에서 제외해야
     // 루트에서 직접 서빙됨. 안 그러면 /ko/robots.txt 로 307 redirect → 404.
-    '/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|og-default\\.png|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|og-default\\.png|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|html)$).*)',
   ],
 };
