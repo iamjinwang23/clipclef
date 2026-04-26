@@ -11,7 +11,7 @@ const MENU_ITEMS = [
   { label: '기본 정보', path: 'settings' },
   { label: '내 좋아요', path: 'likes' },
   { label: '내 댓글', path: 'comments' },
-  { label: '내 플레이리스트', path: 'playlists' },
+  { label: '내 큐레이션', path: 'playlists' },
 ];
 
 export default function ProfileSettingsMenu({ locale }: Props) {

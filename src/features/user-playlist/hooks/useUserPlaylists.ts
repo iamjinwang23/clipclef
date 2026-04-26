@@ -22,12 +22,17 @@ export function useUserPlaylists() {
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  const create = async (name: string): Promise<UserPlaylist | null> => {
+  const create = async (name: string, coverUrl?: string | null): Promise<UserPlaylist | null> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
     const { data, error } = await supabase
       .from('user_playlists')
-      .insert({ user_id: user.id, name: name.trim(), is_public: true })
+      .insert({
+        user_id: user.id,
+        name: name.trim(),
+        is_public: true,
+        cover_url: coverUrl ?? null,
+      })
       .select()
       .single();
     if (error) throw new Error(error.message);

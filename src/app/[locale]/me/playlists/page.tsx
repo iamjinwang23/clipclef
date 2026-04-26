@@ -14,6 +14,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from '@/lib/toast';
+import { resizeImage } from '@/lib/image-resize';
 import { useUserPlaylists } from '@/features/user-playlist/hooks/useUserPlaylists';
 import type { Playlist } from '@/types';
 
@@ -127,13 +128,11 @@ export default function MyPlaylistsPage() {
   const [items, setItems] = useState<Record<string, Playlist[]>>({});
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [newName, setNewName] = useState('');
+  const [newCoverFile, setNewCoverFile] = useState<File | null>(null);
+  const [newCoverPreview, setNewCoverPreview] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const [moveMenu, setMoveMenu] = useState<{ userPlaylistId: string; playlistId: string } | null>(null);
   const moveMenuRef = useRef<HTMLDivElement>(null);
-  const [exporting, setExporting] = useState<string | null>(null); // userPlaylistId
-  const [exportResult, setExportResult] = useState<Record<string, string>>({}); // id → youtube url
-  const [needsYouTubeAuth, setNeedsYouTubeAuth] = useState(false);
 
   const supabase = createClient();
   const sensors = useSensors(
@@ -143,8 +142,7 @@ export default function MyPlaylistsPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) { router.push(`/${locale}`); return; }
-      setUserId(user.id);
+      if (!user) router.push(`/${locale}`);
     });
   }, [locale, router, supabase.auth]);
 
@@ -179,15 +177,51 @@ export default function MyPlaylistsPage() {
     });
   };
 
+  const handleCoverSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setNewCoverFile(file);
+    setNewCoverPreview(URL.createObjectURL(file));
+    e.target.value = '';
+  };
+
+  const handleCoverRemove = () => {
+    setNewCoverFile(null);
+    if (newCoverPreview) URL.revokeObjectURL(newCoverPreview);
+    setNewCoverPreview(null);
+  };
+
   const handleCreate = async () => {
     if (!newName.trim()) return;
     setCreating(true);
-    try { await create(newName); setNewName(''); }
-    finally { setCreating(false); }
+    try {
+      let coverUrl: string | null = null;
+      if (newCoverFile) {
+        const compressed = await resizeImage(newCoverFile);
+        const ext = compressed.name.split('.').pop();
+        const path = `user-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from('collection-banners')
+          .upload(path, compressed, { upsert: true });
+        if (upErr) {
+          toast.error('이미지 업로드 실패: ' + upErr.message);
+          return;
+        }
+        const { data: urlData } = supabase.storage
+          .from('collection-banners')
+          .getPublicUrl(path);
+        coverUrl = urlData?.publicUrl ?? null;
+      }
+      await create(newName, coverUrl);
+      setNewName('');
+      handleCoverRemove();
+    } finally {
+      setCreating(false);
+    }
   };
 
   const handleRemovePlaylist = async (id: string) => {
-    if (!confirm('플레이리스트을 삭제할까요?')) return;
+    if (!confirm('큐레이션을 삭제할까요?')) return;
     await remove(id);
     setExpanded((prev) => { const next = new Set(prev); next.delete(id); return next; });
   };
@@ -235,87 +269,62 @@ export default function MyPlaylistsPage() {
     );
   };
 
-  const handleExportToYouTube = async (pl: { id: string; name: string }) => {
-    setExporting(pl.id);
-    try {
-      const res = await fetch('/api/youtube/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userPlaylistId: pl.id, name: pl.name }),
-      });
-      const data = await res.json();
-      if (res.status === 401 && data.error === 'youtube_not_connected') {
-        setNeedsYouTubeAuth(true);
-        return;
-      }
-      if (!res.ok) {
-        toast.error(data.error ?? 'YouTube 내보내기에 실패했습니다');
-        return;
-      }
-      setExportResult((prev) => ({ ...prev, [pl.id]: data.url }));
-    } finally {
-      setExporting(null);
-    }
-  };
-
-  const handleConnectYouTube = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=/${locale}/me/playlists`,
-        scopes: 'https://www.googleapis.com/auth/youtube',
-        queryParams: { access_type: 'offline', prompt: 'consent' },
-      },
-    });
-  };
-
   const sorted = [...playlists].sort((a, b) => (b.is_default ? 1 : 0) - (a.is_default ? 1 : 0));
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">내 플레이리스트</h1>
-        {userId && (
-          <Link href={`/${locale}/profile/${userId}`} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)] underline">
-            공개 프로필 보기 →
-          </Link>
-        )}
+        <h1 className="text-xl font-semibold">내 큐레이션</h1>
       </div>
 
-      {/* 새 플레이리스트 만들기 */}
-      <div className="flex gap-2 mb-6">
-        <input
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-          placeholder="새 플레이리스트 이름"
-          className="flex-1 text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
-        />
-        <button
-          onClick={handleCreate}
-          disabled={!newName.trim() || creating}
-          className="px-4 py-2 text-sm font-medium bg-[var(--foreground)] text-[var(--background)] rounded-lg disabled:opacity-40 hover:opacity-80 transition-opacity"
-        >
-          만들기
-        </button>
-      </div>
-
-      {/* YouTube 연결 필요 안내 */}
-      {needsYouTubeAuth && (
-        <div className="mb-4 flex items-center gap-3 rounded-lg border border-red-900/40 bg-red-950/30 px-4 py-3 text-sm">
-          <span className="flex-1 text-red-400">YouTube 계정 연결이 필요합니다. Google 재인증 후 다시 시도하세요.</span>
+      {/* 새 큐레이션 만들기 */}
+      <div className="mb-6 space-y-2">
+        <div className="flex gap-2">
+          <input
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+            placeholder="새 큐레이션 이름"
+            className="flex-1 text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
+          />
           <button
-            onClick={handleConnectYouTube}
-            className="flex-shrink-0 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors"
+            onClick={handleCreate}
+            disabled={!newName.trim() || creating}
+            className="px-4 py-2 text-sm font-medium bg-[var(--foreground)] text-[var(--background)] rounded-lg disabled:opacity-40 hover:opacity-80 transition-opacity"
           >
-            YouTube 연결
+            {creating ? '만드는 중…' : '만들기'}
           </button>
-          <button onClick={() => setNeedsYouTubeAuth(false)} className="text-red-500 hover:text-red-400 text-lg leading-none">×</button>
         </div>
-      )}
+
+        {/* 커버 이미지 (선택) */}
+        <div>
+          {newCoverPreview ? (
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={newCoverPreview} alt="커버 미리보기" className="w-32 h-16 object-cover rounded" />
+              <button onClick={handleCoverRemove} className="text-xs text-red-400 hover:text-red-300 transition-colors">
+                삭제
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <label className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-dashed border-[var(--subtle)] rounded-lg cursor-pointer hover:border-[var(--text-secondary)] transition-colors">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4 4 4" />
+                </svg>
+                커버 이미지 첨부 (선택)
+                <input type="file" accept="image/*" className="hidden" onChange={handleCoverSelect} />
+              </label>
+              <p className="text-[10px] text-[var(--subtle)] leading-relaxed">
+                권장 사이즈: <span className="text-[var(--text-secondary)]">웹 1920×480px · 모바일 750×750px</span> · JPG / WebP · 최대 5MB
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
 
       {playlists.length === 0 ? (
-        <p className="py-12 text-center text-sm text-[var(--text-secondary)]">아직 만든 플레이리스트이 없어요</p>
+        <p className="py-12 text-center text-sm text-[var(--text-secondary)]">아직 만든 큐레이션이 없어요</p>
       ) : (
         <div className="space-y-2">
           {sorted.map((pl) => {
@@ -340,25 +349,6 @@ export default function MyPlaylistsPage() {
                       <span className="text-xs text-[var(--text-secondary)]">{items[pl.id].length}개</span>
                     )}
                   </button>
-                  {exportResult[pl.id] ? (
-                    <a
-                      href={exportResult[pl.id]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs px-2 py-0.5 rounded-full border border-red-800/50 text-red-400 hover:bg-red-950/30 transition-colors"
-                    >
-                      YouTube ↗
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => handleExportToYouTube(pl)}
-                      disabled={exporting === pl.id}
-                      title="YouTube 계정에 플레이리스트으로 저장"
-                      className="text-xs px-2 py-0.5 rounded-full border border-[var(--border)] text-[var(--text-secondary)] hover:border-red-300 hover:text-red-500 transition-colors disabled:opacity-40"
-                    >
-                      {exporting === pl.id ? '내보내는 중…' : 'YouTube로 저장'}
-                    </button>
-                  )}
                   <button
                     onClick={() => togglePublic(pl.id, !pl.is_public)}
                     className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
