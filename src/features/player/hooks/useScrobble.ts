@@ -101,6 +101,11 @@ export function useScrobble() {
         return;
       }
 
+      // duration 갱신 — MiniBar 진행률 바가 store.duration 을 구독함.
+      // 영상 swap 시 변경되므로 매 tick 체크 (동일 값이면 set 은 no-op).
+      const dur = player.getDuration?.() ?? 0;
+      if (dur > 0 && dur !== s.duration) s.setDuration(dur);
+
       const pos = player.getCurrentTime();
       const now = Date.now();
       const wallDelta = now - lastTickWall;
