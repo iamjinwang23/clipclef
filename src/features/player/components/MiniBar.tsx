@@ -74,16 +74,17 @@ function MiniBarInner({
   // 재생 진행률 — useScrobble 이 1Hz 로 store 갱신, transition 으로 부드럽게 보간
   const currentTime = usePlayerStore((s) => s.currentTime);
   const duration = usePlayerStore((s) => s.duration);
-  const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const progressPct = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
-  // 트랙 점프 감지: trackIndex 가 바뀐 렌더에서만 transition 을 죽여 순간이동.
-  // 다음 tick 부터는 다시 1s linear 로 부드럽게 흐름.
-  const prevTrackIndexRef = useRef(currentTrackIndex);
-  const isJumping = prevTrackIndexRef.current !== currentTrackIndex;
+  // 점프 감지: progressPct 가 한번에 크게 변하면 트랙 이동/seek 으로 간주 → 순간이동.
+  // 자연 재생에선 1초당 (1/duration*100)% 증가하므로 임계값 1.5%면 충분(영상 길이가
+  // 70초 이상일 때 자연 증가는 1.5% 미만). 점프 감지된 렌더만 transition 죽이고
+  // 다음 tick 부터는 다시 1s linear.
+  const prevPctRef = useRef(progressPct);
+  const isJumping = Math.abs(progressPct - prevPctRef.current) > 1.5;
   useEffect(() => {
-    prevTrackIndexRef.current = currentTrackIndex;
-  }, [currentTrackIndex]);
+    prevPctRef.current = progressPct;
+  }, [progressPct]);
 
   const handleSaveClick = async (e: React.MouseEvent) => {
     e.preventDefault();
