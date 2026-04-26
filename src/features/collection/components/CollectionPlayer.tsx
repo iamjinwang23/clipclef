@@ -72,7 +72,13 @@ export default function CollectionPlayer({
       if (!window.YT) return;
       playerRef.current = new window.YT.Player(iframeContainerRef.current, {
         videoId,
-        playerVars: { autoplay: 1, rel: 0 },
+        playerVars: {
+          autoplay: 1,
+          rel: 0,
+          // 외부 직진입(공유 링크) 대응 — origin/enablejsapi 누락 시 일반 재생 오류 발생
+          origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+          enablejsapi: 1,
+        },
         events: {
           onReady: (e: YTPlayerEvent) => {
             e.target.playVideo?.();

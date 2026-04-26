@@ -35,6 +35,10 @@ export default function PersistentPlayer() {
         rel: 0,
         playsinline: 1,
         modestbranding: 1,
+        // 외부 직진입(카톡 등 공유 링크) 시 YouTube가 부모 origin 검증에 실패해
+        // "재생 ID는 ..." 일반 오류를 띄우는 케이스 방지. enablejsapi와 함께 명시.
+        origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+        enablejsapi: 1,
       },
       events: {
         onReady: (e: YTPlayerEvent) => {
