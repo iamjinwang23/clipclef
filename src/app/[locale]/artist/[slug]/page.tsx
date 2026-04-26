@@ -1,5 +1,7 @@
 // Design Ref: §6.1 — 아티스트 상세 페이지 (서버 컴포넌트)
 // Plan SC: 아티스트 페이지에 사진·바이오·출연 플레이리스트 노출
+import { cache } from 'react';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ArtistHero from '@/features/artist/components/ArtistHero';
 import PlaylistCard from '@/features/playlist/components/PlaylistCard';
@@ -8,25 +10,88 @@ import {
   getArtistPlaylists,
 } from '@/features/artist/lib/artist.server';
 import { extractMainArtist } from '@/lib/artist-apis';
+import { OG_DEFAULT, SITE_NAME, SITE_URL } from '@/lib/seo';
+
+// generateMetadata + page 페치 중복 제거 (request-level)
+const getArtist = cache(async (slug: string) => {
+  const artistName = slug.replace(/-/g, ' ');
+  return fetchArtistWithCache(slug, artistName);
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
+  const artist = await getArtist(slug);
+  if (!artist) return { title: '아티스트를 찾을 수 없습니다' };
+
+  const description =
+    artist.bio_en?.trim().slice(0, 200) || `${artist.name} — clip/clef 아티스트 페이지`;
+  const url = `${SITE_URL}/${locale}/artist/${encodeURIComponent(slug)}`;
+  const image = artist.image_url || OG_DEFAULT;
+
+  return {
+    title: artist.name,
+    description,
+    alternates: {
+      canonical: `/${locale}/artist/${encodeURIComponent(slug)}`,
+      languages: {
+        ko: `/ko/artist/${encodeURIComponent(slug)}`,
+        en: `/en/artist/${encodeURIComponent(slug)}`,
+      },
+    },
+    openGraph: {
+      type: 'profile',
+      siteName: SITE_NAME,
+      title: artist.name,
+      description,
+      url,
+      images: [{ url: image, alt: artist.name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: artist.name,
+      description,
+      images: [image],
+    },
+  };
+}
 
 export default async function ArtistPage({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug: rawSlug } = await params;
+  const { locale, slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
 
-  // slug에서 아티스트명 복원 (하이픈 → 공백, 후에 DB에 실제 이름 있음)
-  const artistName = slug.replace(/-/g, ' ');
-
-  const artist = await fetchArtistWithCache(slug, artistName);
+  const artist = await getArtist(slug);
   if (!artist) notFound();
 
   const playlists = await getArtistPlaylists(extractMainArtist(artist.name!));
 
+  // JSON-LD: MusicGroup (schema.org)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'MusicGroup',
+    name: artist.name,
+    description: artist.bio_en || undefined,
+    url: `${SITE_URL}/${locale}/artist/${encodeURIComponent(slug)}`,
+    image: artist.image_url || undefined,
+    identifier: artist.mbid
+      ? { '@type': 'PropertyValue', propertyID: 'MusicBrainz', value: artist.mbid }
+      : undefined,
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 pb-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* 히어로 */}
       <ArtistHero
         name={artist.name}

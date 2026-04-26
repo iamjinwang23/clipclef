@@ -1,8 +1,11 @@
+import { cache } from 'react';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import type { Playlist } from '@/types';
 import CollectionPageClient from '@/features/collection/components/CollectionPageClient';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { OG_DEFAULT, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +26,7 @@ type CollectionData = {
   creator: Creator | null;
 };
 
-async function getCollection(id: string): Promise<CollectionData | null> {
+const getCollection = cache(async (id: string): Promise<CollectionData | null> => {
   const service = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -96,6 +99,49 @@ async function getCollection(id: string): Promise<CollectionData | null> {
     coverUrl: userPl.cover_url,
     items: playlists,
     creator,
+  };
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const collection = await getCollection(id);
+  if (!collection) return { title: '컬렉션을 찾을 수 없습니다' };
+
+  const description =
+    collection.description?.trim() ||
+    `${collection.title} — ${collection.items.length}개 플레이리스트`;
+  const image =
+    collection.coverUrl || collection.items[0]?.thumbnail_url || OG_DEFAULT;
+  const url = `${SITE_URL}/${locale}/collection/${collection.id}`;
+
+  return {
+    title: collection.title,
+    description,
+    alternates: {
+      canonical: `/${locale}/collection/${collection.id}`,
+      languages: {
+        ko: `/ko/collection/${collection.id}`,
+        en: `/en/collection/${collection.id}`,
+      },
+    },
+    openGraph: {
+      type: 'article',
+      siteName: SITE_NAME,
+      title: collection.title,
+      description,
+      url,
+      images: [{ url: image, alt: collection.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: collection.title,
+      description,
+      images: [image],
+    },
   };
 }
 

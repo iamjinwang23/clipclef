@@ -1,4 +1,6 @@
 // Design Ref: §5.1 — 플레이리스트 상세 페이지
+import { cache } from 'react';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
@@ -14,6 +16,72 @@ import UploaderCard from '@/features/interaction/components/UploaderCard';
 import ArtistStrip from '@/features/artist/components/ArtistStrip';
 import UploadSuccessToast from '@/features/playlist/components/UploadSuccessToast';
 import { toArtistSlug, extractMainArtist } from '@/lib/artist-apis';
+import { OG_DEFAULT, SITE_NAME, SITE_URL } from '@/lib/seo';
+
+type PlaylistWithUploader = Playlist & {
+  uploader?: { display_name: string | null; avatar_url: string | null; is_verified: boolean } | null;
+};
+
+// 한 요청 내 generateMetadata + page 페치 중복 제거
+const getPlaylistData = cache(async (id: string) => {
+  const supabase = await createClient();
+  const [{ data: playlist }, { data: tracks }] = await Promise.all([
+    supabase
+      .from('playlists')
+      .select('*, uploader:profiles!uploaded_by(display_name, avatar_url, is_verified)')
+      .eq('id', id)
+      .single(),
+    supabase.from('tracks').select('*').eq('playlist_id', id).order('position'),
+  ]);
+  return {
+    playlist: (playlist ?? null) as PlaylistWithUploader | null,
+    tracks: (tracks ?? []) as Track[],
+  };
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const { playlist } = await getPlaylistData(id);
+  if (!playlist) return { title: '플레이리스트를 찾을 수 없습니다' };
+
+  const tags = [...playlist.genre, ...playlist.mood, ...playlist.place, ...playlist.era];
+  const description =
+    playlist.editor_note?.trim() ||
+    playlist.description?.trim() ||
+    `${playlist.channel_name} · ${tags.slice(0, 6).join(', ') || '플레이리스트'}`;
+  const url = `${SITE_URL}/${locale}/playlist/${playlist.id}`;
+  const image = playlist.thumbnail_url || OG_DEFAULT;
+
+  return {
+    title: playlist.title,
+    description,
+    alternates: {
+      canonical: `/${locale}/playlist/${playlist.id}`,
+      languages: {
+        ko: `/ko/playlist/${playlist.id}`,
+        en: `/en/playlist/${playlist.id}`,
+      },
+    },
+    openGraph: {
+      type: 'article',
+      siteName: SITE_NAME,
+      title: playlist.title,
+      description,
+      url,
+      images: [{ url: image, alt: playlist.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: playlist.title,
+      description,
+      images: [image],
+    },
+  };
+}
 
 export default async function PlaylistDetailPage({
   params,
@@ -23,16 +91,15 @@ export default async function PlaylistDetailPage({
   const { locale, id } = await params;
   const supabase = await createClient();
 
-  const [{ data: playlist }, { data: tracks }, { data: { user } }] = await Promise.all([
-    supabase.from('playlists').select('*, uploader:profiles!uploaded_by(display_name, avatar_url, is_verified)').eq('id', id).single(),
-    supabase.from('tracks').select('*').eq('playlist_id', id).order('position'),
+  const [{ playlist, tracks }, { data: { user } }] = await Promise.all([
+    getPlaylistData(id),
     supabase.auth.getUser(),
   ]);
 
   if (!playlist) notFound();
 
-  const p = playlist as Playlist & { uploader?: { display_name: string | null; avatar_url: string | null; is_verified: boolean } | null };
-  const t = (tracks ?? []) as Track[];
+  const p = playlist;
+  const t = tracks;
 
   // FK embed가 null을 반환해도 uploaded_by가 있으면 프로필을 별도 조회하여 fallback
   type UploaderInfo = { display_name: string | null; avatar_url: string | null; is_verified: boolean };
@@ -62,8 +129,32 @@ export default async function PlaylistDetailPage({
   }
   const artistSlugs = [...artistMap.values()];
 
+  // JSON-LD: MusicPlaylist (schema.org) — 검색 리치 결과 후보
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'MusicPlaylist',
+    name: p.title,
+    description: p.editor_note || p.description || undefined,
+    url: `${SITE_URL}/${locale}/playlist/${p.id}`,
+    image: p.thumbnail_url || undefined,
+    numTracks: p.track_count,
+    genre: p.genre.length ? p.genre : undefined,
+    track: t.slice(0, 50).map((track, i) => ({
+      '@type': 'MusicRecording',
+      position: track.position ?? i + 1,
+      name: track.title,
+      byArtist: track.artist
+        ? { '@type': 'MusicGroup', name: extractMainArtist(track.artist) }
+        : undefined,
+    })),
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 pb-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <UploadSuccessToast />
       {/* 업로더 프로필 — 최상단 */}
       {p.uploaded_by && (

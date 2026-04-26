@@ -12,12 +12,52 @@ import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import ToastContainer from '@/components/layout/ToastContainer';
 import PersistentPlayer from '@/features/player/components/PersistentPlayer';
 import MiniBar from '@/features/player/components/MiniBar';
+import { LOCALES, OG_DEFAULT, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/seo';
 import '../globals.css';
 
-export const metadata: Metadata = {
-  title: 'clip/clef',
-  description: '유튜브 플레이리스트 큐레이션 아카이브',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const languages: Record<string, string> = {};
+  for (const lc of LOCALES) languages[lc] = `${SITE_URL}/${lc}`;
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    applicationName: SITE_NAME,
+    alternates: {
+      canonical: `/${locale}`,
+      languages,
+    },
+    openGraph: {
+      type: 'website',
+      siteName: SITE_NAME,
+      title: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      url: `${SITE_URL}/${locale}`,
+      locale: locale === 'ko' ? 'ko_KR' : 'en_US',
+      images: [{ url: OG_DEFAULT, width: 1200, height: 630, alt: SITE_NAME }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      images: [OG_DEFAULT],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    },
+  };
+}
 
 export const viewport = {
   colorScheme: 'dark',
