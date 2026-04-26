@@ -6,7 +6,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { usePlayerStore } from '../store';
 import { useCollection } from '@/features/interaction/hooks/useCollection';
@@ -74,7 +74,16 @@ function MiniBarInner({
   // 재생 진행률 — useScrobble 이 1Hz 로 store 갱신, transition 으로 부드럽게 보간
   const currentTime = usePlayerStore((s) => s.currentTime);
   const duration = usePlayerStore((s) => s.duration);
+  const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const progressPct = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
+
+  // 트랙 점프 감지: trackIndex 가 바뀐 렌더에서만 transition 을 죽여 순간이동.
+  // 다음 tick 부터는 다시 1s linear 로 부드럽게 흐름.
+  const prevTrackIndexRef = useRef(currentTrackIndex);
+  const isJumping = prevTrackIndexRef.current !== currentTrackIndex;
+  useEffect(() => {
+    prevTrackIndexRef.current = currentTrackIndex;
+  }, [currentTrackIndex]);
 
   const handleSaveClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -104,7 +113,7 @@ function MiniBarInner({
             className="h-full bg-[#e72b2d]"
             style={{
               width: `${progressPct}%`,
-              transition: isPlaying ? 'width 1s linear' : 'none',
+              transition: !isJumping && isPlaying ? 'width 1s linear' : 'none',
             }}
           />
         </div>
