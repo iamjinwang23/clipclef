@@ -1,6 +1,7 @@
 // Design Ref: §5.1 — v2 홈 5섹션 재구성
 // 순서: (hero 유지) → § 1 이어듣기 → § 2 큐레이션 → § 3 팔로우 큐레이터 → § 4 전체 플레이리스트 → § 5 장르·아티스트 탐색
-// § 1, § 3는 조건부 렌더 (로그인 + 데이터 있을 때만 — 컴포넌트 내부에서 null 반환)
+// § 1, § 3는 서버에서 존재 여부 확인 후 조건부 렌더 — 데이터 없으면 레이블도 제거.
+// (이전엔 inner 컴포넌트가 null 반환해도 HomeSection 의 label 은 노출돼 빈 섹션처럼 보임)
 
 import { createClient } from '@/lib/supabase/server';
 import CuratedCollectionSection from '@/features/playlist/components/CuratedCollectionSection';
@@ -19,20 +20,31 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
 
-  // 로그인 여부만 서버에서 판별 — 로그인한 유저에게만 § 1, § 3 렌더 시도
-  // (실제 데이터 유무는 각 컴포넌트 클라이언트 쿼리로 판단, 비어 있으면 null)
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isLoggedIn = !!user;
+
+  // § 1 이어듣기 / § 3 팔로우 큐레이터 는 데이터 0건일 때 섹션 자체를 숨김.
+  // 단일 행 존재 체크 (limit 1) — 인덱스 hit 으로 비용 무시.
+  let hasListens = false;
+  let hasFollows = false;
+  if (isLoggedIn && user) {
+    const [listensRes, followsRes] = await Promise.all([
+      supabase.from('listens').select('id').eq('user_id', user.id).limit(1),
+      supabase.from('follows').select('follower_id').eq('follower_id', user.id).limit(1),
+    ]);
+    hasListens = (listensRes.data ?? []).length > 0;
+    hasFollows = (followsRes.data ?? []).length > 0;
+  }
 
   return (
     <div>
       {/* Hero 배너 — 레이블 없이 유지 (v1.1 유지) */}
       <CuratedCollectionSection />
 
-      {/* § 1 이어듣기 — 로그인 + listens 있을 때만 자체 렌더 */}
+      {/* § 1 이어듣기 — 로그인 + listens 있을 때만 렌더 */}
       {/* "더 보기" 없음: listens는 저장이 아닌 최근 재생 큐라 별도 페이지 없음 */}
-      {isLoggedIn && (
+      {isLoggedIn && hasListens && (
         <HomeSection label="이어듣기">
           <HomeContinueRail />
         </HomeSection>
@@ -43,8 +55,8 @@ export default async function HomePage({
         <MixedShelf limit={12} />
       </HomeSection>
 
-      {/* § 3 팔로우 큐레이터 — 로그인 + 팔로우 있을 때만 자체 렌더 */}
-      {isLoggedIn && (
+      {/* § 3 팔로우 큐레이터 — 로그인 + 팔로우 있을 때만 렌더 */}
+      {isLoggedIn && hasFollows && (
         <HomeSection label="팔로우 큐레이터">
           <FollowedCuratorsSection />
         </HomeSection>
