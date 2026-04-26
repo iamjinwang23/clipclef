@@ -71,6 +71,11 @@ function MiniBarInner({
   const { saved, loading: saveLoading, toggle } = useCollection(playlistId);
   const [showLogin, setShowLogin] = useState(false);
 
+  // 재생 진행률 — useScrobble 이 1Hz 로 store 갱신, transition 으로 부드럽게 보간
+  const currentTime = usePlayerStore((s) => s.currentTime);
+  const duration = usePlayerStore((s) => s.duration);
+  const progressPct = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
+
   const handleSaveClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -90,6 +95,19 @@ function MiniBarInner({
           border-t border-[var(--border)]
         "
       >
+        {/* 재생 진행률 — 미니바 상단 2px. seek/pause 시엔 즉시 반영, 재생 중엔 1s linear 보간 */}
+        <div
+          className="absolute -top-0.5 left-0 right-0 h-0.5 pointer-events-none"
+          aria-hidden="true"
+        >
+          <div
+            className="h-full bg-[#e72b2d]"
+            style={{
+              width: `${progressPct}%`,
+              transition: isPlaying ? 'width 1s linear' : 'none',
+            }}
+          />
+        </div>
         <div className="max-w-6xl mx-auto px-3 sm:px-4 h-16 flex items-center gap-3">
           {/* 썸네일 + 제목 (클릭 시 상세로) */}
           <Link
