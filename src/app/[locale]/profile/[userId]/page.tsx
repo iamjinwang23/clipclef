@@ -6,8 +6,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import UserAvatar from '@/components/ui/UserAvatar';
-import VerifiedBadge from '@/components/ui/VerifiedBadge';
+import ProfileHeroHeader from '@/components/ui/ProfileHeroHeader';
 import UserFollowChip from '@/features/search/components/UserFollowChip';
 import { createClient } from '@/lib/supabase/server';
 import type { Playlist } from '@/types';
@@ -93,32 +92,24 @@ export default async function ProfilePage({
   >[];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      {/* Design Ref: §6.1 — header parity with /me/profile (ProfileSettingsMenu → UserFollowChip) */}
-      <div className="flex items-center gap-4 mb-8">
-        <UserAvatar src={avatarUrl} name={displayName} size={64} />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-semibold flex items-center gap-1.5 truncate">
-            {displayName}
-            {isVerified && <VerifiedBadge size={18} />}
-          </h1>
-          <div className="flex gap-4 mt-1 text-xs text-[var(--text-secondary)]">
-            <span>
-              팔로워 <strong className="text-[var(--foreground)]">{followerCount ?? 0}</strong>
-            </span>
-            <span>
-              팔로잉 <strong className="text-[var(--foreground)]">{followingCount ?? 0}</strong>
-            </span>
-          </div>
-        </div>
-        {/* Plan SC-3 — self-view/guest hides chip via UserFollowChip internal guard */}
-        <UserFollowChip
-          userId={userId}
-          initialFollowing={isFollowing}
-          currentUserId={me?.id ?? null}
-        />
-      </div>
+    <div className="pb-10">
+      {/* Design Ref: §6.1 — header parity with /me/profile (Spotify-style hero header) */}
+      <ProfileHeroHeader
+        avatarUrl={avatarUrl}
+        displayName={displayName}
+        isVerified={isVerified}
+        followerCount={followerCount ?? 0}
+        followingCount={followingCount ?? 0}
+        trailing={
+          <UserFollowChip
+            userId={userId}
+            initialFollowing={isFollowing}
+            currentUserId={me?.id ?? null}
+          />
+        }
+      />
 
+      <div className="max-w-3xl mx-auto px-4 mt-6">
       {/* Design Ref: §6.2 — uploaded playlists section (mirrors /me/profile §플레이리스트) */}
       <section className="mb-10">
         <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
@@ -183,6 +174,7 @@ export default async function ProfilePage({
           </div>
         </section>
       )}
+      </div>
     </div>
   );
 }

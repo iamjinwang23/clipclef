@@ -75,22 +75,18 @@ export default async function ChannelPage({
   const channelName = playlists[0].channel_name;
 
   return (
-    <div className="pb-10">
-      {/* 헤더는 full-width (본문 max-w 래퍼 밖에 배치) */}
+    <div className="max-w-4xl mx-auto px-4 py-8 pb-10">
       <ChannelHeader
         channelId={channelId}
         channelName={channelName}
         playlistCount={playlists.length}
       />
 
-      {/* 플레이리스트 그리드 */}
-      <section className="max-w-4xl mx-auto px-4 mt-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {playlists.map((p) => (
-            <PlaylistCard key={p.id} playlist={p} />
-          ))}
-        </div>
-      </section>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {playlists.map((p) => (
+          <PlaylistCard key={p.id} playlist={p} />
+        ))}
+      </div>
     </div>
   );
 }

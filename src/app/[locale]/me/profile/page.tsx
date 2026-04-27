@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import type { Playlist } from '@/types';
 import ProfileSettingsMenu from './ProfileSettingsMenu';
-import UserAvatar from '@/components/ui/UserAvatar';
-import VerifiedBadge from '@/components/ui/VerifiedBadge';
+import ProfileHeroHeader from '@/components/ui/ProfileHeroHeader';
 
 export default async function MyProfilePage({
   params,
@@ -48,23 +47,17 @@ export default async function MyProfilePage({
   const pubLists = userPlaylists ?? [];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      {/* 프로필 헤더 */}
-      <div className="flex items-center gap-4 mb-8">
-        <UserAvatar src={avatarUrl} name={displayName} size={64} />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-semibold flex items-center gap-1.5 truncate">
-            {displayName}
-            {isVerified && <VerifiedBadge size={18} />}
-          </h1>
-          <div className="flex gap-4 mt-1 text-xs text-[var(--text-secondary)]">
-            <span>팔로워 <strong className="text-[var(--foreground)]">{followerCount ?? 0}</strong></span>
-            <span>팔로잉 <strong className="text-[var(--foreground)]">{followingCount ?? 0}</strong></span>
-          </div>
-        </div>
-        <ProfileSettingsMenu locale={locale} />
-      </div>
+    <div className="pb-10">
+      <ProfileHeroHeader
+        avatarUrl={avatarUrl}
+        displayName={displayName}
+        isVerified={isVerified}
+        followerCount={followerCount ?? 0}
+        followingCount={followingCount ?? 0}
+        trailing={<ProfileSettingsMenu locale={locale} />}
+      />
 
+      <div className="max-w-3xl mx-auto px-4 mt-6">
       {/* 플레이리스트 */}
       <section className="mb-10">
         <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
@@ -119,6 +112,7 @@ export default async function MyProfilePage({
           </div>
         </section>
       )}
+      </div>
     </div>
   );
 }
