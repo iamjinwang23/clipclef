@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { Playlist } from '@/types';
 import ProfileSettingsMenu from './ProfileSettingsMenu';
 import ProfileHeroHeader from '@/components/ui/ProfileHeroHeader';
+import PlaylistThumbCard from '@/features/playlist/components/PlaylistThumbCard';
 
 export default async function MyProfilePage({
   params,
@@ -73,18 +74,14 @@ export default async function MyProfilePage({
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {playlists.map((p) => (
-              <Link key={p.id} href={`/${locale}/playlist/${p.id}`} className="group block">
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-[var(--muted)] mb-1.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.thumbnail_url}
-                    alt={p.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <p className="text-xs font-medium line-clamp-2 leading-snug">{p.title}</p>
-                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5 truncate">{p.channel_name}</p>
-              </Link>
+              <PlaylistThumbCard
+                key={p.id}
+                id={p.id}
+                title={p.title}
+                thumbnailUrl={p.thumbnail_url}
+                channelName={p.channel_name}
+                href={`/${locale}/playlist/${p.id}`}
+              />
             ))}
           </div>
         )}
