@@ -13,7 +13,7 @@ export default async function UploadPage({
   if (!user) redirect(`/${locale}`);
 
   return (
-    <div className="max-w-5xl mx-auto px-8 sm:px-12 py-12 sm:py-16">
+    <div className="px-4 sm:px-6 py-10 sm:py-14">
       <h1 className="text-2xl sm:text-3xl font-semibold mb-8 sm:mb-10">플레이리스트 올리기</h1>
       <PlaylistForm uploadedBy={user.id} locale={locale} />
     </div>
