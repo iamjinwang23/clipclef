@@ -1,12 +1,18 @@
 'use client';
 // Design Ref: §5.3 — PlaylistCard: CollectionGrid 디자인 통일
 // 썸네일 + 호버 재생 오버레이 + 텍스트 스택 (카드 배경 없음)
+// Phase 3: 데스크톱 클릭 → 페이지 전환 없이 우측 패널에서 재생 (라우팅 모델 A)
+//          모바일 클릭 → 기존 페이지 이동 (BottomNav 패턴 유지)
+//          현재 재생 중인 카드 → dim overlay + sound wave (다음 commit)
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
+import { useState } from 'react';
 import type { Playlist } from '@/types';
 import ChannelAvatar from './ChannelAvatar';
+import { usePlayerStore } from '@/features/player/store';
+import { createClient } from '@/lib/supabase/client';
 
 // 카드가 실제로 렌더에 쓰는 필드만 타입으로 노출 → over-fetch 방지
 export type PlaylistCardData = Pick<
@@ -28,10 +34,36 @@ interface PlaylistCardProps {
 
 export default function PlaylistCard({ playlist }: PlaylistCardProps) {
   const locale = useLocale();
+  const [loading, setLoading] = useState(false);
+  const load = usePlayerStore((s) => s.load);
+
+  const handleClick = async (e: React.MouseEvent) => {
+    // 모바일은 기존 페이지 이동 동작 유지
+    if (typeof window === 'undefined') return;
+    if (!window.matchMedia('(min-width: 640px)').matches) return;
+
+    // 데스크톱: 페이지 전환 없이 우측 패널에서 재생
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    try {
+      const supabase = createClient();
+      const [{ data: full }, { data: tracks }] = await Promise.all([
+        supabase.from('playlists').select('*').eq('id', playlist.id).single(),
+        supabase.from('tracks').select('*').eq('playlist_id', playlist.id).order('position'),
+      ]);
+      if (full) {
+        load(full as Playlist, tracks ?? []);
+        // URL 무변 — 라우팅 모델 A. 명시적 공유 시에만 query-param URL 생성 (Phase 3-라)
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="group relative">
-      <Link href={`/${locale}/playlist/${playlist.id}`}>
+      <Link href={`/${locale}/playlist/${playlist.id}`} onClick={handleClick}>
         {/* 썸네일 */}
         <div className="relative w-full aspect-video rounded-md sm:rounded-xl overflow-hidden bg-[var(--muted)] mb-2 ring-[0.5px] ring-white/20">
           <Image
@@ -52,9 +84,16 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
           {/* 호버 재생 아이콘 오버레이 (데스크톱) */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <div className="w-11 h-11 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-              <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
+              {loading ? (
+                <svg className="w-5 h-5 text-white animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25" />
+                  <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
             </div>
           </div>
 

@@ -1,12 +1,20 @@
 'use client';
-// Phase 2: 데스크톱 우측 now-playing 패널.
+// Phase 2-3: 데스크톱 우측 now-playing 패널.
 // - 데스크톱(`>=sm`) 전용. 모바일은 기존 MiniBar / ExpandedView 패턴 유지.
-// - 패널이 마운트되면 panelActive=true 로 표시 → in-page ExpandedView 가 슬롯 등록을 양보.
+// - 패널이 마운트되면 panelActive=true → in-page ExpandedView 가 슬롯 등록 양보.
 // - 슬롯 메커니즘: ExpandedView 와 동일한 IntersectionObserver/ResizeObserver/scroll 측정.
-// - 영상 슬롯은 패널 상단 sticky aspect-video, 그 아래 영역은 독립 스크롤.
+// - 영상 슬롯은 패널 상단 sticky aspect-video, 그 아래 트랙 리스트 + 액션은 독립 스크롤.
 
 import { useEffect, useRef } from 'react';
 import { usePlayerStore } from '@/features/player/store';
+import type { Track } from '@/types';
+
+function formatDuration(sec: number | null) {
+  if (!sec) return '--:--';
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
 
 export default function RightNowPlayingPanel() {
   const slotRef = useRef<HTMLDivElement>(null);
@@ -14,21 +22,18 @@ export default function RightNowPlayingPanel() {
   const tracks = usePlayerStore((s) => s.tracks);
   const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const playlistId = usePlayerStore((s) => s.playlistId);
+  const seekToTrack = usePlayerStore((s) => s.seekToTrack);
 
-  // 패널 자체는 항상 mounted (sticky 위치 유지). panelActive 플래그로
-  // ExpandedView 와 슬롯 우선순위 정리.
   useEffect(() => {
     usePlayerStore.getState().setPanelActive(true);
     return () => {
       usePlayerStore.getState().setPanelActive(false);
-      // 언마운트 시 expandedRect 도 정리
       const state = usePlayerStore.getState();
       if (state.view !== 'hidden') state.setView('mini');
       state.setExpandedRect(null);
     };
   }, []);
 
-  // 슬롯 측정 — ExpandedView 패턴과 동일
   useEffect(() => {
     const el = slotRef.current;
     if (!el) return;
@@ -38,7 +43,6 @@ export default function RightNowPlayingPanel() {
 
     const measure = () => {
       const r = el.getBoundingClientRect();
-      // 슬롯이 0 사이즈(예: 모바일에서 hidden) 면 등록 skip
       if (r.width === 0 || r.height === 0) return;
       usePlayerStore.getState().setExpandedRect({
         top: r.top,
@@ -88,8 +92,7 @@ export default function RightNowPlayingPanel() {
     };
   }, [playlist, playlistId]);
 
-  // 플리 미로드 시 패널 자체는 빈 placeholder 로 표시 (자리 유지)
-  const currentTrack = tracks[currentTrackIndex];
+  const currentTrack: Track | undefined = tracks[currentTrackIndex];
 
   return (
     <aside
@@ -107,19 +110,61 @@ export default function RightNowPlayingPanel() {
           />
 
           {/* 패널 본문 — 독립 스크롤 */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto">
             {/* 트랙 메타 */}
-            <h2 className="text-base font-semibold leading-tight mb-1 break-keep">
-              {currentTrack?.title ?? playlist.title}
-            </h2>
-            <p className="text-sm text-[var(--text-secondary)] truncate">
-              {playlist.channel_name}
-            </p>
-
-            {/* 액션 영역 placeholder — Phase 3: 좋아요 | 저장 | 공유 | 유튜브에서보기 */}
-            <div className="mt-4 pt-4 border-t border-[var(--border)] text-xs text-[var(--text-secondary)]">
-              액션 영역 (Phase 3 예정)
+            <div className="p-4 border-b border-[var(--border)]">
+              <h2 className="text-base font-semibold leading-tight mb-1 break-keep line-clamp-2">
+                {playlist.title}
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)] truncate">
+                {playlist.channel_name}
+              </p>
             </div>
+
+            {/* 액션 영역 placeholder — Phase 3-가 후속: 좋아요 | 저장 | 공유 | 유튜브에서보기 */}
+            <div className="px-4 py-3 border-b border-[var(--border)] text-xs text-[var(--text-secondary)]">
+              액션 영역 (좋아요·저장·공유·유튜브)
+            </div>
+
+            {/* 트랙 리스트 */}
+            {tracks.length > 0 && (
+              <div>
+                <h3 className="text-[11px] font-semibold text-[var(--text-secondary)] uppercase tracking-wide px-4 pt-3 pb-2">
+                  트랙 {tracks.length}개
+                </h3>
+                <ul className="pb-3">
+                  {tracks.map((track, index) => {
+                    const isActive = currentTrackIndex === index;
+                    return (
+                      <li
+                        key={track.id}
+                        onClick={() => seekToTrack(index)}
+                        className={`flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors ${
+                          isActive ? 'bg-[var(--muted)]' : 'hover:bg-[var(--muted)]'
+                        }`}
+                      >
+                        <span className={`w-5 text-right text-xs tabular-nums flex-shrink-0 ${
+                          isActive ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'
+                        }`}>
+                          {isActive ? '▶' : track.position}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{track.title}</p>
+                          {track.artist && (
+                            <p className="text-xs text-[var(--text-secondary)] truncate mt-0.5">
+                              {track.artist}
+                            </p>
+                          )}
+                        </div>
+                        <span className="text-xs text-[var(--text-secondary)] tabular-nums flex-shrink-0">
+                          {formatDuration(track.duration_sec)}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
         </>
       ) : (
