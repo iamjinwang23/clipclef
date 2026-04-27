@@ -80,7 +80,7 @@ export default function DesktopRail() {
 
   return (
     <aside
-      className="hidden sm:flex flex-col w-16 sticky top-14 h-[calc(100vh-3.5rem)] bg-[var(--background)] border-r border-[var(--border)] z-30 py-3 flex-shrink-0"
+      className="hidden sm:flex flex-col w-16 h-screen bg-[var(--background)] border-r border-[var(--border)] z-30 py-3 flex-shrink-0"
       aria-label="주 메뉴"
     >
       {/* 로고 그룹 — Rail 64px 폭에 적합한 c/c 컴팩트 로고 */}

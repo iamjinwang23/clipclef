@@ -81,43 +81,54 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="h-full" style={{ colorScheme: 'dark', backgroundColor: '#0D0D0D' }}>
-      <body className="min-h-full flex flex-col" style={{ backgroundColor: '#0D0D0D', color: '#F0F0F0' }}>
+      {/* Mobile: 일반 vertical scroll. Desktop: 컬럼별 독립 스크롤 (rail 고정 + main overflow-y-auto) */}
+      <body
+        className="min-h-screen sm:h-screen sm:overflow-hidden flex flex-col sm:flex-row"
+        style={{ backgroundColor: '#0D0D0D', color: '#F0F0F0' }}
+      >
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
-            <Header />
-            <div className="flex-1 flex">
-              <DesktopRail />
-              <main className="flex-1 min-w-0 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-20">{children}</main>
+            {/* 데스크톱 좌측 rail — 풀-높이, 헤더 위에 오는 첫 컬럼 */}
+            <DesktopRail />
+
+            {/* 우측 컬럼: header + main(독립 스크롤) + footer (footer 는 main 스크롤 안에) */}
+            <div className="flex-1 flex flex-col min-w-0 sm:overflow-hidden">
+              <Header />
+              <main className="flex-1 sm:overflow-y-auto min-w-0 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-0">
+                {children}
+                <footer className="hidden sm:block pt-20 pb-32 text-sm text-[var(--subtle)]">
+                  <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
+                    <div className="flex items-center gap-5">
+                      <Link href={`/${locale}`} className="flex-shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/logo.svg" alt="ClipClef" className="h-4.5 w-auto opacity-40" />
+                      </Link>
+                      <Link href={`/${locale}/terms`} className="hover:text-[var(--foreground)] transition-colors">
+                        Agreement
+                      </Link>
+                      <Link href={`/${locale}/privacy`} className="hover:text-[var(--foreground)] transition-colors">
+                        Privacy
+                      </Link>
+                      <a
+                        href={`mailto:${process.env.ADMIN_EMAIL}`}
+                        className="hover:text-[var(--foreground)] transition-colors"
+                      >
+                        Contact
+                      </a>
+                    </div>
+                    <p>2026 ©clip/clef, all rights reserved.</p>
+                  </div>
+                </footer>
+              </main>
             </div>
+
+            {/* Fixed elements — body flex 영향 받지 않음 */}
             <MobileBottomNav />
             <AuthErrorToast />
             <ToastContainer />
             {/* Design Ref: §1.2 — Persistent Player 단일 마운트 지점. 세션 내 재생성 금지 */}
             <PersistentPlayer />
             <MiniBar />
-            <footer className="hidden sm:block pt-20 pb-32 text-sm text-[var(--subtle)]">
-              <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
-                <div className="flex items-center gap-5">
-                  <Link href={`/${locale}`} className="flex-shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.svg" alt="ClipClef" className="h-4.5 w-auto opacity-40" />
-                  </Link>
-                  <Link href={`/${locale}/terms`} className="hover:text-[var(--foreground)] transition-colors">
-                    Agreement
-                  </Link>
-                  <Link href={`/${locale}/privacy`} className="hover:text-[var(--foreground)] transition-colors">
-                    Privacy
-                  </Link>
-                  <a
-                    href={`mailto:${process.env.ADMIN_EMAIL}`}
-                    className="hover:text-[var(--foreground)] transition-colors"
-                  >
-                    Contact
-                  </a>
-                </div>
-                <p>2026 ©clip/clef, all rights reserved.</p>
-              </div>
-            </footer>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>
