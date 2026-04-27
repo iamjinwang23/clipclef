@@ -44,3 +44,11 @@ select option { background: #181818; color: #F0F0F0; }
     transition: opacity 80ms ease-out;
   }
 }
+
+/* Phase 3 C2: 재생 중 카드 sound wave (3-bar pulse) */
+@keyframes sound-wave-1 { 0%,100%{transform:scaleY(0.3)} 50%{transform:scaleY(1)} }
+@keyframes sound-wave-2 { 0%,100%{transform:scaleY(0.5)} 50%{transform:scaleY(0.9)} }
+@keyframes sound-wave-3 { 0%,100%{transform:scaleY(0.4)} 50%{transform:scaleY(1)} }
+.sound-wave-bar-1 { animation: sound-wave-1 0.9s ease-in-out infinite; transform-origin: bottom; }
+.sound-wave-bar-2 { animation: sound-wave-2 1.1s ease-in-out infinite; transform-origin: bottom; }
+.sound-wave-bar-3 { animation: sound-wave-3 0.7s ease-in-out infinite; transform-origin: bottom; }

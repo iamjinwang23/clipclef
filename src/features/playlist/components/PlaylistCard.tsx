@@ -36,6 +36,10 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
   const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const load = usePlayerStore((s) => s.load);
+  const currentPlaylistId = usePlayerStore((s) => s.playlistId);
+  const status = usePlayerStore((s) => s.status);
+  const isCurrent = currentPlaylistId === playlist.id;
+  const isPlaying = isCurrent && status === 'playing';
 
   const handleClick = async (e: React.MouseEvent) => {
     // 모바일은 기존 페이지 이동 동작 유지
@@ -81,21 +85,41 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
             </div>
           )}
 
-          {/* 호버 재생 아이콘 오버레이 (데스크톱) */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="w-11 h-11 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-              {loading ? (
-                <svg className="w-5 h-5 text-white animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25" />
-                  <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+          {/* 재생 중 — dim overlay + sound wave (data 기반, hover/loading 보다 우선) */}
+          {isCurrent && (
+            <div className="absolute inset-0 bg-black/55 flex items-center justify-center pointer-events-none">
+              {isPlaying ? (
+                <div className="flex items-end gap-1 h-7" aria-label="재생 중">
+                  <span className="w-1 h-full bg-white rounded-full sound-wave-bar-1" />
+                  <span className="w-1 h-full bg-white rounded-full sound-wave-bar-2" />
+                  <span className="w-1 h-full bg-white rounded-full sound-wave-bar-3" />
+                </div>
               ) : (
-                <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" aria-label="일시정지됨">
+                  <rect x="6" y="5" width="4" height="14" rx="1" />
+                  <rect x="14" y="5" width="4" height="14" rx="1" />
                 </svg>
               )}
             </div>
-          </div>
+          )}
+
+          {/* 호버 재생 아이콘 오버레이 (데스크톱) — 재생 중이 아닐 때만 */}
+          {!isCurrent && (
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="w-11 h-11 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                {loading ? (
+                  <svg className="w-5 h-5 text-white animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25" />
+                    <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                )}
+              </div>
+            </div>
+          )}
 
         </div>
 
