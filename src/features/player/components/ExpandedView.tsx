@@ -22,9 +22,14 @@ export default function ExpandedView({
   const ref = useRef<HTMLDivElement>(null);
   const playlistId = usePlayerStore((s) => s.playlistId);
 
+  const panelActive = usePlayerStore((s) => s.panelActive);
+
   useEffect(() => {
     const el = ref.current;
     if (!el || !autoExpand) return;
+    // Phase 2: RightNowPlayingPanel 이 마운트된 경우 (데스크톱) 패널이 슬롯을 차지.
+    // in-page ExpandedView 는 슬롯 등록을 건너뛰어 iframe 좌표 충돌 방지.
+    if (panelActive) return;
 
     let raf: number | null = null;
 
@@ -86,7 +91,8 @@ export default function ExpandedView({
       state.setExpandedRect(null);
     };
     // playlistId 변화 시 재측정 — 같은 컴포넌트지만 다른 플리 로드됐을 때
-  }, [autoExpand, exitView, playlistId]);
+    // panelActive 변화 시 effect 재실행 — 패널 마운트/언마운트에 반응
+  }, [autoExpand, exitView, playlistId, panelActive]);
 
   // 슬롯은 항상 aspect-video 공간 예약. 배경 투명 — iframe이 이 위치에 와서 덮음.
   // 뷰 벗어날 땐 슬롯도 함께 스크롤 아웃되므로 비주얼 이슈 없음.

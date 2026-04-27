@@ -8,6 +8,7 @@ import { routing } from '@/i18n/routing';
 import QueryProvider from './QueryProvider';
 import Header from '@/components/layout/Header';
 import DesktopRail from '@/components/layout/DesktopRail';
+import RightNowPlayingPanel from '@/components/layout/RightNowPlayingPanel';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import ToastContainer from '@/components/layout/ToastContainer';
@@ -91,7 +92,7 @@ export default async function LocaleLayout({
             {/* 데스크톱 좌측 rail — 풀-높이, 헤더 위에 오는 첫 컬럼 */}
             <DesktopRail />
 
-            {/* 우측 컬럼: header + main(독립 스크롤) + footer (footer 는 main 스크롤 안에) */}
+            {/* 가운데 컬럼: header + main(독립 스크롤) + footer (footer 는 main 스크롤 안에) */}
             <div className="flex-1 flex flex-col min-w-0 sm:overflow-hidden">
               <Header />
               <main className="flex-1 sm:overflow-y-auto min-w-0 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-0">
@@ -121,6 +122,9 @@ export default async function LocaleLayout({
                 </footer>
               </main>
             </div>
+
+            {/* 데스크톱 우측 now-playing 패널 — Phase 2 */}
+            <RightNowPlayingPanel />
 
             {/* Fixed elements — body flex 영향 받지 않음 */}
             <MobileBottomNav />

@@ -38,6 +38,9 @@ interface PlayerState {
   /** ExpandedView 슬롯의 viewport-relative 좌표 (expanded 시 iframe 위치 결정) */
   expandedRect: { top: number; left: number; width: number; height: number } | null;
 
+  /** Phase 2: RightNowPlayingPanel 마운트 여부. true 면 in-page ExpandedView 는 슬롯 등록 skip */
+  panelActive: boolean;
+
   // ── actions: internal (called by PersistentPlayer / useScrobble) ────────
   setPlayer: (player: YTPlayer | null) => void;
   setStatus: (status: PlayerStatus) => void;
@@ -45,6 +48,7 @@ interface PlayerState {
   setDuration: (sec: number) => void;
   setCurrentTrackIndex: (index: number) => void;
   setExpandedRect: (rect: PlayerState['expandedRect']) => void;
+  setPanelActive: (active: boolean) => void;
 
   // ── actions: UI-facing ─────────────────────────────────────────────────
   /** 플리 로드 + 자동 재생 시도. 에러는 setStatus('error')로 전파 */
@@ -70,6 +74,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   currentTime: 0,
   duration: 0,
   expandedRect: null,
+  panelActive: false,
 
   setPlayer: (player) => set({ _player: player }),
   setStatus: (status) => set({ status }),
@@ -77,6 +82,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   setDuration: (duration) => set({ duration }),
   setCurrentTrackIndex: (currentTrackIndex) => set({ currentTrackIndex }),
   setExpandedRect: (expandedRect) => set({ expandedRect }),
+  setPanelActive: (panelActive) => set({ panelActive }),
 
   load: (playlist, tracks) => {
     const { _player } = get();
