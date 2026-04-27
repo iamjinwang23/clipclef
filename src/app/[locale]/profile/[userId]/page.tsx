@@ -105,6 +105,7 @@ export default async function ProfilePage({
             userId={userId}
             initialFollowing={isFollowing}
             currentUserId={me?.id ?? null}
+            variant="hero"
           />
         }
       />

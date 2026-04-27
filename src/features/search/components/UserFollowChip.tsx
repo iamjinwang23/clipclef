@@ -12,9 +12,11 @@ interface UserFollowChipProps {
   userId: string;
   initialFollowing: boolean;
   currentUserId: string | null;
+  /** 'hero' = ProfileHeroHeader 등 colored bg 위에서 흰색 outline 스타일 */
+  variant?: 'default' | 'hero';
 }
 
-export default function UserFollowChip({ userId, initialFollowing, currentUserId }: UserFollowChipProps) {
+export default function UserFollowChip({ userId, initialFollowing, currentUserId, variant = 'default' }: UserFollowChipProps) {
   const [isFollowing, setIsFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
@@ -49,11 +51,19 @@ export default function UserFollowChip({ userId, initialFollowing, currentUserId
       type="button"
       onClick={toggle}
       disabled={loading}
-      className={`text-xs font-medium px-3 py-1 rounded-full border transition-colors disabled:opacity-50 flex-shrink-0 ${
-        isFollowing
-          ? 'bg-[var(--muted)] text-[var(--text-secondary)] border-[var(--border)] hover:border-red-400 hover:text-red-400'
-          : 'bg-[var(--foreground)] text-[var(--background)] border-transparent hover:opacity-80'
-      }`}
+      className={
+        variant === 'hero'
+          ? `text-sm font-medium px-3 py-1.5 rounded-full border transition-colors disabled:opacity-50 flex-shrink-0 ${
+              isFollowing
+                ? 'bg-transparent text-white border-white/40 hover:border-white'
+                : 'bg-white text-black border-transparent hover:bg-white/90'
+            }`
+          : `text-xs font-medium px-3 py-1 rounded-full border transition-colors disabled:opacity-50 flex-shrink-0 ${
+              isFollowing
+                ? 'bg-[var(--muted)] text-[var(--text-secondary)] border-[var(--border)] hover:border-red-400 hover:text-red-400'
+                : 'bg-[var(--foreground)] text-[var(--background)] border-transparent hover:opacity-80'
+            }`
+      }
     >
       {isFollowing ? '팔로잉' : '팔로우'}
     </button>
