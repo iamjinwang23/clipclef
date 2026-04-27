@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { routing } from '@/i18n/routing';
 import QueryProvider from './QueryProvider';
 import Header from '@/components/layout/Header';
+import DesktopRail from '@/components/layout/DesktopRail';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import ToastContainer from '@/components/layout/ToastContainer';
@@ -84,7 +85,10 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Header />
-            <main className="flex-1 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-20">{children}</main>
+            <div className="flex-1 flex">
+              <DesktopRail />
+              <main className="flex-1 min-w-0 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-20">{children}</main>
+            </div>
             <MobileBottomNav />
             <AuthErrorToast />
             <ToastContainer />

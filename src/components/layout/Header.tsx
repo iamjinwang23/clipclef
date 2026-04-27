@@ -9,8 +9,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
-import UserAvatar from '@/components/ui/UserAvatar';
-import NotificationBell from '@/features/notification/components/NotificationBell';
 import { isInAppBrowser } from '@/lib/browser';
 import SearchDropdown from '@/features/search/components/SearchDropdown';
 import { toast } from '@/lib/toast';
@@ -167,7 +165,6 @@ export default function Header() {
   ].includes(pathname);
 
   const [user, setUser] = useState<User | null>(null);
-  const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -176,22 +173,6 @@ export default function Header() {
     });
     return () => subscription.unsubscribe();
   }, [supabase.auth]);
-
-  // Design Ref: §5.4 — profiles.avatar_url 우선, fallback은 OAuth 메타데이터
-  // user 가 null 이면 아바타를 쓰는 UI 자체가 렌더되지 않으므로 sync reset 은 불필요.
-  useEffect(() => {
-    if (!user) return;
-    let cancelled = false;
-    supabase
-      .from('profiles')
-      .select('avatar_url')
-      .eq('id', user.id)
-      .single()
-      .then(({ data }) => {
-        if (!cancelled) setProfileAvatarUrl(data?.avatar_url ?? undefined);
-      });
-    return () => { cancelled = true; };
-  }, [user, supabase]);
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {
@@ -203,9 +184,6 @@ export default function Header() {
       options: { redirectTo: `${window.location.origin}/api/auth/callback` },
     });
   };
-
-  const avatarUrl = profileAvatarUrl ?? (user?.user_metadata?.avatar_url as string | undefined);
-  const displayName = user?.user_metadata?.full_name as string | undefined;
 
   return (
     <>
@@ -224,44 +202,21 @@ export default function Header() {
                 </svg>
               </button>
             )}
-            <Link href={`/${locale}`} className="flex items-center flex-shrink-0">
+            {/* Design Ref: §3.2 — 모바일 로고만 헤더에 유지. 데스크톱은 DesktopRail 상단으로 이동 */}
+            <Link href={`/${locale}`} className="sm:hidden flex items-center flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.svg" alt="ClipClef" className="h-6 w-auto" />
             </Link>
           </div>
 
           {/* 가운데: 검색창 (데스크톱 전용) */}
-          <div className="hidden sm:block w-80">
+          <div className="hidden sm:block flex-1 max-w-xl">
             <DesktopSearchBar />
           </div>
 
-          {/* 우측: 액션 */}
+          {/* 우측: 모바일 비로그인 시 로그인 버튼만. 데스크톱 액션은 모두 DesktopRail 로 이동 */}
           <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
-            {user ? (
-              <>
-                {/* +만들기 — 데스크톱 전용 */}
-                <Link
-                  href={`/${locale}/upload`}
-                  className="hidden sm:flex items-center text-sm font-medium px-3 py-1.5 rounded-full bg-white text-black hover:bg-white/90 transition-colors flex-shrink-0"
-                >
-                  + 만들기
-                </Link>
-
-                {/* 알림 벨 — 데스크톱 전용 */}
-                <span className="hidden sm:block">
-                  <NotificationBell userId={user.id} locale={locale} />
-                </span>
-
-                {/* 프로필 — 데스크톱 전용. 클릭 시 /me/profile 직접 진입 */}
-                <Link
-                  href={`/${locale}/me/profile`}
-                  className="hidden sm:block rounded-full border-2 border-transparent hover:border-[var(--subtle)] transition-colors flex-shrink-0"
-                  aria-label="내 프로필"
-                >
-                  <UserAvatar src={avatarUrl} name={displayName} size={32} />
-                </Link>
-              </>
-            ) : (
+            {!user && (
               <button
                 onClick={handleLogin}
                 className="hidden sm:block text-sm font-medium px-3 py-1.5 bg-[var(--foreground)] text-[var(--background)] rounded hover:opacity-80 transition-opacity"
