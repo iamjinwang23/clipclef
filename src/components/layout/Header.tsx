@@ -168,8 +168,6 @@ export default function Header() {
 
   const [user, setUser] = useState<User | null>(null);
   const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | undefined>(undefined);
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
@@ -195,16 +193,6 @@ export default function Header() {
     return () => { cancelled = true; };
   }, [user, supabase]);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
   const handleLogin = async () => {
     if (isInAppBrowser()) {
       toast.info('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다. Safari 또는 Chrome에서 접속해 주세요.');
@@ -214,13 +202,6 @@ export default function Header() {
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/api/auth/callback` },
     });
-  };
-
-  const handleLogout = async () => {
-    setOpen(false);
-    await supabase.auth.signOut();
-    router.push(`/${locale}`);
-    router.refresh();
   };
 
   const avatarUrl = profileAvatarUrl ?? (user?.user_metadata?.avatar_url as string | undefined);
@@ -271,35 +252,14 @@ export default function Header() {
                   <NotificationBell userId={user.id} locale={locale} />
                 </span>
 
-                {/* 프로필 드롭다운 — 데스크톱 전용 */}
-                <div ref={dropdownRef} className="relative hidden sm:block">
-                  <button
-                    onClick={() => setOpen((v) => !v)}
-                    className="rounded-full border-2 border-transparent hover:border-[var(--subtle)] transition-colors flex-shrink-0"
-                  >
-                    <UserAvatar src={avatarUrl} name={displayName} size={32} />
-                  </button>
-
-                  {open && (
-                    <div className="absolute right-0 mt-2 w-48 bg-[var(--card)] rounded-xl border border-[var(--border)] shadow-2xl py-1 z-50">
-                      <div className="px-4 py-3 border-b border-[var(--border)]">
-                        <p className="text-sm font-medium truncate text-[var(--foreground)]">{displayName ?? '이름 없음'}</p>
-                        <p className="text-xs text-[var(--text-secondary)] truncate">{user.email}</p>
-                      </div>
-                      <div className="py-1">
-                        <DropdownLink href={`/${locale}/me/profile`} onClick={() => setOpen(false)}>내 프로필</DropdownLink>
-                      </div>
-                      <div className="border-t border-[var(--border)] py-1">
-                        <button
-                          onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[var(--muted)] transition-colors"
-                        >
-                          {t('logout')}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                {/* 프로필 — 데스크톱 전용. 클릭 시 /me/profile 직접 진입 */}
+                <Link
+                  href={`/${locale}/me/profile`}
+                  className="hidden sm:block rounded-full border-2 border-transparent hover:border-[var(--subtle)] transition-colors flex-shrink-0"
+                  aria-label="내 프로필"
+                >
+                  <UserAvatar src={avatarUrl} name={displayName} size={32} />
+                </Link>
               </>
             ) : (
               <button
@@ -314,17 +274,5 @@ export default function Header() {
       </header>
 
     </>
-  );
-}
-
-function DropdownLink({ href, onClick, children }: { href: string; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="block px-4 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
-    >
-      {children}
-    </Link>
   );
 }
