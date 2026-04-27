@@ -368,21 +368,32 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
       {!isEditMode && (
         <div>
           <label className="block text-sm font-medium mb-2">{t('urlLabel')}</label>
-          <div className="flex items-center gap-2 bg-[var(--card)] border border-[var(--border)] rounded-2xl px-4 py-3 sm:py-4 focus-within:ring-1 focus-within:ring-[var(--subtle)] transition-shadow">
+          <div className="flex items-center gap-2 bg-[var(--card)] border border-[var(--border)] rounded-full pl-6 pr-2 py-2 focus-within:ring-1 focus-within:ring-[var(--subtle)] transition-shadow">
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://www.youtube.com/watch?v=..."
-              className="flex-1 text-base bg-transparent focus:outline-none placeholder:text-[var(--text-secondary)] min-w-0"
+              className="flex-1 text-base bg-transparent focus:outline-none placeholder:text-[var(--text-secondary)] min-w-0 py-1"
             />
             <button
               type="button"
               onClick={handleParse}
               disabled={isParsing || !url.trim()}
-              className="flex-shrink-0 px-4 py-2 text-sm font-medium bg-[var(--foreground)] text-[var(--background)] rounded-xl disabled:opacity-40 hover:opacity-80 transition-opacity"
+              aria-label={isParsing ? t('parsing') : t('parse')}
+              title={isParsing ? t('parsing') : t('parse')}
+              className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center bg-[var(--foreground)] text-[var(--background)] disabled:opacity-40 hover:opacity-80 transition-opacity"
             >
-              {isParsing ? t('parsing') : t('parse')}
+              {isParsing ? (
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25" />
+                  <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              )}
             </button>
           </div>
           {parseError && <p className="text-xs text-red-500 mt-2">{parseError}</p>}
