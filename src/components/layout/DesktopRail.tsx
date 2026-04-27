@@ -83,11 +83,11 @@ export default function DesktopRail() {
       className="hidden sm:flex flex-col w-16 sticky top-14 h-[calc(100vh-3.5rem)] bg-[var(--background)] border-r border-[var(--border)] z-30 py-3 flex-shrink-0"
       aria-label="주 메뉴"
     >
-      {/* 로고 그룹 */}
+      {/* 로고 그룹 — Rail 64px 폭에 적합한 c/c 컴팩트 로고 */}
       <div className="flex justify-center pb-2">
         <Link href={`/${locale}`} aria-label="홈으로" className="flex-shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="ClipClef" className="h-6 w-auto" />
+          <img src="/mobile_logo.svg" alt="ClipClef" className="h-5 w-auto" />
         </Link>
       </div>
 
