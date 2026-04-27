@@ -88,13 +88,6 @@ export default function ProfileHeroHeader({
         aria-hidden
       />
 
-      {/* 우측 상단 trailing 슬롯 */}
-      {trailing && (
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
-          {trailing}
-        </div>
-      )}
-
       <div className="relative max-w-3xl mx-auto px-4 pt-10 pb-8 sm:pt-16 sm:pb-10">
         <div className="flex flex-col sm:flex-row sm:items-end sm:gap-6">
           <div className="sm:hidden mx-auto mb-6">
@@ -104,10 +97,13 @@ export default function ProfileHeroHeader({
             <UserAvatar src={avatarUrl} name={displayName} size={144} />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tight break-keep flex items-center gap-2">
-              <span className="truncate">{displayName}</span>
-              {isVerified && <VerifiedBadge size={28} />}
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tight break-keep flex items-center gap-2 min-w-0">
+                <span className="truncate">{displayName}</span>
+                {isVerified && <VerifiedBadge size={28} />}
+              </h1>
+              {trailing && <div className="ml-auto flex-shrink-0">{trailing}</div>}
+            </div>
             <div className="mt-2 sm:mt-3 flex gap-4 text-sm text-white/80">
               <span>
                 팔로워 <strong className="text-white">{followerCount}</strong>
