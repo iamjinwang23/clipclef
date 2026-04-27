@@ -364,28 +364,28 @@ export default function PlaylistForm({ editTarget, onComplete, uploadedBy, local
   return (
     <>
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* 등록 모드: URL 입력 */}
+      {/* 등록 모드: URL 입력 — LLM 스타일 통합 입력 박스 */}
       {!isEditMode && (
         <div>
-          <label className="block text-sm font-medium mb-1.5">{t('urlLabel')}</label>
-          <div className="flex gap-2">
+          <label className="block text-sm font-medium mb-2">{t('urlLabel')}</label>
+          <div className="flex items-center gap-2 bg-[var(--card)] border border-[var(--border)] rounded-2xl px-4 py-3 sm:py-4 focus-within:ring-1 focus-within:ring-[var(--subtle)] transition-shadow">
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://www.youtube.com/watch?v=..."
-              className="flex-1 text-sm border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--card)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)]"
+              className="flex-1 text-base bg-transparent focus:outline-none placeholder:text-[var(--text-secondary)] min-w-0"
             />
             <button
               type="button"
               onClick={handleParse}
               disabled={isParsing || !url.trim()}
-              className="px-4 py-2 text-sm font-medium bg-[var(--foreground)] text-[var(--background)] rounded-lg disabled:opacity-40 hover:opacity-80 transition-opacity"
+              className="flex-shrink-0 px-4 py-2 text-sm font-medium bg-[var(--foreground)] text-[var(--background)] rounded-xl disabled:opacity-40 hover:opacity-80 transition-opacity"
             >
               {isParsing ? t('parsing') : t('parse')}
             </button>
           </div>
-          {parseError && <p className="text-xs text-red-500 mt-1">{parseError}</p>}
+          {parseError && <p className="text-xs text-red-500 mt-2">{parseError}</p>}
         </div>
       )}
 
