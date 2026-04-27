@@ -91,7 +91,7 @@ export default async function LocaleLayout({
             {/* Design Ref: §1.2 — Persistent Player 단일 마운트 지점. 세션 내 재생성 금지 */}
             <PersistentPlayer />
             <MiniBar />
-            <footer className="hidden sm:block pt-20 pb-10 text-sm text-[var(--subtle)]">
+            <footer className="hidden sm:block pt-20 pb-32 text-sm text-[var(--subtle)]">
               <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
                 <div className="flex items-center gap-5">
                   <Link href={`/${locale}`} className="flex-shrink-0">
