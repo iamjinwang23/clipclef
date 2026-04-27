@@ -73,10 +73,11 @@ export default function RightNowPlayingPanel() {
     return Math.min(PANEL_WIDTH_MAX, Math.max(PANEL_WIDTH_MIN, n));
   });
 
-  // 업로더 + 로그인 정보 — playlistId 변화 시 fetch
+  // 업로더 + 로그인 정보 — playlistId 변화 시 fetch (데스크톱 전용)
   const [uploader, setUploader] = useState<UploaderInfo | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
+    if (!isDesktop) return;
     let cancelled = false;
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
@@ -85,7 +86,6 @@ export default function RightNowPlayingPanel() {
 
     const uploaderId = playlist?.uploaded_by;
     if (!uploaderId) {
-      // 다음 tick 으로 미뤄 effect body 직접 setState 방지 (cascading render 회피)
       Promise.resolve().then(() => { if (!cancelled) setUploader(null); });
       return () => { cancelled = true; };
     }
@@ -98,7 +98,7 @@ export default function RightNowPlayingPanel() {
         if (!cancelled) setUploader((data as UploaderInfo) ?? null);
       });
     return () => { cancelled = true; };
-  }, [playlist?.uploaded_by, playlist?.id]);
+  }, [isDesktop, playlist?.uploaded_by, playlist?.id]);
 
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -126,8 +126,9 @@ export default function RightNowPlayingPanel() {
     document.addEventListener('mouseup', onUp);
   };
 
-  // panelActive 플래그
+  // panelActive 플래그 — 데스크톱에서만 활성. 모바일은 ExpandedView 가 슬롯을 담당하므로 false 유지.
   useEffect(() => {
+    if (!isDesktop) return;
     usePlayerStore.getState().setPanelActive(true);
     return () => {
       usePlayerStore.getState().setPanelActive(false);
@@ -135,7 +136,7 @@ export default function RightNowPlayingPanel() {
       if (state.view !== 'hidden') state.setView('mini');
       state.setExpandedRect(null);
     };
-  }, []);
+  }, [isDesktop]);
 
   // 슬롯 측정 — panel 내부 overflow-y-auto 컨테이너 스크롤도 listen
   useEffect(() => {
