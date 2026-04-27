@@ -95,7 +95,7 @@ export default async function LocaleLayout({
             {/* 가운데 컬럼: header + main(독립 스크롤) + footer (footer 는 main 스크롤 안에) */}
             <div className="flex-1 flex flex-col min-w-0 sm:overflow-hidden">
               <Header />
-              <main className="flex-1 sm:overflow-y-auto min-w-0 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-0 flex flex-col">
+              <main className="flex-1 sm:overflow-y-auto min-w-0 pb-[calc(8.5rem+env(safe-area-inset-bottom))] sm:pb-0 sm:flex sm:flex-col">
                 {children}
                 <footer className="hidden sm:block mt-auto pt-20 pb-32 text-sm text-[var(--subtle)]">
                   <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
