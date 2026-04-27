@@ -44,11 +44,24 @@ interface UploaderInfo {
 export default function RightNowPlayingPanel() {
   const locale = useLocale();
   const slotRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const playlist = usePlayerStore((s) => s.playlist);
   const tracks = usePlayerStore((s) => s.tracks);
   const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const playlistId = usePlayerStore((s) => s.playlistId);
   const seekToTrack = usePlayerStore((s) => s.seekToTrack);
+
+  // 모바일에서는 패널 자체 mount 안 함 — panelActive 충돌 방지. lazy init + change listener
+  const [isDesktop, setIsDesktop] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(min-width: 640px)').matches;
+  });
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 640px)');
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // 폭 (drag resize + localStorage persist) — lazy init, SSR 시 default
   const [width, setWidth] = useState<number>(() => {
@@ -124,9 +137,10 @@ export default function RightNowPlayingPanel() {
     };
   }, []);
 
-  // 슬롯 측정
+  // 슬롯 측정 — panel 내부 overflow-y-auto 컨테이너 스크롤도 listen
   useEffect(() => {
     const el = slotRef.current;
+    const scrollEl = scrollContainerRef.current;
     if (!el) return;
     if (!playlist) return;
 
@@ -158,12 +172,15 @@ export default function RightNowPlayingPanel() {
     io.observe(el);
     const ro = new ResizeObserver(scheduleMeasure);
     ro.observe(el);
+    // 패널 내부 스크롤 + 윈도우 스크롤/리사이즈 모두 listen
+    if (scrollEl) scrollEl.addEventListener('scroll', scheduleMeasure, { passive: true });
     window.addEventListener('scroll', scheduleMeasure, { passive: true });
     window.addEventListener('resize', scheduleMeasure);
     scheduleMeasure();
     return () => {
       io.disconnect();
       ro.disconnect();
+      if (scrollEl) scrollEl.removeEventListener('scroll', scheduleMeasure);
       window.removeEventListener('scroll', scheduleMeasure);
       window.removeEventListener('resize', scheduleMeasure);
       if (raf != null) cancelAnimationFrame(raf);
@@ -200,9 +217,12 @@ export default function RightNowPlayingPanel() {
     ? [...playlist.genre, ...playlist.mood, ...playlist.place, ...playlist.era]
     : [];
 
+  // 모바일에서는 panel mount 자체 안 함 — panelActive 충돌 방지 (ExpandedView 가 정상 작동)
+  if (!isDesktop) return null;
+
   return (
     <aside
-      className="hidden sm:flex flex-col h-screen bg-[var(--card)] border-l border-[var(--border)] flex-shrink-0 relative"
+      className="flex flex-col h-screen bg-[var(--card)] border-l border-[var(--border)] flex-shrink-0 relative"
       style={{ width }}
       aria-label="현재 재생 패널"
     >
@@ -216,7 +236,7 @@ export default function RightNowPlayingPanel() {
       />
 
       {playlist ? (
-        <div className="flex-1 overflow-y-auto">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
           {/* 업로더 프로필 — 영상 위 */}
           {playlist.uploaded_by && (
             <div className="px-4 pt-4">
@@ -266,15 +286,19 @@ export default function RightNowPlayingPanel() {
             </blockquote>
           )}
 
-          {/* 4 액션 — 좌우 스와이프 (overflow-x-auto, scrollbar-hide) */}
+          {/* 4 액션 — 좌우 스와이프 (overflow-x-auto, scrollbar-hide). 각 항목 flex-shrink-0 보장 */}
           <div className="mt-3 px-4">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1">
-              <LikeButton playlistId={playlist.id} initialCount={playlist.like_count} />
-              <SaveButton playlistId={playlist.id} isLoggedIn={isLoggedIn} responsive={false} />
+              <div className="flex-shrink-0">
+                <LikeButton playlistId={playlist.id} initialCount={playlist.like_count} />
+              </div>
+              <div className="flex-shrink-0">
+                <SaveButton playlistId={playlist.id} isLoggedIn={isLoggedIn} responsive={false} />
+              </div>
               <button
                 type="button"
                 onClick={handleShare}
-                className="flex items-center gap-1.5 h-9 px-4 rounded-full border border-[var(--border)] text-sm font-medium hover:bg-[var(--muted)] transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 h-9 px-4 rounded-full border border-[var(--border)] text-sm font-medium hover:bg-[var(--muted)] transition-colors flex-shrink-0 whitespace-nowrap"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
@@ -287,7 +311,7 @@ export default function RightNowPlayingPanel() {
                 href={`https://www.youtube.com/watch?v=${playlist.youtube_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 h-9 px-4 rounded-full border border-[var(--border)] text-sm font-medium hover:bg-[var(--muted)] transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 h-9 px-4 rounded-full border border-[var(--border)] text-sm font-medium hover:bg-[var(--muted)] transition-colors flex-shrink-0 whitespace-nowrap"
               >
                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>

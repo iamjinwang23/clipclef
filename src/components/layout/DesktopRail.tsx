@@ -83,8 +83,16 @@ export default function DesktopRail() {
       className="hidden sm:flex flex-col w-16 h-screen bg-[var(--background)] border-r border-[var(--border)] z-30 pb-3 flex-shrink-0"
       aria-label="주 메뉴"
     >
-      {/* 헤더(h-16) 아래로 메뉴 정렬 — body 와 시각적 정렬 */}
-      <nav className="flex flex-col items-center gap-1 pt-20">
+      {/* 로고 — 헤더 검색창과 같은 라인(h-16)에서 수직 가운데 정렬 */}
+      <div className="h-16 flex items-center justify-center flex-shrink-0">
+        <Link href={`/${locale}`} aria-label="홈으로" className="flex-shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mobile_logo.svg" alt="ClipClef" className="h-5 w-auto" />
+        </Link>
+      </div>
+
+      {/* 메인 메뉴 그룹 — 로고 아래 약간의 gap */}
+      <nav className="flex flex-col items-center gap-1 pt-4">
         {/* 홈 */}
         <RailItem href={`/${locale}`} active={isHome} ariaLabel="홈">
           {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -189,7 +189,7 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3 sm:gap-4">
-          {/* 좌측: 뒤로가기(모바일) + 로고 (데스크톱·모바일 양쪽 표시) */}
+          {/* 좌측: 뒤로가기(모바일) + 모바일 로고 (데스크톱은 rail 상단이 담당) */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {!isTabRoot && (
               <button
@@ -202,15 +202,17 @@ export default function Header() {
                 </svg>
               </button>
             )}
-            <Link href={`/${locale}`} className="flex items-center flex-shrink-0" aria-label="홈으로">
+            <Link href={`/${locale}`} className="sm:hidden flex items-center flex-shrink-0" aria-label="홈으로">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.svg" alt="ClipClef" className="h-6 w-auto" />
             </Link>
           </div>
 
-          {/* 가운데: 검색창 — 높이 키움 (h-10) (데스크톱 전용) */}
-          <div className="hidden sm:block flex-1 max-w-xl">
-            <DesktopSearchBar />
+          {/* 가운데: 검색창 — 가운데 영역 가운데 정렬 (max-w-xl mx-auto) */}
+          <div className="hidden sm:block flex-1">
+            <div className="max-w-xl mx-auto">
+              <DesktopSearchBar />
+            </div>
           </div>
 
           {/* 우측: 모바일 비로그인 로그인 버튼 (데스크톱은 rail 이 담당) */}
