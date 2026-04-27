@@ -293,7 +293,7 @@ export default function RightNowPlayingPanel() {
                 <LikeButton playlistId={playlist.id} initialCount={playlist.like_count} />
               </div>
               <div className="flex-shrink-0">
-                <SaveButton playlistId={playlist.id} isLoggedIn={isLoggedIn} responsive={false} />
+                <SaveButton playlistId={playlist.id} isLoggedIn={isLoggedIn} responsive={false} portalDropdown />
               </div>
               <button
                 type="button"

@@ -3,8 +3,12 @@
 // Design Ref: §5.1 — 플리 상세의 플레이어 슬롯 + 트랙리스트
 // v2 리팩터: 자체 iframe 제거, PersistentPlayer (layout mount)로 위임.
 // Plan SC: R1 — iframe은 세션 1회만 마운트. 페이지 이동 시 재생 지속.
+// Phase 3: 데스크톱(>=sm)에선 우측 패널이 영상+상세를 표시하므로 페이지 자체는 홈으로 redirect.
+//          모바일은 기존 페이지 그대로 유지.
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import type { Playlist, Track } from '@/types';
 import { usePlayerStore } from '@/features/player/store';
 import ExpandedView from '@/features/player/components/ExpandedView';
@@ -40,11 +44,18 @@ export default function PlaylistPlayer({ playlist, tracks, children }: PlaylistP
   const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const load = usePlayerStore((s) => s.load);
   const seekToTrack = usePlayerStore((s) => s.seekToTrack);
+  const router = useRouter();
+  const locale = useLocale();
 
   // 마운트 시 해당 플리 로드 (이미 같은 플리 재생 중이면 skip — 재생 지속)
   useEffect(() => {
     if (playlistId !== playlist.id) {
       load(playlist, tracks);
+    }
+    // Phase 3: 데스크톱은 패널이 상세를 표시하므로 홈으로 redirect (URL 정리 + 홈 그리드 노출)
+    // 모바일은 기존 페이지 유지
+    if (typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches) {
+      router.replace(`/${locale}`);
     }
     // 의도적으로 tracks/load는 의존에서 제외 — playlist.id만으로 재로드 판단
     // eslint-disable-next-line react-hooks/exhaustive-deps
