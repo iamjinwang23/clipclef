@@ -91,7 +91,7 @@ export default function ProfileHeroHeader({
       <div className="relative max-w-3xl mx-auto px-4 pt-10 pb-8 sm:pt-16 sm:pb-10">
         <div className="flex flex-col sm:flex-row sm:items-end sm:gap-6">
           <div className="sm:hidden mx-auto mb-6">
-            <UserAvatar src={avatarUrl} name={displayName} size={168} />
+            <UserAvatar src={avatarUrl} name={displayName} size={126} />
           </div>
           <div className="hidden sm:block flex-shrink-0">
             <UserAvatar src={avatarUrl} name={displayName} size={144} />
