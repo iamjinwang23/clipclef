@@ -13,6 +13,8 @@ interface ScrollRailProps {
   snap?: boolean;
   /** 그라데이션 폭 (px). 기본 48. */
   fadeWidth?: number;
+  /** 그라데이션 시작색 — 부모 bg 와 일치해야 함. 기본 var(--background). 패널(var(--card)) 등 다른 bg 위에선 오버라이드 필수. */
+  fadeFrom?: string;
 }
 
 export default function ScrollRail({
@@ -20,6 +22,7 @@ export default function ScrollRail({
   className = '',
   snap = false,
   fadeWidth = 48,
+  fadeFrom = 'var(--background)',
 }: ScrollRailProps) {
   const ref = useRef<HTMLDivElement>(null);
   const rafId = useRef<number | null>(null);
@@ -51,16 +54,24 @@ export default function ScrollRail({
 
   return (
     <div className="relative">
-      {/* 좌측 페이드 — 시작점에서는 숨김, 스크롤 시작하면 fade-in */}
+      {/* 좌측 페이드 — 시작점에서는 숨김, 스크롤 시작하면 fade-in. fadeFrom 으로 부모 bg 색 매칭 */}
       <div
-        className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 bg-gradient-to-r from-[var(--background)] to-transparent transition-opacity duration-200"
-        style={{ width: fadeWidth, opacity: showLeft ? 1 : 0 }}
+        className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 transition-opacity duration-200"
+        style={{
+          width: fadeWidth,
+          opacity: showLeft ? 1 : 0,
+          background: `linear-gradient(to right, ${fadeFrom}, transparent)`,
+        }}
         aria-hidden
       />
       {/* 우측 페이드 — 끝에 도달하면 숨김 */}
       <div
-        className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 bg-gradient-to-l from-[var(--background)] to-transparent transition-opacity duration-200"
-        style={{ width: fadeWidth, opacity: showRight ? 1 : 0 }}
+        className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 transition-opacity duration-200"
+        style={{
+          width: fadeWidth,
+          opacity: showRight ? 1 : 0,
+          background: `linear-gradient(to left, ${fadeFrom}, transparent)`,
+        }}
         aria-hidden
       />
 

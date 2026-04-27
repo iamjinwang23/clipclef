@@ -91,8 +91,8 @@ export default function DesktopRail() {
         </Link>
       </div>
 
-      {/* 메인 메뉴 그룹 — 로고 아래 약간의 gap */}
-      <nav className="flex flex-col items-center gap-1 pt-4">
+      {/* 메인 메뉴 그룹 — 로고 아래 약간의 gap, 아이콘 간 여백 ↑ */}
+      <nav className="flex flex-col items-center gap-3 pt-4">
         {/* 홈 */}
         <RailItem href={`/${locale}`} active={isHome} ariaLabel="홈">
           {/* eslint-disable-next-line @next/next/no-img-element */}

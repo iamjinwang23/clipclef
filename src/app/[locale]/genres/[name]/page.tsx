@@ -47,13 +47,13 @@ export default async function GenreDetailPage({
         playlistCount={playlists.length}
       />
 
-      <section className="max-w-4xl mx-auto px-4 mt-6">
+      <section className="@container max-w-4xl mx-auto px-4 mt-6">
         {playlists.length === 0 ? (
           <p className="py-16 text-center text-sm text-[var(--subtle)]">
             이 장르의 플레이리스트가 아직 없어요
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 @md:grid-cols-3 gap-4">
             {playlists.map((p) => (
               <PlaylistCard key={p.id} playlist={p} />
             ))}

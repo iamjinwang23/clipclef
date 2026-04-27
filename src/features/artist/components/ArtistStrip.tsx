@@ -12,6 +12,8 @@ import ScrollRail from '@/components/ui/ScrollRail';
 interface ArtistStripProps {
   artists: { name: string; slug: string }[];
   locale: string;
+  /** ScrollRail 그라데이션 색 — 부모 bg 와 일치해야 함 (기본 var(--background)). 패널은 var(--card) 전달 */
+  fadeFrom?: string;
 }
 
 type ArtistResult = ArtistRow | { not_found: true };
@@ -76,7 +78,7 @@ function ArtistStripItem({
   );
 }
 
-export default function ArtistStrip({ artists, locale }: ArtistStripProps) {
+export default function ArtistStrip({ artists, locale, fadeFrom }: ArtistStripProps) {
   if (artists.length === 0) return null;
 
   return (
@@ -84,7 +86,7 @@ export default function ArtistStrip({ artists, locale }: ArtistStripProps) {
       <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
         아티스트
       </h2>
-      <ScrollRail>
+      <ScrollRail fadeFrom={fadeFrom}>
         {artists.map(({ name, slug }) => (
           <ArtistStripItem key={slug} name={name} slug={slug} locale={locale} />
         ))}

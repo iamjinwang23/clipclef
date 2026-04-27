@@ -378,7 +378,7 @@ export default function RightNowPlayingPanel() {
           {/* 아티스트 카드 */}
           {artistSlugs.length > 0 && (
             <div className="px-4 mt-4">
-              <ArtistStrip artists={artistSlugs} locale={locale} />
+              <ArtistStrip artists={artistSlugs} locale={locale} fadeFrom="var(--card)" />
             </div>
           )}
 

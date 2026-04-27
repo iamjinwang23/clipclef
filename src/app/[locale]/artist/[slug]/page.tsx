@@ -87,7 +87,7 @@ export default async function ArtistPage({
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-10">
+    <div className="@container max-w-4xl mx-auto px-4 pb-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -116,7 +116,7 @@ export default async function ArtistPage({
           <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
             플레이리스트 {playlists.length}개
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 @md:grid-cols-3 gap-4">
             {playlists.map((playlist) => (
               <PlaylistCard key={playlist.id} playlist={playlist} />
             ))}
