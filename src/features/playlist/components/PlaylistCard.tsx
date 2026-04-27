@@ -48,6 +48,15 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
 
     // 데스크톱: 페이지 전환 없이 우측 패널에서 재생
     e.preventDefault();
+
+    // 이미 동일 플리가 로드된 경우 — re-load 하지 말고 play/pause 토글
+    if (isCurrent) {
+      const s = usePlayerStore.getState();
+      if (s.status === 'playing') s.pause();
+      else s.play();
+      return;
+    }
+
     if (loading) return;
     setLoading(true);
     try {

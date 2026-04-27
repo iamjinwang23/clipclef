@@ -87,7 +87,7 @@ function DesktopSearchBar() {
             if (e.key === 'Escape') setFocused(false);
           }}
           placeholder="노래 제목, 아티스트명으로 검색"
-          className="w-full pl-9 pr-8 py-1.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
+          className="w-full pl-9 pr-8 py-2.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
         />
         {value && (
           <button
@@ -188,9 +188,9 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center">
-          {/* 좌측: 뒤로가기(모바일 depth2+) + 로고 */}
-          <div className="flex-1 flex items-center gap-1">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3 sm:gap-4">
+          {/* 좌측: 뒤로가기(모바일) + 로고 (데스크톱·모바일 양쪽 표시) */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {!isTabRoot && (
               <button
                 onClick={() => router.back()}
@@ -202,20 +202,19 @@ export default function Header() {
                 </svg>
               </button>
             )}
-            {/* Design Ref: §3.2 — 모바일 로고만 헤더에 유지. 데스크톱은 DesktopRail 상단으로 이동 */}
-            <Link href={`/${locale}`} className="sm:hidden flex items-center flex-shrink-0">
+            <Link href={`/${locale}`} className="flex items-center flex-shrink-0" aria-label="홈으로">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.svg" alt="ClipClef" className="h-6 w-auto" />
             </Link>
           </div>
 
-          {/* 가운데: 검색창 (데스크톱 전용) */}
+          {/* 가운데: 검색창 — 높이 키움 (h-10) (데스크톱 전용) */}
           <div className="hidden sm:block flex-1 max-w-xl">
             <DesktopSearchBar />
           </div>
 
-          {/* 우측: 모바일 비로그인 시 로그인 버튼만. 데스크톱 액션은 모두 DesktopRail 로 이동 */}
-          <div className="flex-1 flex items-center justify-end gap-2 sm:gap-3">
+          {/* 우측: 모바일 비로그인 로그인 버튼 (데스크톱은 rail 이 담당) */}
+          <div className="flex-1 sm:flex-none flex items-center justify-end gap-2">
             {!user && (
               <button
                 onClick={handleLogin}
