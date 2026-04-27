@@ -5,9 +5,15 @@
 // - 슬롯 메커니즘: ExpandedView 와 동일한 IntersectionObserver/ResizeObserver/scroll 측정.
 // - 영상 슬롯은 패널 상단 sticky aspect-video, 그 아래 트랙 리스트 + 액션은 독립 스크롤.
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePlayerStore } from '@/features/player/store';
 import type { Track } from '@/types';
+
+// Phase 3 C3: 패널 폭 상수
+const PANEL_WIDTH_KEY = 'clipclef_panel_width';
+const PANEL_WIDTH_MIN = 280;
+const PANEL_WIDTH_MAX = 540;
+const PANEL_WIDTH_DEFAULT = 380;
 
 function formatDuration(sec: number | null) {
   if (!sec) return '--:--';
@@ -23,6 +29,43 @@ export default function RightNowPlayingPanel() {
   const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
   const playlistId = usePlayerStore((s) => s.playlistId);
   const seekToTrack = usePlayerStore((s) => s.seekToTrack);
+
+  // Phase 3 C3: 폭 상태 (localStorage 영속). SSR-safe: 초기값 default → mount 후 hydrate
+  const [width, setWidth] = useState<number>(PANEL_WIDTH_DEFAULT);
+  useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem(PANEL_WIDTH_KEY) : null;
+    if (saved) {
+      const n = parseInt(saved, 10);
+      if (Number.isFinite(n)) setWidth(Math.min(PANEL_WIDTH_MAX, Math.max(PANEL_WIDTH_MIN, n)));
+    }
+  }, []);
+
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = width;
+    let latest = startW;
+    const prevCursor = document.body.style.cursor;
+    const prevSelect = document.body.style.userSelect;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const onMove = (ev: MouseEvent) => {
+      // 좌측 핸들 drag — 좌로 이동 = 폭 증가
+      const delta = startX - ev.clientX;
+      latest = Math.min(PANEL_WIDTH_MAX, Math.max(PANEL_WIDTH_MIN, startW + delta));
+      setWidth(latest);
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = prevCursor;
+      document.body.style.userSelect = prevSelect;
+      try { localStorage.setItem(PANEL_WIDTH_KEY, String(latest)); } catch {}
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
 
   useEffect(() => {
     usePlayerStore.getState().setPanelActive(true);
@@ -96,9 +139,18 @@ export default function RightNowPlayingPanel() {
 
   return (
     <aside
-      className="hidden sm:flex flex-col w-80 h-screen bg-[var(--card)] border-l border-[var(--border)] flex-shrink-0"
+      className="hidden sm:flex flex-col h-screen bg-[var(--card)] border-l border-[var(--border)] flex-shrink-0 relative"
+      style={{ width }}
       aria-label="현재 재생 패널"
     >
+      {/* 좌측 drag 핸들 — 폭 조정 */}
+      <div
+        onMouseDown={handleResizeStart}
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="패널 폭 조정"
+        className="absolute top-0 left-0 bottom-0 w-1 -translate-x-1/2 cursor-col-resize z-10 hover:bg-[var(--foreground)]/30 transition-colors"
+      />
       {playlist ? (
         <>
           {/* 비디오 슬롯 — aspect-video 공간 예약, iframe 이 fixed 로 이 위에 올라옴 */}
