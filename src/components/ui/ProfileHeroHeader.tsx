@@ -81,7 +81,7 @@ export default function ProfileHeroHeader({
     : 'linear-gradient(180deg, var(--card) 0%, transparent 100%)';
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full">
       <div
         className="absolute inset-0 pointer-events-none transition-[background] duration-500"
         style={{ background: gradient, opacity: 0.9 }}
