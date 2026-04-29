@@ -67,5 +67,32 @@
   "auth": {
     "loginWithGoogle": "Continue with Google",
     "loginPrompt": "Login required"
+  },
+  "nav": {
+    "menu": "Main menu",
+    "home": "Home",
+    "homeLink": "Go home",
+    "back": "Back",
+    "search": "Search",
+    "notifications": "Notifications",
+    "create": "Create",
+    "profile": "Profile",
+    "more": "More",
+    "comingSoon": "Coming soon"
+  },
+  "header": {
+    "searchPlaceholder": "Search by track or artist",
+    "viewAllResults": "View all results",
+    "inAppBrowserNotice": "In-app browsers do not support Google login. Please open this site in Safari or Chrome.",
+    "recentTitle": "Recent searches",
+    "recentClearAll": "Clear all",
+    "recentEmpty": "No recent searches"
+  },
+  "more": {
+    "basicInfo": "Basic info",
+    "likes": "My likes",
+    "comments": "My comments",
+    "curations": "My curations",
+    "language": "Language"
   }
 }

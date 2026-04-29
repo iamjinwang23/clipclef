@@ -28,6 +28,7 @@ function saveRecent(terms: string[]) {
 function DesktopSearchBar() {
   const locale = useLocale();
   const router = useRouter();
+  const t = useTranslations('header');
   const [value, setValue] = useState('');
   const [focused, setFocused] = useState(false);
   // lazy init — 마운트 시 1회만 localStorage 를 읽고, 이후에는 로컬 상태만 갱신.
@@ -86,7 +87,7 @@ function DesktopSearchBar() {
             if (e.key === 'Enter') applySearch(value);
             if (e.key === 'Escape') setFocused(false);
           }}
-          placeholder="노래 제목, 아티스트명으로 검색"
+          placeholder={t('searchPlaceholder')}
           className="w-full pl-9 pr-8 py-2.5 text-sm rounded-full bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--subtle)] placeholder:text-[var(--text-secondary)]"
         />
         {value && (
@@ -112,13 +113,13 @@ function DesktopSearchBar() {
             /* 최근 검색어 */
             <div className="p-2">
               <div className="flex items-center justify-between px-2 py-1.5 mb-1">
-                <span className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">최근 검색</span>
+                <span className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">{t('recentTitle')}</span>
                 <button onClick={clearAll} className="text-xs text-[var(--text-secondary)] hover:text-[var(--foreground)]">
-                  전체 삭제
+                  {t('recentClearAll')}
                 </button>
               </div>
               {recent.length === 0 ? (
-                <p className="text-xs text-[var(--subtle)] text-center py-3">최근 검색어가 없습니다</p>
+                <p className="text-xs text-[var(--subtle)] text-center py-3">{t('recentEmpty')}</p>
               ) : (
                 <ul className="space-y-0.5">
                   {recent.map((term) => (
@@ -150,6 +151,8 @@ function DesktopSearchBar() {
 // ─── Header ──────────────────────────────────────────────────────────────────
 export default function Header() {
   const t = useTranslations('common');
+  const tNav = useTranslations('nav');
+  const tHeader = useTranslations('header');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -176,7 +179,7 @@ export default function Header() {
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {
-      toast.info('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다. Safari 또는 Chrome에서 접속해 주세요.');
+      toast.info(tHeader('inAppBrowserNotice'));
       return;
     }
     await supabase.auth.signInWithOAuth({
@@ -195,14 +198,14 @@ export default function Header() {
               <button
                 onClick={() => router.back()}
                 className="md:hidden p-1 -ml-1 text-[var(--foreground)]"
-                aria-label="뒤로가기"
+                aria-label={tNav('back')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
             )}
-            <Link href={`/${locale}`} className="md:hidden flex items-center flex-shrink-0" aria-label="홈으로">
+            <Link href={`/${locale}`} className="md:hidden flex items-center flex-shrink-0" aria-label={tNav('homeLink')}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.svg" alt="ClipClef" className="h-6 w-auto" />
             </Link>

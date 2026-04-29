@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -15,6 +15,8 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const tNav = useTranslations('nav');
+  const tHeader = useTranslations('header');
 
   const [user, setUser] = useState<User | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
@@ -62,7 +64,7 @@ export default function MobileBottomNav() {
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {
-      toast.info('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다. Safari 또는 Chrome에서 접속해 주세요.');
+      toast.info(tHeader('inAppBrowserNotice'));
       return;
     }
     await supabase.auth.signInWithOAuth({
@@ -92,7 +94,7 @@ export default function MobileBottomNav() {
         <div className="flex items-center h-14">
 
           {/* 홈 */}
-          <Link href={`/${locale}`} className={item(isHome)} aria-label="홈">
+          <Link href={`/${locale}`} className={item(isHome)} aria-label={tNav('home')}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={isHome ? '/icons/bottom-nav/Home.svg' : '/icons/bottom-nav/Home_Line.svg'}
@@ -102,7 +104,7 @@ export default function MobileBottomNav() {
           </Link>
 
           {/* 검색 */}
-          <button onClick={() => router.push(`/${locale}/search`)} className={item(isSearch)} aria-label="검색">
+          <button onClick={() => router.push(`/${locale}/search`)} className={item(isSearch)} aria-label={tNav('search')}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={isSearch ? '/icons/bottom-nav/Search.svg' : '/icons/bottom-nav/Search_Line.svg'}
@@ -113,12 +115,12 @@ export default function MobileBottomNav() {
 
           {/* 만들기 */}
           {user ? (
-            <Link href={`/${locale}/upload`} className={item(isUpload)} aria-label="만들기">
+            <Link href={`/${locale}/upload`} className={item(isUpload)} aria-label={tNav('create')}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icons/bottom-nav/Plus.svg" alt="" className={`w-7 h-7 invert ${isUpload ? '' : 'opacity-60'}`} />
             </Link>
           ) : (
-            <button onClick={handleLogin} className={item(false)} aria-label="만들기">
+            <button onClick={handleLogin} className={item(false)} aria-label={tNav('create')}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7 invert opacity-60" />
             </button>
@@ -126,7 +128,7 @@ export default function MobileBottomNav() {
 
           {/* 알림 */}
           {user ? (
-            <Link href={`/${locale}/me/notifications`} className={item(isNotif)} aria-label="알림">
+            <Link href={`/${locale}/me/notifications`} className={item(isNotif)} aria-label={tNav('notifications')}>
               <span className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -140,7 +142,7 @@ export default function MobileBottomNav() {
               </span>
             </Link>
           ) : (
-            <button onClick={handleLogin} className={item(false)} aria-label="알림">
+            <button onClick={handleLogin} className={item(false)} aria-label={tNav('notifications')}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icons/bottom-nav/Bell-Line.svg" alt="" className="w-7 h-7 invert opacity-60" />
             </button>
@@ -148,11 +150,11 @@ export default function MobileBottomNav() {
 
           {/* 프로필 */}
           {user ? (
-            <Link href={`/${locale}/me/profile`} className={item(isProfile)} aria-label="프로필">
+            <Link href={`/${locale}/me/profile`} className={item(isProfile)} aria-label={tNav('profile')}>
               <UserAvatar src={avatarUrl} name={user.user_metadata?.full_name as string} size={28} />
             </Link>
           ) : (
-            <button onClick={handleLogin} className={item(false)} aria-label="프로필">
+            <button onClick={handleLogin} className={item(false)} aria-label={tNav('profile')}>
               <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" />
                 <circle cx="12" cy="10" r="3" />

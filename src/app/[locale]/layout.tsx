@@ -14,7 +14,7 @@ import AuthErrorToast from '@/components/layout/AuthErrorToast';
 import ToastContainer from '@/components/layout/ToastContainer';
 import PersistentPlayer from '@/features/player/components/PersistentPlayer';
 import MiniBar from '@/features/player/components/MiniBar';
-import { LOCALES, OG_DEFAULT, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { LOCALES, OG_DEFAULT, SITE_NAME, SITE_URL, getSiteDescription } from '@/lib/seo';
 import '../globals.css';
 
 export async function generateMetadata({
@@ -23,7 +23,9 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const languages: Record<string, string> = {};
+  const description = getSiteDescription(locale);
+  // Design Ref: §6.2 — locale별 alternate + x-default(=ko)
+  const languages: Record<string, string> = { 'x-default': `${SITE_URL}/ko` };
   for (const lc of LOCALES) languages[lc] = `${SITE_URL}/${lc}`;
 
   return {
@@ -32,7 +34,7 @@ export async function generateMetadata({
       default: SITE_NAME,
       template: `%s | ${SITE_NAME}`,
     },
-    description: SITE_DESCRIPTION,
+    description,
     applicationName: SITE_NAME,
     alternates: {
       canonical: `/${locale}`,
@@ -42,7 +44,7 @@ export async function generateMetadata({
       type: 'website',
       siteName: SITE_NAME,
       title: SITE_NAME,
-      description: SITE_DESCRIPTION,
+      description,
       url: `${SITE_URL}/${locale}`,
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
       images: [{ url: OG_DEFAULT, width: 1200, height: 630, alt: SITE_NAME }],
@@ -50,7 +52,7 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: SITE_NAME,
-      description: SITE_DESCRIPTION,
+      description,
       images: [OG_DEFAULT],
     },
     robots: {

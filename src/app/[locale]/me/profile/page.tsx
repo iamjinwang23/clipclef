@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import type { Playlist } from '@/types';
-import ProfileSettingsMenu from './ProfileSettingsMenu';
+import MoreMenu from '@/components/layout/MoreMenu';
 import ProfileHeroHeader from '@/components/ui/ProfileHeroHeader';
 import PlaylistThumbCard from '@/features/playlist/components/PlaylistThumbCard';
 
@@ -55,7 +55,7 @@ export default async function MyProfilePage({
         isVerified={isVerified}
         followerCount={followerCount ?? 0}
         followingCount={followingCount ?? 0}
-        trailing={<ProfileSettingsMenu locale={locale} />}
+        trailing={<MoreMenu locale={locale} />}
       />
 
       <div className="max-w-3xl mx-auto px-4 mt-6">

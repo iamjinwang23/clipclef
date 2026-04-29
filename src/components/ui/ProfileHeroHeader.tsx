@@ -12,7 +12,7 @@ interface ProfileHeroHeaderProps {
   isVerified?: boolean;
   followerCount: number;
   followingCount: number;
-  /** 우측 상단 액션 슬롯 — ProfileSettingsMenu 또는 UserFollowChip */
+  /** 우측 상단 액션 슬롯 — MoreMenu 또는 UserFollowChip */
   trailing?: ReactNode;
 }
 

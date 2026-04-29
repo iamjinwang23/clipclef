@@ -1,9 +1,9 @@
 'use client';
 // Design Ref: §3.1 — 데스크톱 좌측 thin rail (64px). 모바일에서는 hidden, BottomNav 사용.
-// 메뉴 구성 (위→아래): 로고 → (gap) → 홈 → 알림 → 만들기 → 프로필 → (push) → 설정(자리만)
+// 메뉴 구성 (위→아래): 로고 → (gap) → 홈 → 알림 → 만들기 → 프로필 → (push) → 더보기(MoreMenu trigger)
 
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState, type ReactNode } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -11,11 +11,14 @@ import type { User } from '@supabase/supabase-js';
 import UserAvatar from '@/components/ui/UserAvatar';
 import { isInAppBrowser } from '@/lib/browser';
 import { toast } from '@/lib/toast';
+import MoreMenu from '@/components/layout/MoreMenu';
 
 export default function DesktopRail() {
   const locale = useLocale();
   const pathname = usePathname();
   const supabase = createClient();
+  const tNav = useTranslations('nav');
+  const tHeader = useTranslations('header');
 
   const [user, setUser] = useState<User | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
@@ -63,7 +66,7 @@ export default function DesktopRail() {
 
   const handleLogin = async () => {
     if (isInAppBrowser()) {
-      toast.info('앱 내 브라우저에서는 Google 로그인이 지원되지 않습니다. Safari 또는 Chrome에서 접속해 주세요.');
+      toast.info(tHeader('inAppBrowserNotice'));
       return;
     }
     await supabase.auth.signInWithOAuth({
@@ -81,11 +84,11 @@ export default function DesktopRail() {
   return (
     <aside
       className="hidden md:flex flex-col w-16 h-screen bg-[var(--background)] border-r border-[var(--border)] z-30 pb-3 flex-shrink-0"
-      aria-label="주 메뉴"
+      aria-label={tNav('menu')}
     >
       {/* 로고 — 헤더 검색창과 같은 라인(h-16)에서 수직 가운데 정렬 */}
       <div className="h-16 flex items-center justify-center flex-shrink-0">
-        <Link href={`/${locale}`} aria-label="홈으로" className="flex-shrink-0">
+        <Link href={`/${locale}`} aria-label={tNav('homeLink')} className="flex-shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/mobile_logo.svg" alt="ClipClef" className="h-5 w-auto" />
         </Link>
@@ -94,7 +97,7 @@ export default function DesktopRail() {
       {/* 메인 메뉴 그룹 — 로고 아래 약간의 gap, 아이콘 간 여백 ↑ */}
       <nav className="flex flex-col items-center gap-3 pt-4">
         {/* 홈 */}
-        <RailItem href={`/${locale}`} active={isHome} ariaLabel="홈">
+        <RailItem href={`/${locale}`} active={isHome} ariaLabel={tNav('home')}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={isHome ? '/icons/bottom-nav/Home.svg' : '/icons/bottom-nav/Home_Line.svg'}
@@ -105,7 +108,7 @@ export default function DesktopRail() {
 
         {/* 알림 */}
         {user ? (
-          <RailItem href={`/${locale}/me/notifications`} active={isNotif} ariaLabel="알림">
+          <RailItem href={`/${locale}/me/notifications`} active={isNotif} ariaLabel={tNav('notifications')}>
             <span className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -119,7 +122,7 @@ export default function DesktopRail() {
             </span>
           </RailItem>
         ) : (
-          <RailButton onClick={handleLogin} ariaLabel="알림">
+          <RailButton onClick={handleLogin} ariaLabel={tNav('notifications')}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icons/bottom-nav/Bell-Line.svg" alt="" className="w-7 h-7 invert opacity-60" />
           </RailButton>
@@ -127,12 +130,12 @@ export default function DesktopRail() {
 
         {/* 만들기 */}
         {user ? (
-          <RailItem href={`/${locale}/upload`} active={isUpload} ariaLabel="만들기">
+          <RailItem href={`/${locale}/upload`} active={isUpload} ariaLabel={tNav('create')}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icons/bottom-nav/Plus.svg" alt="" className={`w-7 h-7 invert ${isUpload ? '' : 'opacity-60'}`} />
           </RailItem>
         ) : (
-          <RailButton onClick={handleLogin} ariaLabel="만들기">
+          <RailButton onClick={handleLogin} ariaLabel={tNav('create')}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icons/bottom-nav/Plus.svg" alt="" className="w-7 h-7 invert opacity-60" />
           </RailButton>
@@ -140,11 +143,11 @@ export default function DesktopRail() {
 
         {/* 프로필 */}
         {user ? (
-          <RailItem href={`/${locale}/me/profile`} active={isProfile} ariaLabel="프로필">
+          <RailItem href={`/${locale}/me/profile`} active={isProfile} ariaLabel={tNav('profile')}>
             <UserAvatar src={avatarUrl} name={user.user_metadata?.full_name as string} size={28} />
           </RailItem>
         ) : (
-          <RailButton onClick={handleLogin} ariaLabel="프로필">
+          <RailButton onClick={handleLogin} ariaLabel={tNav('profile')}>
             <svg className="w-7 h-7 text-[var(--text-secondary)] opacity-60" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" />
               <circle cx="12" cy="10" r="3" />
@@ -154,17 +157,27 @@ export default function DesktopRail() {
         )}
       </nav>
 
-      {/* 설정 — 하단 자리만 (Phase 1 OOS) */}
+      {/* 더보기 — 하단. MoreMenu (direction='up') 호출 — 5개 메뉴 + KO|EN 토글 */}
       <div className="mt-auto flex justify-center pb-2">
-        <button
-          onClick={() => toast.info('준비 중입니다')}
-          className="p-2.5 opacity-40 cursor-not-allowed"
-          aria-label="설정 (준비 중)"
-          disabled
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/Settings.svg" alt="" className="w-7 h-7 invert opacity-60" />
-        </button>
+        <MoreMenu
+          locale={locale}
+          direction="up"
+          align="left"
+          trigger={
+            <span className="flex items-center justify-center w-11 h-11 rounded-lg transition-[transform] duration-100 ease-out active:scale-95">
+              <svg
+                className="w-7 h-7 text-[var(--foreground)] opacity-60"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <circle cx="5" cy="12" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="19" cy="12" r="2" />
+              </svg>
+            </span>
+          }
+        />
       </div>
     </aside>
   );
