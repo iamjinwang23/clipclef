@@ -54,10 +54,10 @@ export default function RightNowPlayingPanel() {
   // 모바일에서는 패널 자체 mount 안 함 — panelActive 충돌 방지. lazy init + change listener
   const [isDesktop, setIsDesktop] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    return window.matchMedia('(min-width: 1024px)').matches;
+    return window.matchMedia('(min-width: 768px)').matches;
   });
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
+    const mq = window.matchMedia('(min-width: 768px)');
     const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);

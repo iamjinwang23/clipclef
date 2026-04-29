@@ -54,7 +54,7 @@ export default function PlaylistPlayer({ playlist, tracks, children }: PlaylistP
     }
     // Phase 3: 데스크톱은 패널이 상세를 표시하므로 홈으로 redirect (URL 정리 + 홈 그리드 노출)
     // 모바일은 기존 페이지 유지
-    if (typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches) {
+    if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
       router.replace(`/${locale}`);
     }
     // 의도적으로 tracks/load는 의존에서 제외 — playlist.id만으로 재로드 판단

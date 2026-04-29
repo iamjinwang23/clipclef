@@ -44,7 +44,7 @@ export default function PlaylistCard({ playlist }: PlaylistCardProps) {
   const handleClick = async (e: React.MouseEvent) => {
     // 모바일은 기존 페이지 이동 동작 유지
     if (typeof window === 'undefined') return;
-    if (!window.matchMedia('(min-width: 1024px)').matches) return;
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
 
     // 데스크톱: 페이지 전환 없이 우측 패널에서 재생
     e.preventDefault();

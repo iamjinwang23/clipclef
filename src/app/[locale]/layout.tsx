@@ -84,7 +84,7 @@ export default async function LocaleLayout({
     <html lang={locale} className="h-full" style={{ colorScheme: 'dark', backgroundColor: '#0D0D0D' }}>
       {/* Mobile/tablet (<lg): 일반 vertical scroll. Desktop (lg+): 컬럼별 독립 스크롤 (rail + 4-zone). lg 미만은 viewport 가 좁아 4-zone 이 답답해짐 → 모바일 UX 로 전환. */}
       <body
-        className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row"
+        className="min-h-screen md:h-screen md:overflow-hidden flex flex-col md:flex-row"
         style={{ backgroundColor: '#0D0D0D', color: '#F0F0F0' }}
       >
         <NextIntlClientProvider messages={messages}>
@@ -93,14 +93,14 @@ export default async function LocaleLayout({
             <DesktopRail />
 
             {/* 가운데 컬럼: header + scrollable area (main + footer) */}
-            <div className="flex-1 flex flex-col min-w-0 lg:overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-0 md:overflow-hidden">
               <Header />
-              {/* 스크롤 컨테이너 — lg+ 는 lg:flex lg:flex-col 로 footer mt-auto 가능. main 은 일반 block 으로 children 격리 */}
-              <div className="flex-1 lg:overflow-y-auto min-w-0 lg:flex lg:flex-col">
-                <main className="pb-[calc(8.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+              {/* 스크롤 컨테이너 — lg+ 는 md:flex md:flex-col 로 footer mt-auto 가능. main 은 일반 block 으로 children 격리 */}
+              <div className="flex-1 md:overflow-y-auto min-w-0 md:flex md:flex-col">
+                <main className="pb-[calc(8.5rem+env(safe-area-inset-bottom))] md:pb-0">
                   {children}
                 </main>
-                <footer className="hidden sm:block lg:mt-auto pt-20 pb-32 text-sm text-[var(--subtle)]">
+                <footer className="hidden sm:block md:mt-auto pt-20 pb-32 text-sm text-[var(--subtle)]">
                   <div className="max-w-6xl mx-auto px-4 flex flex-col gap-3">
                     <div className="flex items-center gap-5">
                       <Link href={`/${locale}`} className="flex-shrink-0">
