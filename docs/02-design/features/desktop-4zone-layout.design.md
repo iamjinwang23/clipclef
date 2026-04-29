@@ -269,12 +269,25 @@ const isProfile = pathname.includes('/me/') && !isNotif;
 
 ## 7. Mobile / Responsive
 
-| Viewport | Rail | Header | BottomNav |
-|----------|:----:|--------|:---------:|
-| `<sm` (mobile) | hidden | logo + 검색 아이콘 + 뒤로가기 | visible |
-| `>=sm` (desktop) | visible (64px) | 검색바만 | hidden (`sm:hidden`) |
+**Threshold = `md` (768px)** — 그 미만은 모바일 UX, 그 이상은 4-zone 데스크톱.
+
+(초기 설계는 `sm`(640px) 였으나 좁은 데스크톱(640-768px)에서 우측 패널이 폭을 차지해 카드가 무한 축소되는 이슈로 `md` 로 상향. 태블릿 portrait(~768px) 부터 4-zone 활성.)
+
+| Viewport | Rail | Panel | BottomNav | MiniBar | 카드 클릭 |
+|----------|:----:|:-----:|:---------:|:-------:|----------|
+| `<md` (모바일·태블릿 portrait 미만) | hidden | hidden | visible | visible | 페이지 이동 |
+| `>=md` (태블릿 portrait+, 데스크톱) | visible (64px) | visible (drag-resize) | hidden (`md:hidden`) | hidden (`md:hidden`) | 패널 hydrate (URL 무변) |
 
 **검증 viewport**: 360px / 640px(sm) / 768px(md) / 1024px(lg) / 1440px(xl)
+
+**구현 위치 (md threshold 일관 적용):**
+- `body`: `min-h-screen md:h-screen md:overflow-hidden flex flex-col md:flex-row`
+- `DesktopRail`: `hidden md:flex`
+- `MobileBottomNav`, `MiniBar`: `md:hidden`
+- `Header` 좌측 로고/뒤로가기: `md:hidden` (rail 이 로고 담당하는 md+ 에선 헤더에서 제거)
+- `RightNowPlayingPanel` isDesktop matchMedia: `(min-width: 768px)`
+- `PlaylistCard`, `PlaylistThumbCard` 클릭 인터셉트: `(min-width: 768px)`
+- `PlaylistPlayer` redirect: `(min-width: 768px)`
 
 ---
 
