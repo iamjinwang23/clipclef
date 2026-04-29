@@ -19,14 +19,14 @@ export default function GenresPage() {
       ) : !data || data.length === 0 ? (
         <p className="py-10 text-center text-sm text-[var(--subtle)]">등록된 장르가 없어요</p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-4 gap-y-6">
           {data.map((g) => (
             <div key={g.id} className="flex justify-center">
               <GenreCard
                 name={g.name}
                 thumbnailUrl={g.thumbnail_url}
                 locale={locale}
-                size={168}
+                size={140}
               />
             </div>
           ))}

@@ -19,7 +19,7 @@ export default function ArtistsPage() {
       ) : !data || data.length === 0 ? (
         <p className="py-10 text-center text-sm text-[var(--subtle)]">등록된 아티스트가 없어요</p>
       ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 gap-y-6">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,1fr))] gap-4 gap-y-6">
           {data.map((a) => (
             <div key={a.slug} className="flex justify-center">
               <ArtistCard
@@ -27,8 +27,8 @@ export default function ArtistsPage() {
                 slug={a.slug}
                 imageUrl={a.image_url}
                 locale={locale}
-                size={126}
-                sizeMobile={108}
+                size={108}
+                sizeMobile={96}
               />
             </div>
           ))}
