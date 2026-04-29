@@ -28,7 +28,7 @@ export default function PlaylistThumbCard({ id, title, thumbnailUrl, channelName
 
   const handleClick = async (e: React.MouseEvent) => {
     if (typeof window === 'undefined') return;
-    if (!window.matchMedia('(min-width: 640px)').matches) return;
+    if (!window.matchMedia('(min-width: 1024px)').matches) return;
     e.preventDefault();
 
     if (isCurrent) {

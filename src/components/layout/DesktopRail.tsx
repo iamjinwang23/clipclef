@@ -80,7 +80,7 @@ export default function DesktopRail() {
 
   return (
     <aside
-      className="hidden sm:flex flex-col w-16 h-screen bg-[var(--background)] border-r border-[var(--border)] z-30 pb-3 flex-shrink-0"
+      className="hidden lg:flex flex-col w-16 h-screen bg-[var(--background)] border-r border-[var(--border)] z-30 pb-3 flex-shrink-0"
       aria-label="주 메뉴"
     >
       {/* 로고 — 헤더 검색창과 같은 라인(h-16)에서 수직 가운데 정렬 */}

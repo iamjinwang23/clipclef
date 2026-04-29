@@ -99,7 +99,7 @@ function MiniBarInner({
         role="region"
         aria-label="현재 재생 중"
         className="
-          sm:hidden
+          lg:hidden
           fixed left-0 right-0 z-40
           bottom-[calc(3.5rem+env(safe-area-inset-bottom))]
           bg-[var(--card)]/95 backdrop-blur-md
