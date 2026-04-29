@@ -3,6 +3,7 @@
 // § 1, § 3는 서버에서 존재 여부 확인 후 조건부 렌더 — 데이터 없으면 레이블도 제거.
 // (이전엔 inner 컴포넌트가 null 반환해도 HomeSection 의 label 은 노출돼 빈 섹션처럼 보임)
 
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import CuratedCollectionSection from '@/features/playlist/components/CuratedCollectionSection';
 import HomeSection from '@/components/layout/HomeSection';
@@ -78,12 +79,12 @@ export default async function HomePage({
             <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide">
               장르
             </h3>
-            <a
+            <Link
               href={`/${locale}/genres`}
               className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] transition-colors"
             >
               더 보기
-            </a>
+            </Link>
           </div>
           <GenreHomeSection limit={8} />
         </div>
@@ -93,12 +94,12 @@ export default async function HomePage({
             <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide">
               아티스트
             </h3>
-            <a
+            <Link
               href={`/${locale}/artists`}
               className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] transition-colors"
             >
               더 보기
-            </a>
+            </Link>
           </div>
           <ArtistHomeSection limit={8} size={126} />
         </div>
