@@ -107,14 +107,14 @@ export async function POST(req: NextRequest) {
   const description: string = video.snippet.description ?? '';
   let tracks = parseTracklist(description, totalSec);
 
-  // 1차(description) 실패 시 상위 댓글 5개 스캔 — relevance 순 (고정 댓글이 있다면 보통 1번)
+  // 1차(description) 실패 시 상위 댓글 10개 스캔 — relevance 순 (고정 댓글이 있다면 보통 1번)
   // 가사 타임스탬프 댓글 등 false-positive 방지:
   //  - 최소 3개 이상 추출된 경우에만 채택
   //  - 첫 타임이 60초 이내(실제 트랙리스트는 0:00 근처에서 시작)
   if (tracks.length === 0) {
     try {
       const cRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&order=relevance&maxResults=5&textFormat=plainText&key=${apiKey}`
+        `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&order=relevance&maxResults=10&textFormat=plainText&key=${apiKey}`
       );
       const cData = await cRes.json();
       if (!cData.error && Array.isArray(cData.items)) {
