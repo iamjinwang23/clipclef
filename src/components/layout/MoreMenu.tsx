@@ -7,6 +7,10 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import LocaleToggle from '@/components/i18n/LocaleToggle';
 
+// 한국어 사용자 집중 단계 — KO|EN 토글은 숨겨둠. 영어 유입 신호 발생 시 true 로 복귀.
+// 인프라(LocaleToggle, /en 라우팅, 메시지)는 그대로 살려둠. 자세한 복귀 절차는 docs/02-design/features/i18n.design.md §12 참조.
+const SHOW_LOCALE_TOGGLE = false;
+
 interface Props {
   locale: string;
   direction?: 'down' | 'up';
@@ -88,8 +92,12 @@ export default function MoreMenu({
               {t(key)}
             </Link>
           ))}
-          <div className="border-t border-[var(--border)] my-1" />
-          <LocaleToggle />
+          {SHOW_LOCALE_TOGGLE && (
+            <>
+              <div className="border-t border-[var(--border)] my-1" />
+              <LocaleToggle />
+            </>
+          )}
         </div>
       )}
     </div>
