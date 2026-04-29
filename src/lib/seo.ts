@@ -12,7 +12,7 @@ function resolveSiteUrl(): string {
 
 export const SITE_URL = resolveSiteUrl();
 export const SITE_NAME = 'clip/clef';
-export const SITE_DESCRIPTION = '유튜브 플레이리스트 큐레이션 아카이브';
+export const SITE_DESCRIPTION = '취향을 모으고, 취향으로 듣다';
 export const OG_DEFAULT = '/og-default.png';
 export const LOCALES = ['ko', 'en'] as const;
 export const DEFAULT_LOCALE = 'ko';

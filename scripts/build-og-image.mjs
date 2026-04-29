@@ -37,7 +37,7 @@ const composite = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="
   <text x="${W / 2}" y="${LOGO_Y + LOGO_H + 56}" text-anchor="middle"
     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
     font-size="26" fill="${SUBTLE}" letter-spacing="0.5">
-    유튜브 플레이리스트 큐레이션 아카이브
+    취향을 모으고, 취향으로 듣다
   </text>
 </svg>`;
 

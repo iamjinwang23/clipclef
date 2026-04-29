@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'clip/clef',
-  description: '유튜브 플레이리스트 큐레이션 아카이브',
+  description: '취향을 모으고, 취향으로 듣다',
 };
 
 // Root layout: [locale] 레이아웃이 html/body를 렌더링
